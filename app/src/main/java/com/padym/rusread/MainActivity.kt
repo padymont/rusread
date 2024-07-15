@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -68,7 +68,9 @@ fun setupNavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = Screen.SyllableSelection.route
     ) {
-        composable(Screen.SyllableSelection.route) { SyllableSelectionScreen(navController) }
+        composable(Screen.SyllableSelection.route) {
+            SyllableSelectionScreen(navController)
+        }
         composable(Screen.SyllableGame.route) { backStackEntry ->
             val chosenSyllables = Screen.SyllableGame.parseChosenSyllables(backStackEntry)
             SyllableGameScreen(navController, chosenSyllables)
@@ -78,7 +80,8 @@ fun setupNavGraph(navController: NavHostController) {
 
 @Composable
 fun SyllableSelectionScreen(navController: NavHostController) {
-    var selectedSyllables by remember { mutableStateOf(emptySet<String>()) }
+    val viewModel: SyllableListViewModel = viewModel()
+    val selectedSyllables = viewModel.selectedSyllables
 
     Column(
         modifier = Modifier
@@ -97,10 +100,10 @@ fun SyllableSelectionScreen(navController: NavHostController) {
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(buildSyllableGroups()) { group ->
                 SyllableGroupItem(group) { syllable ->
-                    selectedSyllables = if (syllable.isSelected) {
-                        selectedSyllables + syllable.text
+                    if (syllable.isSelected) {
+                        viewModel.addSyllable(syllable.text)
                     } else {
-                        selectedSyllables - syllable.text
+                        viewModel.removeSyllable(syllable.text)
                     }
                 }
             }
@@ -112,6 +115,7 @@ fun SyllableSelectionScreen(navController: NavHostController) {
                     navController.navigate(
                         Screen.SyllableGame.passChosenSyllables(selectedSyllables)
                     )
+                    viewModel.clearChosenSyllables()
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
@@ -125,7 +129,7 @@ data class SyllableGroup(val syllables: List<String>)
 
 fun buildSyllableGroups(): List<SyllableGroup> {
     val consonants = "бвгджзклмнпрстфхцчшщ"
-    val vowels = "аеёиоуыэюя"
+    val vowels = "аеёиоуыюя"
 
     val consonantSyllableGroupsList = consonants.map { char ->
         val letter = char.toString()
@@ -133,32 +137,31 @@ fun buildSyllableGroups(): List<SyllableGroup> {
         SyllableGroup(syllables)
     }
     val vowelSyllableGroup = SyllableGroup(vowels.map { it.toString() })
-    val specialSyllableGroup = SyllableGroup(listOf("й", "ъ"))
+    val specialSyllableGroup = SyllableGroup(listOf("й", "ъ", "э"))
 
     return consonantSyllableGroupsList + vowelSyllableGroup + specialSyllableGroup
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SyllableGameScreen(
-    navController: NavHostController,
-    chosenSyllables: Set<String>,
-) {
-    var correctAnswers by remember { mutableIntStateOf(0) }
-    var newSyllable by remember { mutableStateOf(chosenSyllables.random()) }
+fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
+    val viewModel: SyllableGameViewModel = viewModel()
+    viewModel.initializeData(chosenSyllables)
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("") }, // Empty title
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
                         Icon(Icons.Filled.Close, contentDescription = "Close")
                     }
                 })
         }
     ) { paddingValues ->
-        if (correctAnswers < 10 && newSyllable.isNotEmpty()) {
+        if (viewModel.correctAnswers < 4) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -167,7 +170,7 @@ fun SyllableGameScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = newSyllable,
+                    text = viewModel.newSyllable,
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 32.dp)
@@ -178,12 +181,12 @@ fun SyllableGameScreen(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    chosenSyllables.forEach { syllable ->
+                    viewModel.selectedSyllables.forEach { syllable ->
                         Button(onClick = {
-                            if (syllable == newSyllable) {
-                                correctAnswers++
+                            if (syllable == viewModel.newSyllable) {
+                                viewModel.increaseCorrectAnswers()
                             }
-                            newSyllable = chosenSyllables.random()
+                            viewModel.setNewSyllable()
                         }) {
                             Text(syllable)
                         }
