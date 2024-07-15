@@ -2,8 +2,12 @@ package com.padym.rusread
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,12 +32,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +49,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.padym.rusread.ui.theme.RusreadTheme
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -128,6 +135,28 @@ fun SyllableSelectionScreen(navController: NavHostController) {
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
+    val context = LocalContext.current
+    val tts = remember { mutableStateOf<TextToSpeech?>(null) }
+
+    // Initialize TTS
+    LaunchedEffect(key1 = Unit) {
+        tts.value = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                val result = tts.value?.setLanguage(Locale("ru"))
+                val voice = tts.value?.voices?.find { it.name.contains("ru-ru-x-rud-network") }
+                tts.value?.setVoice(voice)
+                if (result == TextToSpeech.LANG_MISSING_DATA ||
+                    result == TextToSpeech.LANG_NOT_SUPPORTED
+                ) {
+                    Toast.makeText(context, "Russian language not supported", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else {
+                Toast.makeText(context, "TTS initialization failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     val viewModel: SyllableGameViewModel = viewModel()
     viewModel.initializeData(chosenSyllables)
 
@@ -144,7 +173,8 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
                 })
         }
     ) { paddingValues ->
-        if (viewModel.correctAnswers < 4) {
+        val currentSyllable = viewModel.newSyllable
+        if (viewModel.correctAnswers < 40) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -153,12 +183,15 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = viewModel.newSyllable,
+                    text = currentSyllable,
                     fontSize = 48.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 32.dp)
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .clickable {
+                            tts.value?.speak(currentSyllable, TextToSpeech.QUEUE_FLUSH, null, null)
+                        }
                 )
-
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
