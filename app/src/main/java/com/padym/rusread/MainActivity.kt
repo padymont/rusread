@@ -98,8 +98,8 @@ fun SyllableSelectionScreen(navController: NavHostController) {
         )
 
         LazyColumn(modifier = Modifier.weight(1f)) {
-            items(buildSyllableGroups()) { group ->
-                SyllableGroupItem(group) { syllable ->
+            items(viewModel.getGroupedSyllables()) { group ->
+                SyllableGroupItem(group.syllables) { syllable ->
                     if (syllable.isSelected) {
                         viewModel.addSyllable(syllable.text)
                     } else {
@@ -123,23 +123,6 @@ fun SyllableSelectionScreen(navController: NavHostController) {
             }
         }
     }
-}
-
-data class SyllableGroup(val syllables: List<String>)
-
-fun buildSyllableGroups(): List<SyllableGroup> {
-    val consonants = "бвгджзклмнпрстфхцчшщ"
-    val vowels = "аеёиоуыюя"
-
-    val consonantSyllableGroupsList = consonants.map { char ->
-        val letter = char.toString()
-        val syllables = vowels.map { letter + it } + (letter + "ь") + letter
-        SyllableGroup(syllables)
-    }
-    val vowelSyllableGroup = SyllableGroup(vowels.map { it.toString() })
-    val specialSyllableGroup = SyllableGroup(listOf("й", "ъ", "э"))
-
-    return consonantSyllableGroupsList + vowelSyllableGroup + specialSyllableGroup
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -204,11 +187,11 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SyllableGroupItem(group: SyllableGroup, onSyllableSelected: (Syllable) -> Unit) {
+fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (Syllable) -> Unit) {
     var selectedSyllables by remember { mutableStateOf(emptySet<String>()) }
     Column(modifier = Modifier.padding(bottom = 8.dp)) {
         FlowRow(modifier = Modifier.padding(8.dp)) {
-            group.syllables.forEach { syllable ->
+            syllables.forEach { syllable ->
                 SyllableItem(
                     syllable = syllable,
                     isSelected = syllable in selectedSyllables,
