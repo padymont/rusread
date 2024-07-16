@@ -220,7 +220,7 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (Syllable) -> Unit) {
+fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (SyllableBlock) -> Unit) {
     var selectedSyllables by remember { mutableStateOf(emptySet<String>()) }
     Column(modifier = Modifier.padding(bottom = 8.dp)) {
         FlowRow(modifier = Modifier.padding(8.dp)) {
@@ -234,7 +234,7 @@ fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (Syllable) ->
                         } else {
                             selectedSyllables = selectedSyllables - syllable
                         }
-                        onSyllableSelected(Syllable(syllable, isSelected))
+                        onSyllableSelected(SyllableBlock(syllable, isSelected))
                     }
                 )
             }
@@ -242,7 +242,7 @@ fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (Syllable) ->
     }
 }
 
-data class Syllable(val text: String, val isSelected: Boolean)
+data class SyllableBlock(val text: String, val isSelected: Boolean)
 
 @Composable
 fun SyllableItem(syllable: String, isSelected: Boolean, onToggle: (Boolean) -> Unit) {

@@ -24,17 +24,26 @@ class SyllableListViewModel : ViewModel() {
     data class SyllableGroup(val syllables: List<String>)
 
     fun getGroupedSyllables(): List<SyllableGroup> {
-        val consonants = "бвгджзклмнпрстфхцчшщ"
-        val vowels = "аеёиоуыюя"
+        val allSyllables = getSyllables()
+        val vowels = "аеёиоуыэюя"
 
-        val consonantSyllableGroupsList = consonants.map { char ->
-            val letter = char.toString()
-            val syllables = vowels.map { letter + it } + (letter + "ь") + letter
-            SyllableGroup(syllables)
-        }
-        val vowelSyllableGroup = SyllableGroup(vowels.map { it.toString() })
-        val specialSyllableGroup = SyllableGroup(listOf("й", "ъ", "э"))
+        val syllableGroupsList = allSyllables.map { it.key }
+            .filter { it.length > 1 }
+            .groupBy { it.first() }
+            .map { entry ->
+                SyllableGroup(syllables = entry.value)
+            }
 
-        return consonantSyllableGroupsList + vowelSyllableGroup + specialSyllableGroup
+        val vowelSyllableGroup = SyllableGroup(
+            allSyllables.map { it.key }
+                .filter { it in vowels }
+        )
+        val consonantSyllableGroup = SyllableGroup(
+            allSyllables.map { it.key }
+                .filter { it.length == 1 }
+                .filter { it !in vowels }
+        )
+
+        return syllableGroupsList + vowelSyllableGroup + consonantSyllableGroup
     }
 }
