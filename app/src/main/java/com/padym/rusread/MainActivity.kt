@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +54,8 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
-    lateinit var navController: NavHostController
+    private lateinit var navController: NavHostController
+    private lateinit var tts: MutableState<TextToSpeech?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,203 +64,216 @@ class MainActivity : ComponentActivity() {
                 setContent {
                     navController = rememberNavController()
                     setupNavGraph(navController)
+                    InitTTS()
                 }
             }
         }
     }
-}
 
-@SuppressLint("ComposableNaming")
-@Composable
-fun setupNavGraph(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = Screen.SyllableSelection.route
-    ) {
-        composable(Screen.SyllableSelection.route) {
-            SyllableSelectionScreen(navController)
-        }
-        composable(Screen.SyllableGame.route) { backStackEntry ->
-            val chosenSyllables = Screen.SyllableGame.parseChosenSyllables(backStackEntry)
-            SyllableGameScreen(navController, chosenSyllables)
+    @SuppressLint("ComposableNaming")
+    @Composable
+    fun setupNavGraph(navController: NavHostController) {
+        NavHost(
+            navController = navController,
+            startDestination = Screen.SyllableSelection.route
+        ) {
+            composable(Screen.SyllableSelection.route) {
+                SyllableSelectionScreen(navController)
+            }
+            composable(Screen.SyllableGame.route) { backStackEntry ->
+                val chosenSyllables = Screen.SyllableGame.parseChosenSyllables(backStackEntry)
+                SyllableGameScreen(navController, chosenSyllables)
+            }
         }
     }
-}
 
-@Composable
-fun SyllableSelectionScreen(navController: NavHostController) {
-    val viewModel: SyllableListViewModel = viewModel()
-    val selectedSyllables = viewModel.selectedSyllables
+    @Composable
+    fun SyllableSelectionScreen(navController: NavHostController) {
+        val viewModel: SyllableListViewModel = viewModel()
+        val selectedSyllables = viewModel.selectedSyllables
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Choose at least 3 syllables",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 16.dp)
-        )
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Choose at least 3 syllables",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
+            )
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(viewModel.getGroupedSyllables()) { group ->
-                SyllableGroupItem(group.syllables) { syllable ->
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(viewModel.getGroupedSyllables()) { group ->
+                    SyllableGroupItem(group.syllables) { syllable ->
+//                        tts.value?.speak(syllable.text, TextToSpeech.QUEUE_FLUSH, null, null)
                     if (syllable.isSelected) {
                         viewModel.addSyllable(syllable.text)
                     } else {
                         viewModel.removeSyllable(syllable.text)
                     }
+                    }
+                }
+            }
+
+            if (selectedSyllables.size >= 3) {
+                Button(
+                    onClick = {
+                        navController.navigate(
+                            Screen.SyllableGame.passChosenSyllables(selectedSyllables)
+                        )
+                        viewModel.clearChosenSyllables()
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text("Next")
                 }
             }
         }
+    }
 
-        if (selectedSyllables.size >= 3) {
-            Button(
-                onClick = {
-                    navController.navigate(
-                        Screen.SyllableGame.passChosenSyllables(selectedSyllables)
-                    )
-                    viewModel.clearChosenSyllables()
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("Next")
+    @Composable
+    fun InitTTS() {
+        val context = LocalContext.current
+        tts = remember { mutableStateOf<TextToSpeech?>(null) }
+        LaunchedEffect(key1 = Unit) {
+            tts.value = TextToSpeech(context) { status ->
+                if (status == TextToSpeech.SUCCESS) {
+                    val result = tts.value?.setLanguage(Locale("ru"))
+                    val voice = tts.value?.voices?.find { it.name.contains("ru-ru-x-rud-network") }
+                    tts.value?.setVoice(voice)
+                    if (result == TextToSpeech.LANG_MISSING_DATA ||
+                        result == TextToSpeech.LANG_NOT_SUPPORTED
+                    ) {
+                        Toast.makeText(
+                            context,
+                            "Russian language not supported",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                } else {
+                    Toast.makeText(context, "TTS initialization failed", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
-}
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
-@Composable
-fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
-    val context = LocalContext.current
-    val tts = remember { mutableStateOf<TextToSpeech?>(null) }
+    @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+    @Composable
+    fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
+        val viewModel: SyllableGameViewModel = viewModel()
+        viewModel.initializeData(chosenSyllables)
 
-    // Initialize TTS
-    LaunchedEffect(key1 = Unit) {
-        tts.value = TextToSpeech(context) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                val result = tts.value?.setLanguage(Locale("ru"))
-                val voice = tts.value?.voices?.find { it.name.contains("ru-ru-x-rud-network") }
-                tts.value?.setVoice(voice)
-                if (result == TextToSpeech.LANG_MISSING_DATA ||
-                    result == TextToSpeech.LANG_NOT_SUPPORTED
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("") }, // Empty title
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }) {
+                            Icon(Icons.Filled.Close, contentDescription = "Close")
+                        }
+                    })
+            }
+        ) { paddingValues ->
+            val currentSyllable = viewModel.newSyllable
+            if (viewModel.correctAnswers < 40) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
                 ) {
-                    Toast.makeText(context, "Russian language not supported", Toast.LENGTH_SHORT)
-                        .show()
+                    Text(
+                        text = currentSyllable,
+                        fontSize = 48.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = 32.dp)
+                            .clickable {
+                                tts.value?.speak(
+                                    currentSyllable,
+                                    TextToSpeech.QUEUE_FLUSH,
+                                    null,
+                                    null
+                                )
+                            }
+                    )
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        viewModel.selectedSyllables.forEach { syllable ->
+                            Button(onClick = {
+                                if (syllable == viewModel.newSyllable) {
+                                    viewModel.increaseCorrectAnswers()
+                                }
+                                viewModel.setNewSyllable()
+                            }) {
+                                Text(syllable)
+                            }
+                        }
+                    }
                 }
             } else {
-                Toast.makeText(context, "TTS initialization failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    val viewModel: SyllableGameViewModel = viewModel()
-    viewModel.initializeData(chosenSyllables)
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("") }, // Empty title
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(Icons.Filled.Close, contentDescription = "Close")
-                    }
-                })
-        }
-    ) { paddingValues ->
-        val currentSyllable = viewModel.newSyllable
-        if (viewModel.correctAnswers < 40) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Text(
-                    text = currentSyllable,
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(top = 32.dp)
-                        .clickable {
-                            tts.value?.speak(currentSyllable, TextToSpeech.QUEUE_FLUSH, null, null)
-                        }
-                )
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    viewModel.selectedSyllables.forEach { syllable ->
-                        Button(onClick = {
-                            if (syllable == viewModel.newSyllable) {
-                                viewModel.increaseCorrectAnswers()
-                            }
-                            viewModel.setNewSyllable()
-                        }) {
-                            Text(syllable)
-                        }
-                    }
+                // Game finished
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Great job!", fontSize = 32.sp)
                 }
             }
-        } else {
-            // Game finished
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Great job!", fontSize = 32.sp)
-            }
         }
     }
-}
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (SyllableBlock) -> Unit) {
-    var selectedSyllables by remember { mutableStateOf(emptySet<String>()) }
-    Column(modifier = Modifier.padding(bottom = 8.dp)) {
-        FlowRow(modifier = Modifier.padding(8.dp)) {
-            syllables.forEach { syllable ->
-                SyllableItem(
-                    syllable = syllable,
-                    isSelected = syllable in selectedSyllables,
-                    onToggle = { isSelected ->
-                        if (isSelected) {
-                            selectedSyllables = selectedSyllables + syllable
-                        } else {
-                            selectedSyllables = selectedSyllables - syllable
+    @OptIn(ExperimentalLayoutApi::class)
+    @Composable
+    fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (SyllableBlock) -> Unit) {
+        var selectedSyllables by remember { mutableStateOf(emptySet<String>()) }
+        Column(modifier = Modifier.padding(bottom = 8.dp)) {
+            FlowRow(modifier = Modifier.padding(8.dp)) {
+                syllables.forEach { syllable ->
+                    SyllableItem(
+                        syllable = syllable,
+                        isSelected = syllable in selectedSyllables,
+                        onToggle = { isSelected ->
+                            if (isSelected) {
+                                selectedSyllables = selectedSyllables + syllable
+                            } else {
+                                selectedSyllables = selectedSyllables - syllable
+                            }
+                            onSyllableSelected(SyllableBlock(syllable, isSelected))
                         }
-                        onSyllableSelected(SyllableBlock(syllable, isSelected))
-                    }
-                )
+                    )
+                }
             }
         }
     }
-}
 
-data class SyllableBlock(val text: String, val isSelected: Boolean)
+    data class SyllableBlock(val text: String, val isSelected: Boolean)
 
-@Composable
-fun SyllableItem(syllable: String, isSelected: Boolean, onToggle: (Boolean) -> Unit) {
-    OutlinedButton(
-        onClick = { onToggle(!isSelected) },
-        modifier = Modifier.padding(end = 6.dp),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if (isSelected) MaterialTheme.colorScheme.primary else LocalContentColor.current
-        )
-    ) {
-        Text(text = syllable)
+    @Composable
+    fun SyllableItem(syllable: String, isSelected: Boolean, onToggle: (Boolean) -> Unit) {
+        OutlinedButton(
+            onClick = { onToggle(!isSelected) },
+            modifier = Modifier.padding(end = 6.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = if (isSelected) MaterialTheme.colorScheme.primary else LocalContentColor.current
+            )
+        ) {
+            Text(text = syllable)
+        }
     }
-}
 
 //@Preview(showBackground = true)
 //@Composable
 //fun DefaultPreview() {
 //    SyllableSelectionScreen(initialSelectedCount = 3)
 //}
+
+}
