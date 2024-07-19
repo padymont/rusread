@@ -1,5 +1,7 @@
 package com.padym.rusread.viewmodels
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
@@ -12,9 +14,9 @@ class SyllableListViewModel : ViewModel() {
     val selectedSyllables: Set<String>
         get() = _selectedSyllables.value
 
-    private val _isSelectionEnabled = mutableStateOf(true)
-    val isSelectionEnabled: Boolean
-        get() = _isSelectionEnabled.value
+    val selectedSyllablesCount by derivedStateOf { selectedSyllables.size }
+    val isEnoughSyllablesSelected by derivedStateOf { selectedSyllables.size >= MIN_CHOSEN_SYLLABLES }
+    val isSelectionEnabled by derivedStateOf { selectedSyllables.size < MAX_CHOSEN_SYLLABLES }
 
     fun changeSyllableSelection(syllable: String) {
         if (syllable in _selectedSyllables.value) {
@@ -22,7 +24,6 @@ class SyllableListViewModel : ViewModel() {
         } else {
             _selectedSyllables.value += syllable
         }
-        _isSelectionEnabled.value = selectedSyllables.size < MAX_CHOSEN_SYLLABLES
     }
 
     fun clearChosenSyllables() {
