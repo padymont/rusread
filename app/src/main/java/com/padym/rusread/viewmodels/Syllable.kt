@@ -1,4 +1,4 @@
-package com.padym.rusread
+package com.padym.rusread.viewmodels
 
 data class Syllable(
     val key: String,

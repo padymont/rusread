@@ -1,4 +1,4 @@
-package com.padym.rusread
+package com.padym.rusread.viewmodels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

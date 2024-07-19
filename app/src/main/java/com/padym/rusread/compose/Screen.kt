@@ -1,4 +1,4 @@
-package com.padym.rusread
+package com.padym.rusread.compose
 
 import androidx.navigation.NavBackStackEntry
 
