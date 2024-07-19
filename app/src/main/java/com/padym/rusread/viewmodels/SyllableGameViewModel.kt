@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import java.util.Locale
 
+const val RIGHT_ANSWER_NUMBER = 40
+
 class SyllableGameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _selectedSyllables = mutableStateOf<Set<String>>(emptySet())

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.padym.rusread.viewmodels.MIN_CHOSEN_SYLLABLES
 import com.padym.rusread.viewmodels.SyllableListViewModel
 
 @Composable
@@ -58,7 +59,7 @@ fun SyllableSelectionScreen(navController: NavHostController) {
             }
         }
 
-        if (selectedSyllables.size >= 3) {
+        if (selectedSyllables.size >= MIN_CHOSEN_SYLLABLES) {
             Button(
                 onClick = {
                     navController.navigate(

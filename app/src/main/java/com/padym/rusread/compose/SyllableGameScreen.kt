@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.padym.rusread.viewmodels.RIGHT_ANSWER_NUMBER
 import com.padym.rusread.viewmodels.SyllableGameViewModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -48,7 +49,7 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
         }
     ) { paddingValues ->
         val currentSyllable = viewModel.newSyllable
-        if (viewModel.correctAnswers < 40) {
+        if (viewModel.correctAnswers < RIGHT_ANSWER_NUMBER) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

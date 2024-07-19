@@ -3,6 +3,9 @@ package com.padym.rusread.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
+const val MIN_CHOSEN_SYLLABLES = 3
+const val MAX_CHOSEN_SYLLABLES = 20
+
 class SyllableListViewModel : ViewModel() {
 
     private val _selectedSyllables = mutableStateOf<Set<String>>(emptySet())
