@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
 const val MIN_CHOSEN_SYLLABLES = 3
-const val MAX_CHOSEN_SYLLABLES = 20
+const val MAX_CHOSEN_SYLLABLES = 5
 
 class SyllableListViewModel : ViewModel() {
 
@@ -12,12 +12,17 @@ class SyllableListViewModel : ViewModel() {
     val selectedSyllables: Set<String>
         get() = _selectedSyllables.value
 
-    fun addSyllable(syllable: String) {
-        _selectedSyllables.value += syllable
-    }
+    private val _isSelectionEnabled = mutableStateOf(true)
+    val isSelectionEnabled: Boolean
+        get() = _isSelectionEnabled.value
 
-    fun removeSyllable(syllable: String) {
-        _selectedSyllables.value -= syllable
+    fun changeSyllableSelection(syllable: String) {
+        if (syllable in _selectedSyllables.value) {
+            _selectedSyllables.value -= syllable
+        } else {
+            _selectedSyllables.value += syllable
+        }
+        _isSelectionEnabled.value = selectedSyllables.size < MAX_CHOSEN_SYLLABLES
     }
 
     fun clearChosenSyllables() {

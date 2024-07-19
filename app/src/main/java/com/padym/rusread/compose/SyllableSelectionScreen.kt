@@ -14,10 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -49,13 +45,12 @@ fun SyllableSelectionScreen(navController: NavHostController) {
 
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(viewModel.getGroupedSyllables()) { group ->
-                SyllableGroupItem(group.syllables) { syllable ->
-                    if (syllable.isSelected) {
-                        viewModel.addSyllable(syllable.text)
-                    } else {
-                        viewModel.removeSyllable(syllable.text)
-                    }
-                }
+                SyllableGroupItem(
+                    group.syllables.map { syllable ->
+                        Pair(syllable, syllable in selectedSyllables)
+                    },
+                    viewModel.isSelectionEnabled
+                ) { syllable -> viewModel.changeSyllableSelection(syllable) }
             }
         }
 
@@ -77,34 +72,35 @@ fun SyllableSelectionScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SyllableGroupItem(syllables: List<String>, onSyllableSelected: (SyllableBlock) -> Unit) {
-    var selectedSyllables by remember { mutableStateOf(emptySet<String>()) }
+fun SyllableGroupItem(
+    syllables: List<Pair<String, Boolean>>,
+    isSelectionEnabled: Boolean,
+    onSyllableSelected: (String) -> Unit
+) {
     Column(modifier = Modifier.padding(bottom = 8.dp)) {
         FlowRow(modifier = Modifier.padding(8.dp)) {
-            syllables.forEach { syllable ->
+            syllables.forEach { (syllable, isSelected) ->
                 SyllableItem(
                     syllable = syllable,
-                    isSelected = syllable in selectedSyllables,
-                    onToggle = { isSelected ->
-                        if (isSelected) {
-                            selectedSyllables = selectedSyllables + syllable
-                        } else {
-                            selectedSyllables = selectedSyllables - syllable
-                        }
-                        onSyllableSelected(SyllableBlock(syllable, isSelected))
-                    }
+                    isSelected = isSelected,
+                    isEnabled = isSelectionEnabled || isSelected,
+                    onToggle = { onSyllableSelected(syllable) }
                 )
             }
         }
     }
 }
 
-data class SyllableBlock(val text: String, val isSelected: Boolean)
-
 @Composable
-fun SyllableItem(syllable: String, isSelected: Boolean, onToggle: (Boolean) -> Unit) {
+fun SyllableItem(
+    syllable: String,
+    isSelected: Boolean,
+    isEnabled: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
     OutlinedButton(
         onClick = { onToggle(!isSelected) },
+        enabled = isEnabled,
         modifier = Modifier.padding(end = 6.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = if (isSelected) MaterialTheme.colorScheme.primary else LocalContentColor.current
