@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
 const val MIN_CHOSEN_SYLLABLES = 3
-const val MAX_CHOSEN_SYLLABLES = 5
+const val MAX_CHOSEN_SYLLABLES = 10
 
 class SyllableListViewModel : ViewModel() {
 
