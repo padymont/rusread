@@ -3,12 +3,15 @@ package com.padym.rusread.viewmodels
 import android.app.Application
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import java.util.Locale
 
-const val RIGHT_ANSWER_NUMBER = 40
+const val RIGHT_ANSWER_NUMBER = 10
+const val PROGRESS_OFFSET = 0.3f
 
 class SyllableGameViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -27,15 +30,26 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     val correctAnswers: Int
         get() = _correctAnswers.intValue
 
+    val gameProgress by derivedStateOf {
+        (correctAnswers.toFloat() + PROGRESS_OFFSET) / (RIGHT_ANSWER_NUMBER + PROGRESS_OFFSET)
+    }
+
     fun initializeData(data: Set<String>) {
         _selectedSyllables.value = data
     }
 
-    fun setNewSyllable() {
-        _newSyllable.value = selectedSyllables.random()
+    fun processAnswer(syllable: String) {
+        if (syllable == newSyllable) {
+            increaseCorrectAnswers()
+        }
+        setNewSyllable()
     }
 
     fun increaseCorrectAnswers() = _correctAnswers.intValue++
+
+    fun setNewSyllable() {
+        _newSyllable.value = selectedSyllables.random()
+    }
 
     private val context = application
     private val textToSpeech: TextToSpeech by lazy {
