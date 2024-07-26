@@ -1,5 +1,6 @@
 package com.padym.rusread.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,20 +45,14 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
         containerColor = Color.White,
         topBar = {
             SimpleCloseTopAppBar() { navController.popBackStack() }
-            SpeakSyllableButton(viewModel.newSyllable) {
-                viewModel.speakText(viewModel.newSyllable)
-            }
         },
         bottomBar = { ProgressBottomBar(viewModel.gameProgress) }
     ) { paddingValues ->
-        if (viewModel.correctAnswers < RIGHT_ANSWER_NUMBER) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
+        if (viewModel.isGameOn) {
+            Column(modifier = Modifier.padding(paddingValues)) {
+                SpeakSyllableButton(viewModel.newSyllable) {
+                    viewModel.speakText(viewModel.newSyllable)
+                }
                 ScatteredSyllablesButtons(viewModel.selectedSyllables) { syllable ->
                     viewModel.processAnswer(syllable)
                 }
@@ -92,7 +87,7 @@ fun SpeakSyllableButton(syllable: String, onButtonClick: () -> Unit) {
         fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 32.dp)
+            .padding(top = 16.dp)
             .clickable { onButtonClick() }
     )
 }
@@ -100,7 +95,9 @@ fun SpeakSyllableButton(syllable: String, onButtonClick: () -> Unit) {
 @Composable
 fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (String) -> Unit) {
     Layout(
-        modifier = Modifier.padding(48.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .background(Color.Green),
         content = {
             selectedSyllables.forEach { syllable ->
                 Button(onClick = { onSyllableClick(syllable) }) {

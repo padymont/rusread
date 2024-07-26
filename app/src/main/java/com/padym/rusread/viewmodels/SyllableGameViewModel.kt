@@ -34,6 +34,10 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         (correctAnswers.toFloat() + PROGRESS_OFFSET) / (RIGHT_ANSWER_NUMBER + PROGRESS_OFFSET)
     }
 
+    val isGameOn by derivedStateOf {
+        (correctAnswers < RIGHT_ANSWER_NUMBER)
+    }
+
     fun initializeData(data: Set<String>) {
         _selectedSyllables.value = data
     }
