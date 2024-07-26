@@ -58,44 +58,8 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                Layout(
-                    modifier = Modifier
-                        .padding(48.dp),
-                    content = {
-                        viewModel.selectedSyllables.forEach { syllable ->
-                            Button(onClick = {
-                                if (syllable == viewModel.newSyllable) {
-                                    viewModel.increaseCorrectAnswers()
-                                }
-                                viewModel.setNewSyllable()
-                            }) {
-                                Text(
-                                    text = syllable,
-                                    fontSize = 48.sp,
-                                )
-                            }
-                        }
-                    }
-                ) { measurables, constraints ->
-                    val placeables = measurables.map { it.measure(constraints) }
-                    val buttonList = mutableListOf<Pair<Float, Float>>()
-                    placeables.forEach { placeable ->
-                        val coordinates = generateRandomPosition(
-                            buttonList,
-                            constraints.maxWidth,
-                            constraints.maxHeight,
-                            placeable.width,
-                            placeable.height
-                        )
-                        buttonList.add(coordinates)
-                    }
-
-                    layout(constraints.maxWidth, constraints.maxHeight) {
-                        placeables.forEachIndexed { index, placeable ->
-                            val (buttonX, buttonY) = buttonList[index]
-                            placeable.placeRelative(buttonX.toInt(), buttonY.toInt())
-                        }
-                    }
+                ScatteredSyllablesButtons(viewModel.selectedSyllables) { syllable ->
+                    viewModel.processAnswer(syllable)
                 }
             }
         } else {
@@ -131,6 +95,43 @@ fun SpeakSyllableButton(syllable: String, onButtonClick: () -> Unit) {
             .padding(top = 32.dp)
             .clickable { onButtonClick() }
     )
+}
+
+@Composable
+fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (String) -> Unit) {
+    Layout(
+        modifier = Modifier.padding(48.dp),
+        content = {
+            selectedSyllables.forEach { syllable ->
+                Button(onClick = { onSyllableClick(syllable) }) {
+                    Text(
+                        text = syllable,
+                        fontSize = 48.sp,
+                    )
+                }
+            }
+        }
+    ) { measurables, constraints ->
+        val placeables = measurables.map { it.measure(constraints) }
+        val buttonList = mutableListOf<Pair<Float, Float>>()
+        placeables.forEach { placeable ->
+            val coordinates = generateRandomPosition(
+                buttonList,
+                constraints.maxWidth,
+                constraints.maxHeight,
+                placeable.width,
+                placeable.height
+            )
+            buttonList.add(coordinates)
+        }
+
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeables.forEachIndexed { index, placeable ->
+                val (buttonX, buttonY) = buttonList[index]
+                placeable.placeRelative(buttonX.toInt(), buttonY.toInt())
+            }
+        }
+    }
 }
 
 @Composable
