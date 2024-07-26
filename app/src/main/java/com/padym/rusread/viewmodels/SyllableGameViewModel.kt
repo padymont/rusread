@@ -26,15 +26,16 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
             return _newSyllable.value
         }
 
-    private val correctAnswers = mutableIntStateOf(0)
+    private val _correctAnswers = mutableIntStateOf(0)
+    val correctAnswers: Int
+        get() = _correctAnswers.intValue
 
     val gameProgress by derivedStateOf {
-        (correctAnswers.intValue.toFloat() + PROGRESS_OFFSET) /
-                (RIGHT_ANSWER_NUMBER + PROGRESS_OFFSET)
+        (correctAnswers + PROGRESS_OFFSET) / (RIGHT_ANSWER_NUMBER + PROGRESS_OFFSET)
     }
 
     val isGameOn by derivedStateOf {
-        (correctAnswers.intValue < RIGHT_ANSWER_NUMBER)
+        (correctAnswers < RIGHT_ANSWER_NUMBER)
     }
 
     fun initializeData(data: Set<String>) {
@@ -48,7 +49,7 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         setNewSyllable()
     }
 
-    private fun increaseCorrectAnswers() = correctAnswers.intValue++
+    private fun increaseCorrectAnswers() = _correctAnswers.intValue++
 
     private fun setNewSyllable() {
         _newSyllable.value = selectedSyllables.random()
