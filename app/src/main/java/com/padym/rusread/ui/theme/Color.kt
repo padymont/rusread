@@ -15,4 +15,10 @@ object AppColors {
     val Linen = Color(0xFFF8EDDA)
 
     val Charcoal = Color(0xFF36454F)
+
+    val Goldenrod = Color(0xFFB8860B)
+    val DarkGoldenrod = Color(0xFFB8860B)
+    val MetallicGold = Color(0xFFD4AF37)
+    val OldGold = Color(0xFFCFB53B)
+
 }

@@ -136,7 +136,7 @@ fun ProgressBottomBar(progress: Float) {
         modifier = Modifier
             .fillMaxWidth()
             .height(12.dp),
-        color = Color.Red,
+        color = AppColors.MetallicGold,
         trackColor = AppColors.Almond
     )
 }
