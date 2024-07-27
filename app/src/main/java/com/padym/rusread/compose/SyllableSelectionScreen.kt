@@ -1,6 +1,5 @@
 package com.padym.rusread.compose
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -8,20 +7,26 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
@@ -39,18 +44,20 @@ fun SyllableSelectionScreen(navController: NavHostController) {
     val selectedSyllables = viewModel.selectedSyllables
 
     Scaffold(
-        topBar = {},
+        topBar = {
+            ClearSelectionTopAppBar(viewModel.isClearSelectionEnabled) {
+                viewModel.clearChosenSyllables()
+            }
+        },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            Box {
-                ProgressBarButton(
-                    progress = viewModel.selectedSyllablesCount,
-                    maxProgress = MAX_CHOSEN_SYLLABLES,
-                    isEnabled = viewModel.isEnoughSyllablesSelected
-                ) {
-                    navController.navigate(Screen.SyllableGame.passChosenSyllables(selectedSyllables))
-                    viewModel.clearChosenSyllables()
-                }
+            ProgressBarButton(
+                progress = viewModel.selectedSyllablesCount,
+                maxProgress = MAX_CHOSEN_SYLLABLES,
+                isEnabled = viewModel.isEnoughSyllablesSelected
+            ) {
+                navController.navigate(Screen.SyllableGame.passChosenSyllables(selectedSyllables))
+                viewModel.clearChosenSyllables()
             }
         }
     ) { paddingValues ->
@@ -68,6 +75,29 @@ fun SyllableSelectionScreen(navController: NavHostController) {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ClearSelectionTopAppBar(
+    isVisible: Boolean,
+    onAction: () -> Unit = {}
+) {
+    TopAppBar(
+        title = { Text("") },
+        modifier = Modifier.padding(8.dp),
+        actions = {
+            if (isVisible) {
+                IconButton(onClick = onAction) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Clear",
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
+            }
+        },
+    )
 }
 
 @Composable

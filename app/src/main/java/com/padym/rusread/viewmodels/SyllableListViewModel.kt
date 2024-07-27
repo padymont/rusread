@@ -17,6 +17,7 @@ class SyllableListViewModel : ViewModel() {
     val selectedSyllablesCount by derivedStateOf { selectedSyllables.size }
     val isEnoughSyllablesSelected by derivedStateOf { selectedSyllables.size >= MIN_CHOSEN_SYLLABLES }
     val isSelectionEnabled by derivedStateOf { selectedSyllables.size < MAX_CHOSEN_SYLLABLES }
+    val isClearSelectionEnabled by derivedStateOf { selectedSyllables.isNotEmpty() }
 
     fun changeSyllableSelection(syllable: String) {
         if (syllable in _selectedSyllables.value) {
