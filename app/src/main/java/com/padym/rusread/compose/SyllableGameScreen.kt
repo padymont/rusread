@@ -1,5 +1,6 @@
 package com.padym.rusread.compose
 
+import android.content.res.Resources.Theme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.viewmodels.SyllableGameViewModel
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -40,7 +43,6 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
     viewModel.initializeData(chosenSyllables)
 
     Scaffold(
-        containerColor = Color.White,
         topBar = {
             SimpleCloseTopAppBar() { navController.popBackStack() }
         },
@@ -66,9 +68,6 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
 fun SimpleCloseTopAppBar(onClose: () -> Unit = {}) {
     TopAppBar(
         title = { Text("") },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.White
-        ),
         navigationIcon = {
             IconButton(onClick = onClose) {
                 Icon(Icons.Filled.Close, contentDescription = "Close")
@@ -93,9 +92,7 @@ fun SpeakSyllableButton(syllable: String, onButtonClick: () -> Unit) {
 @Composable
 fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (String) -> Unit) {
     Layout(
-        modifier = Modifier
-            .padding(8.dp)
-            .background(Color.Green),
+        modifier = Modifier.padding(8.dp),
         content = {
             selectedSyllables.forEach { syllable ->
                 Button(onClick = { onSyllableClick(syllable) }) {
@@ -137,7 +134,7 @@ fun ProgressBottomBar(progress: Float) {
             .fillMaxWidth()
             .height(12.dp),
         color = Color.Red,
-        trackColor = Color.White
+        trackColor = AppColors.Almond
     )
 }
 
