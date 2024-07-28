@@ -1,5 +1,6 @@
 package com.padym.rusread.compose
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -34,8 +37,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.MAX_CHOSEN_SYLLABLES
 import com.padym.rusread.viewmodels.SyllableListViewModel
@@ -124,16 +129,20 @@ fun ProgressBarButton(progress: Int, maxProgress: Int, isEnabled: Boolean, onCli
                 val width = size.width * progressFraction
                 val cornerRadius = CornerRadius(radius.toPx())
                 drawRoundRect(
-                    color = Color.White,
+                    color = AppColors.Almond,
                     cornerRadius = cornerRadius
                 )
                 drawRoundRect(
-                    color = Color.Yellow,
+                    color = AppColors.IndianRed,
                     size = Size(width, size.height),
                     cornerRadius = cornerRadius
                 )
             }) {
-        Text("Начать")
+        Text(
+            text = "Начать",
+            fontSize = 36.sp,
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 
@@ -144,8 +153,16 @@ fun SyllableGroupItem(
     isSelectionEnabled: Boolean,
     onSyllableSelected: (String) -> Unit
 ) {
-    Column(modifier = Modifier.padding(bottom = 8.dp)) {
-        FlowRow(modifier = Modifier.padding(8.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 8.dp)
+            .fillMaxWidth()
+    ) {
+        FlowRow(
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .fillMaxWidth()
+        ) {
             syllables.forEach { (syllable, isSelected) ->
                 SyllableItem(syllable = syllable,
                     isSelected = isSelected,
@@ -161,14 +178,22 @@ fun SyllableItem(
     syllable: String, isSelected: Boolean, isEnabled: Boolean, onToggle: (Boolean) -> Unit
 ) {
     OutlinedButton(
-        onClick = { onToggle(!isSelected) },
         enabled = isEnabled,
-        modifier = Modifier.padding(end = 6.dp),
+        onClick = { onToggle(!isSelected) },
+        contentPadding = PaddingValues(8.dp),
+        border = BorderStroke(width = 0.dp, color = Color.Transparent),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if (isSelected) MaterialTheme.colorScheme.primary else LocalContentColor.current
-        )
+            containerColor = if (isSelected) AppColors.Almond else Color.Transparent
+        ),
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .widthIn(min = 48.dp)
     ) {
-        Text(text = syllable)
+        Text(
+            text = syllable,
+            fontSize = 32.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
     }
 }
 
@@ -179,7 +204,7 @@ fun SyllableSelectionScreenPreview() {
         SyllableGroup(listOf("ба", "бо", "бу", "бя", "бы", "би", "бе")),
         SyllableGroup(listOf("т", "е", "в", "я", "й", "ж", "з", "ч", "ф")),
         SyllableGroup(listOf("ба", "бо", "бу", "бы", "би", "бе")),
-        SyllableGroup(listOf("ба", "же", "жо",  "жа", "бе")),
+        SyllableGroup(listOf("ба", "же", "жо", "жа", "бе")),
         SyllableGroup(listOf("ба", "бо", "бу", "бя", "бы", "би", "бе")),
         SyllableGroup(listOf("ко", "на", "са", "ку", "ла", "ле", "ли", "ло", "лу")),
         SyllableGroup(listOf("л", "жу")),
@@ -187,13 +212,12 @@ fun SyllableSelectionScreenPreview() {
     )
     val selectedSyllables = groupedSyllables.flatMap { it.syllables }
         .shuffled()
-        .take(5)
+        .take(10)
         .toSet()
+
     RusreadTheme {
         Scaffold(
-            topBar = {
-                ClearSelectionTopAppBar(true) {}
-            },
+            topBar = { ClearSelectionTopAppBar(true) {} },
             floatingActionButtonPosition = FabPosition.Center,
             floatingActionButton = {
                 ProgressBarButton(
