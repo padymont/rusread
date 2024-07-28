@@ -191,7 +191,10 @@ fun overlaps(
 fun SyllableGameContentPreview() {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
     RusreadTheme {
-        Scaffold() { paddingValues ->
+        Scaffold(
+            topBar = { SimpleCloseTopAppBar() { } },
+            bottomBar = { ProgressBottomBar(0.7f) }
+        ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 SpeakSyllableButton("жа") {}
                 ScatteredSyllablesButtons(selectedSyllables) { _ -> }
