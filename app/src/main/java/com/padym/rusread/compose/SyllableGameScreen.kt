@@ -21,10 +21,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -175,4 +175,14 @@ fun overlaps(
 ): Boolean {
     val distance = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
     return distance < size
+}
+
+@Preview
+@Composable
+fun SyllableGameContentPreview() {
+    val selectedSyllables = setOf("до", "ме", "мя", "ко", "на", "са", "л", "жу")
+    Column() {
+        SpeakSyllableButton("жа") {}
+        ScatteredSyllablesButtons(selectedSyllables) { _ -> }
+    }
 }
