@@ -1,5 +1,8 @@
 package com.padym.rusread.compose
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -7,11 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +25,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +44,7 @@ import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.SyllableGameViewModel
+import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -103,16 +112,7 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
         modifier = Modifier.padding(8.dp),
         content = {
             selectedSyllables.forEach { syllable ->
-                OutlinedButton(
-                    onClick = { onSyllableClick(syllable) },
-                    border = BorderStroke(width = 0.dp, color = Color.Transparent),
-                ) {
-                    Text(
-                        text = syllable,
-                        fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+                SyllableButton(syllable) { onSyllableClick(syllable) }
             }
         }
     ) { measurables, constraints ->
@@ -133,6 +133,47 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
             placeables.forEachIndexed { index, placeable ->
                 val (buttonX, buttonY) = buttonList[index]
                 placeable.placeRelative(buttonX.toInt(), buttonY.toInt())
+            }
+        }
+    }
+}
+
+@Composable
+fun SyllableButton(syllable: String, onButtonClick: (String) -> Unit) {
+    var showAnimation by remember { mutableStateOf(false) }
+    val animatedY by animateFloatAsState(
+        targetValue = if (showAnimation) 0f else 10f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "FloatAnimationOnSyllableButton",
+    )
+    Box {
+        OutlinedButton(
+            onClick = {
+                onButtonClick(syllable)
+                showAnimation = !showAnimation
+            },
+            border = BorderStroke(width = 0.dp, color = Color.Transparent),
+        ) {
+            Text(
+                text = syllable,
+                fontSize = 48.sp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+        if (showAnimation) {
+            Text(
+                text = "🚀",
+                fontSize = 24.sp,
+                modifier = Modifier.offset(y = animatedY.dp)
+            )
+        }
+        LaunchedEffect(key1 = showAnimation) {
+            if (showAnimation) {
+                delay(1000)
+                showAnimation = false
             }
         }
     }
