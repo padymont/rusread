@@ -112,7 +112,7 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
         modifier = Modifier.padding(8.dp),
         content = {
             selectedSyllables.forEach { syllable ->
-                SyllableButton(syllable) { onSyllableClick(syllable) }
+                InteractiveSyllableButton(syllable) { onSyllableClick(syllable) }
             }
         }
     ) { measurables, constraints ->
@@ -139,44 +139,51 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
 }
 
 @Composable
-fun SyllableButton(syllable: String, onButtonClick: (String) -> Unit) {
+fun InteractiveSyllableButton(syllable: String, onClick: () -> Unit) {
     var showAnimation by remember { mutableStateOf(false) }
     val animatedY by animateFloatAsState(
         targetValue = if (showAnimation) -20f else 0f,
         animationSpec = spring(
             stiffness = Spring.StiffnessLow
         ),
-        label = "FloatAnimationOnSyllableButton",
+        label = "AnimatedEmoji",
     )
-    Box {
-        OutlinedButton(
-            onClick = {
-                onButtonClick(syllable)
-                showAnimation = !showAnimation
-            },
-            border = BorderStroke(width = 0.dp, color = Color.Transparent),
-        ) {
-            Text(
-                text = syllable,
-                fontSize = 48.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+    Box(contentAlignment = Alignment.TopEnd) {
+        SyllableButton(syllable, enabled = !showAnimation) {
+            onClick()
+            showAnimation = true
         }
         if (showAnimation) {
-            Text(
-                text = "🚀",
-                fontSize = 36.sp,
-                modifier = Modifier.offset(y = animatedY.dp).align(Alignment.TopEnd)
-            )
-        }
-        LaunchedEffect(key1 = showAnimation) {
-            if (showAnimation) {
+            AnimatedEmoji(animatedY)
+            LaunchedEffect(key1 = showAnimation) {
                 delay(1000)
                 showAnimation = false
             }
         }
     }
 }
+
+@Composable
+fun SyllableButton(syllable: String, enabled: Boolean, onClick: () -> Unit) {
+    OutlinedButton(
+        enabled = enabled,
+        onClick = onClick,
+        border = BorderStroke(width = 0.dp, color = Color.Transparent),
+    ) {
+        Text(
+            text = syllable,
+            fontSize = 48.sp,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+fun AnimatedEmoji(animatedY: Float) = Text(
+    text = "🚀",
+    fontSize = 36.sp,
+    modifier = Modifier.offset(y = animatedY.dp)
+)
 
 @Composable
 fun ProgressBottomBar(progress: Float) {
