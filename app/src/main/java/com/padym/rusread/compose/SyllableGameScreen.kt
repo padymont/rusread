@@ -1,5 +1,6 @@
 package com.padym.rusread.compose
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,12 +16,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
+import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.SyllableGameViewModel
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -98,10 +103,14 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
         modifier = Modifier.padding(8.dp),
         content = {
             selectedSyllables.forEach { syllable ->
-                Button(onClick = { onSyllableClick(syllable) }) {
+                OutlinedButton(
+                    onClick = { onSyllableClick(syllable) },
+                    border = BorderStroke(width = 0.dp, color = Color.Transparent),
+                ) {
                     Text(
                         text = syllable,
                         fontSize = 48.sp,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -177,12 +186,16 @@ fun overlaps(
     return distance < size
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SyllableGameContentPreview() {
-    val selectedSyllables = setOf("до", "ме", "мя", "ко", "на", "са", "л", "жу")
-    Column() {
-        SpeakSyllableButton("жа") {}
-        ScatteredSyllablesButtons(selectedSyllables) { _ -> }
+    val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
+    RusreadTheme {
+        Scaffold() { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                SpeakSyllableButton("жа") {}
+                ScatteredSyllablesButtons(selectedSyllables) { _ -> }
+            }
+        }
     }
 }
