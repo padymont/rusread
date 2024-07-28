@@ -5,9 +5,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val LightColorScheme = lightColorScheme(
-    primary = AppColors.Purple40,
-    secondary = AppColors.PurpleGrey40,
-    tertiary = AppColors.Pink40,
+    primary = AppColors.IndianRed,
     background = AppColors.Linen,
     surface = AppColors.Linen,
     onBackground = AppColors.Charcoal,
@@ -15,6 +13,8 @@ private val LightColorScheme = lightColorScheme(
 
     /* Other default colors to override
     surface = Color(0xFFFFFBFE),
+    secondary = AppColors.PurpleGrey40,
+    tertiary = AppColors.Pink40,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
