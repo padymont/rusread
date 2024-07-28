@@ -142,9 +142,8 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
 fun SyllableButton(syllable: String, onButtonClick: (String) -> Unit) {
     var showAnimation by remember { mutableStateOf(false) }
     val animatedY by animateFloatAsState(
-        targetValue = if (showAnimation) 0f else 10f,
+        targetValue = if (showAnimation) -20f else 0f,
         animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         ),
         label = "FloatAnimationOnSyllableButton",
@@ -166,8 +165,8 @@ fun SyllableButton(syllable: String, onButtonClick: (String) -> Unit) {
         if (showAnimation) {
             Text(
                 text = "🚀",
-                fontSize = 24.sp,
-                modifier = Modifier.offset(y = animatedY.dp)
+                fontSize = 36.sp,
+                modifier = Modifier.offset(y = animatedY.dp).align(Alignment.TopEnd)
             )
         }
         LaunchedEffect(key1 = showAnimation) {
