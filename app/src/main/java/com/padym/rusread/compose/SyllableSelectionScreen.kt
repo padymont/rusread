@@ -32,11 +32,14 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.MAX_CHOSEN_SYLLABLES
 import com.padym.rusread.viewmodels.SyllableListViewModel
+import com.padym.rusread.viewmodels.SyllableListViewModel.SyllableGroup
 
 @Composable
 fun SyllableSelectionScreen(navController: NavHostController) {
@@ -166,5 +169,53 @@ fun SyllableItem(
         )
     ) {
         Text(text = syllable)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SyllableSelectionScreenPreview() {
+    val groupedSyllables = listOf(
+        SyllableGroup(listOf("ба", "бо", "бу", "бя", "бы", "би", "бе")),
+        SyllableGroup(listOf("т", "е", "в", "я", "й", "ж", "з", "ч", "ф")),
+        SyllableGroup(listOf("ба", "бо", "бу", "бы", "би", "бе")),
+        SyllableGroup(listOf("ба", "же", "жо",  "жа", "бе")),
+        SyllableGroup(listOf("ба", "бо", "бу", "бя", "бы", "би", "бе")),
+        SyllableGroup(listOf("ко", "на", "са", "ку", "ла", "ле", "ли", "ло", "лу")),
+        SyllableGroup(listOf("л", "жу")),
+        SyllableGroup(listOf("ба", "бо", "бу", "бя", "бы", "би", "бе")),
+    )
+    val selectedSyllables = groupedSyllables.flatMap { it.syllables }
+        .shuffled()
+        .take(5)
+        .toSet()
+    RusreadTheme {
+        Scaffold(
+            topBar = {
+                ClearSelectionTopAppBar(true) {}
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+            floatingActionButton = {
+                ProgressBarButton(
+                    progress = MAX_CHOSEN_SYLLABLES - 2,
+                    maxProgress = MAX_CHOSEN_SYLLABLES,
+                    isEnabled = true
+                ) {}
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                items(groupedSyllables) { group ->
+                    SyllableGroupItem(
+                        group.syllables.map { syllable ->
+                            Pair(syllable, syllable in selectedSyllables)
+                        }, true
+                    ) { }
+                }
+            }
+        }
     }
 }
