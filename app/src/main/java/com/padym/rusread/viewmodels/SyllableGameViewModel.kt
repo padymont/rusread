@@ -17,6 +17,7 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
 
     private val context = application
     private lateinit var textToSpeech: TextToSpeech
+
     init {
         textToSpeech = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
@@ -40,17 +41,14 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    private val _selectedSyllables = mutableStateOf<Set<String>>(emptySet())
+    private val _syllables = mutableStateOf<Set<String>>(emptySet())
+    val syllables: Set<String>
+        get() = _syllables.value
 
-    val selectedSyllables: Set<String>
-        get() = _selectedSyllables.value
-    private val _newSyllable = mutableStateOf("")
+    private val _spokenSyllable = mutableStateOf("")
+    val spokenSyllable: String
+        get() = _spokenSyllable.value
 
-    val newSyllable: String
-        get() {
-            if (_newSyllable.value.isEmpty()) setNewSyllable()
-            return _newSyllable.value
-        }
     private val _correctAnswers = mutableIntStateOf(0)
 
     val correctAnswers: Int
@@ -65,13 +63,14 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun initializeData(data: Set<String>) {
-        _selectedSyllables.value = data
+        _syllables.value = data
+        _spokenSyllable.value = syllables.random()
     }
 
     fun processAnswer(syllable: String): Result {
-        val isAnswerCorrect = syllable == newSyllable
+        val isAnswerCorrect = syllable == spokenSyllable
         if (isAnswerCorrect) increaseCorrectAnswers() else decreaseCorrectAnswers()
-        setNewSyllable()
+        setNextSpokenSyllable()
         return if (isAnswerCorrect) Result.CORRECT else Result.WRONG
     }
 
@@ -81,8 +80,9 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         if (correctAnswers > 0) _correctAnswers.intValue--
     }
 
-    private fun setNewSyllable() {
-        _newSyllable.value = selectedSyllables.random()
+    private fun setNextSpokenSyllable() {
+        val tempSet = syllables.minus(spokenSyllable)
+        _spokenSyllable.value = tempSet.random()
     }
 
     fun speakText(text: String) = textToSpeech.speak(

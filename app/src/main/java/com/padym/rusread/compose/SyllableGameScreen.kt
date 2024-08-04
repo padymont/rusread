@@ -64,10 +64,10 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
     ) { paddingValues ->
         if (viewModel.isGameOn) {
             Column(modifier = Modifier.padding(paddingValues)) {
-                SpeakSyllableButton(viewModel.newSyllable) {
-                    viewModel.speakText(viewModel.newSyllable)
+                SpeakSyllableButton(viewModel.spokenSyllable) {
+                    viewModel.speakText(viewModel.spokenSyllable)
                 }
-                ScatteredSyllablesButtons(viewModel.selectedSyllables) { syllable ->
+                ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
                     viewModel.processAnswer(syllable)
                 }
             }
