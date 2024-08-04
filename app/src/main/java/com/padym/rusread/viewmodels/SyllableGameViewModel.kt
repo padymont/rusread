@@ -20,9 +20,9 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     private val context = application
     private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
-    private val _syllables = mutableStateOf<Set<String>>(emptySet())
+    private var _syllables = emptySet<String>()
     val syllables: Set<String>
-        get() = _syllables.value
+        get() = _syllables
 
     private val _spokenSyllable = mutableStateOf("")
     val spokenSyllable: String
@@ -42,7 +42,7 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun initializeData(data: Set<String>) {
-        _syllables.value = data
+        _syllables = data
         if (spokenSyllable.isEmpty()) {
             _spokenSyllable.value = syllables.random()
         }
