@@ -42,9 +42,11 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         _selectedSyllables.value = data
     }
 
-    fun processAnswer(syllable: String) {
-        if (syllable == newSyllable) increaseCorrectAnswers() else decreaseCorrectAnswers()
+    fun processAnswer(syllable: String): Result {
+        val isAnswerCorrect = syllable == newSyllable
+        if (isAnswerCorrect) increaseCorrectAnswers() else decreaseCorrectAnswers()
         setNewSyllable()
+        return if (isAnswerCorrect) Result.CORRECT else Result.WRONG
     }
 
     private fun increaseCorrectAnswers() = _correctAnswers.intValue++
@@ -92,3 +94,5 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         textToSpeech.shutdown()
     }
 }
+
+enum class Result { CORRECT, WRONG }

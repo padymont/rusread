@@ -45,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
+import com.padym.rusread.viewmodels.Result
 import com.padym.rusread.viewmodels.SyllableGameViewModel
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
@@ -121,7 +122,7 @@ fun SpeakSyllableButton(syllable: String, onButtonClick: () -> Unit) {
 }
 
 @Composable
-fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (String) -> Unit) {
+fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (String) -> Result) {
     Layout(
         modifier = Modifier.padding(8.dp),
         content = {
@@ -153,8 +154,9 @@ fun ScatteredSyllablesButtons(selectedSyllables: Set<String>, onSyllableClick: (
 }
 
 @Composable
-fun InteractiveSyllableButton(syllable: String, onClick: () -> Unit) {
+fun InteractiveSyllableButton(syllable: String, onClick: () -> Result) {
     var showAnimation by remember { mutableStateOf(false) }
+    var result by remember { mutableStateOf(Result.WRONG) }
     val animatedY by animateFloatAsState(
         targetValue = if (showAnimation) -20f else 0f,
         animationSpec = spring(
@@ -164,11 +166,14 @@ fun InteractiveSyllableButton(syllable: String, onClick: () -> Unit) {
     )
     Box(contentAlignment = Alignment.TopEnd) {
         SyllableButton(syllable, enabled = !showAnimation) {
-            onClick()
+            result = onClick()
             showAnimation = true
         }
         if (showAnimation) {
-            AnimatedEmoji(animatedY)
+            when (result) {
+                Result.CORRECT -> AnimatedEmoji(animatedY)
+                Result.WRONG -> SadEmoji()
+            }
             LaunchedEffect(key1 = showAnimation) {
                 delay(1000)
                 showAnimation = false
@@ -197,6 +202,16 @@ fun AnimatedEmoji(animatedY: Float) = Text(
     text = "🚀",
     fontSize = 36.sp,
     modifier = Modifier.offset(y = animatedY.dp)
+)
+
+@Composable
+fun SadEmoji() = Text(
+    text = "💩",
+    fontSize = 32.sp,
+    modifier = Modifier.offset(
+        x = 10f.dp,
+        y = (-10f).dp
+    )
 )
 
 @Composable
@@ -253,12 +268,12 @@ fun SyllableGameContentPreview() {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
     RusreadTheme {
         Scaffold(
-            topBar = { SimpleCloseTopAppBar() { } },
+            topBar = { SimpleCloseTopAppBar { } },
             bottomBar = { ProgressBottomBar(0.7f) }
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 SpeakSyllableButton("жа") {}
-                ScatteredSyllablesButtons(selectedSyllables) { _ -> }
+                ScatteredSyllablesButtons(selectedSyllables) { _ -> Result.entries.random() }
             }
         }
     }
