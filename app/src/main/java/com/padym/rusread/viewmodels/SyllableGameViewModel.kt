@@ -1,14 +1,15 @@
 package com.padym.rusread.viewmodels
 
 import android.app.Application
-import android.speech.tts.TextToSpeech
-import android.widget.Toast
+import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import java.util.Locale
+import com.padym.rusread.R
 
 const val RIGHT_ANSWER_NUMBER = 10
 const val PROGRESS_OFFSET = 0.3f
@@ -16,30 +17,7 @@ const val PROGRESS_OFFSET = 0.3f
 class SyllableGameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
-    private lateinit var textToSpeech: TextToSpeech
-
-    init {
-        textToSpeech = TextToSpeech(context) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                val result = textToSpeech.setLanguage(Locale("ru"))
-                val voice =
-                    textToSpeech.voices?.find { it.name.contains("ru-ru-x-rud-network") }
-                textToSpeech.setVoice(voice)
-                if (result == TextToSpeech.LANG_MISSING_DATA ||
-                    result == TextToSpeech.LANG_NOT_SUPPORTED
-                ) {
-                    Toast.makeText(
-                        context,
-                        "Russian language not supported",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
-            } else {
-                Toast.makeText(context, "TTS initialization failed", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    private val mediaPlayer = MediaPlayer.create(context, R.raw.syllables)
 
     private val _syllables = mutableStateOf<Set<String>>(emptySet())
     val syllables: Set<String>
@@ -88,16 +66,19 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
         speakText(spokenSyllable)
     }
 
-    fun speakText(text: String) = textToSpeech.speak(
-        text,
-        TextToSpeech.QUEUE_FLUSH,
-        null,
-        null
-    )
+    fun speakText(text: String) {
+        mediaPlayer.seekTo(5000)
+        mediaPlayer.start()
+        Handler(Looper.getMainLooper())
+            .postDelayed(
+                { mediaPlayer.pause() },
+                1000
+            )
+    }
 
     override fun onCleared() {
         super.onCleared()
-        textToSpeech.shutdown()
+        mediaPlayer.release()
     }
 }
 

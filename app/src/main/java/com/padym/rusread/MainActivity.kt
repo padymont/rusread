@@ -10,8 +10,6 @@ import com.padym.rusread.ui.theme.RusreadTheme
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var tts: MutableState<TextToSpeech?>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
