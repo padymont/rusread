@@ -6,6 +6,11 @@ data class Syllable(
     val occurrenceCount: Int = 0
 ) {
     companion object {
+
+        fun findOffset(syllable: String): Int {
+            return getAll().find { it.key == syllable }?.millisOffset ?: 0
+        }
+
         fun getAll(): List<Syllable> = listOf(
             Syllable("ба", millisOffset = 660, occurrenceCount = 21),
             Syllable("бе", millisOffset = 2500, occurrenceCount = 29),

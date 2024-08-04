@@ -69,7 +69,9 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
         Column(modifier = Modifier.padding(paddingValues)) {
             if (viewModel.isGameOn) {
 //                DebugSyllablesAudioOffsets { offset -> viewModel.speakText(offset) }
-                SpeakSyllableButton(viewModel.spokenSyllable) { viewModel.speakText() }
+                SpeakSyllableButton(viewModel.spokenSyllable) {
+                    viewModel.speakSyllable(viewModel.spokenSyllable)
+                }
                 ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
                     viewModel.processAnswer(syllable)
                 }

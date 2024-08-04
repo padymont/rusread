@@ -64,10 +64,15 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     private fun setNextSpokenSyllable() {
         val tempSet = syllables.minus(spokenSyllable)
         _spokenSyllable.value = tempSet.random()
-        speakText()
+        speakSyllable(spokenSyllable)
     }
 
-    fun speakText(offset: Int = 3000) {
+    fun speakSyllable(text: String) {
+        val offset = Syllable.findOffset(text)
+        playAudio(offset)
+    }
+
+    private fun playAudio(offset: Int) {
         mediaPlayer.seekTo(offset)
         mediaPlayer.start()
         Handler(Looper.getMainLooper())
