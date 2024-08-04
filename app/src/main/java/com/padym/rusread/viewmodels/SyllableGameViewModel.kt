@@ -13,11 +13,12 @@ import com.padym.rusread.R
 
 const val RIGHT_ANSWER_NUMBER = 10
 const val PROGRESS_OFFSET = 0.3f
+const val SYLLABLE_LENGTH_MILLIS = 1200L
 
 class SyllableGameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
-    private val mediaPlayer = MediaPlayer.create(context, R.raw.syllables)
+    private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
     private val _syllables = mutableStateOf<Set<String>>(emptySet())
     val syllables: Set<String>
@@ -63,16 +64,16 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     private fun setNextSpokenSyllable() {
         val tempSet = syllables.minus(spokenSyllable)
         _spokenSyllable.value = tempSet.random()
-        speakText(spokenSyllable)
+        speakText()
     }
 
-    fun speakText(text: String) {
-        mediaPlayer.seekTo(5000)
+    fun speakText(offset: Int = 3000) {
+        mediaPlayer.seekTo(offset)
         mediaPlayer.start()
         Handler(Looper.getMainLooper())
             .postDelayed(
                 { mediaPlayer.pause() },
-                1000
+                SYLLABLE_LENGTH_MILLIS
             )
     }
 

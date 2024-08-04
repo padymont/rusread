@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -24,10 +25,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,17 +66,16 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
         },
         bottomBar = { ProgressBottomBar(viewModel.gameProgress) }
     ) { paddingValues ->
-        if (viewModel.isGameOn) {
-            Column(modifier = Modifier.padding(paddingValues)) {
-                SpeakSyllableButton(viewModel.spokenSyllable) {
-                    viewModel.speakText(viewModel.spokenSyllable)
-                }
+        Column(modifier = Modifier.padding(paddingValues)) {
+            if (viewModel.isGameOn) {
+//                DebugSyllablesAudioOffsets { offset -> viewModel.speakText(offset) }
+                SpeakSyllableButton(viewModel.spokenSyllable) { viewModel.speakText() }
                 ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
                     viewModel.processAnswer(syllable)
                 }
+            } else {
+                EndGameMessage()
             }
-        } else {
-            EndGameMessage()
         }
     }
 }
@@ -233,6 +236,35 @@ fun EndGameMessage() {
     }
 }
 
+@Composable
+fun DebugSyllablesAudioOffsets(action: (Int) -> Unit) {
+    var text by remember { mutableStateOf("") }
+    var intValue by remember { mutableIntStateOf(0) }
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextField(
+            value = text,
+            singleLine = true,
+            onValueChange = {
+                text = it
+                intValue = it.toIntOrNull() ?: 0
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.padding(top = 64.dp)
+        )
+        Button(
+            onClick = { action(intValue) },
+            modifier = Modifier.padding(vertical = 16.dp)
+        ) {
+            Text(text = "Test the offset")
+        }
+    }
+}
+
 fun generateRandomPosition(
     existingButtons: List<Pair<Float, Float>>,
     screenWidth: Int,
@@ -274,6 +306,21 @@ fun SyllableGameContentPreview() {
             Column(modifier = Modifier.padding(paddingValues)) {
                 SpeakSyllableButton("жа") {}
                 ScatteredSyllablesButtons(selectedSyllables) { _ -> Result.entries.random() }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DebugSyllablesAudioOffsetsPreview() {
+    RusreadTheme {
+        Scaffold(
+            topBar = { SimpleCloseTopAppBar { } },
+            bottomBar = { ProgressBottomBar(0.7f) }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                DebugSyllablesAudioOffsets { }
             }
         }
     }
