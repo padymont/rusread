@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 
 const val MIN_CHOSEN_SYLLABLES = 3
 const val MAX_CHOSEN_SYLLABLES = 10
+const val VOWELS = "аеёиоуыэюя"
 
 class SyllableListViewModel : ViewModel() {
 
@@ -34,26 +35,22 @@ class SyllableListViewModel : ViewModel() {
     data class SyllableGroup(val syllables: List<String>)
 
     fun getGroupedSyllables(): List<SyllableGroup> {
-        val allSyllables = getSyllables()
-        val vowels = "аеёиоуыэюя"
-
+        val allSyllables = Syllable.getAll()
         val syllableGroupsList = allSyllables.map { it.key }
             .filter { it.length > 1 }
             .groupBy { it.first() }
             .map { entry ->
                 SyllableGroup(syllables = entry.value)
             }
-
         val vowelSyllableGroup = SyllableGroup(
             allSyllables.map { it.key }
-                .filter { it in vowels }
+                .filter { it in VOWELS }
         )
         val consonantSyllableGroup = SyllableGroup(
             allSyllables.map { it.key }
                 .filter { it.length == 1 }
-                .filter { it !in vowels }
+                .filter { it !in VOWELS }
         )
-
         return syllableGroupsList + vowelSyllableGroup + consonantSyllableGroup
     }
 }
