@@ -64,7 +64,9 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
 
     fun initializeData(data: Set<String>) {
         _syllables.value = data
-        _spokenSyllable.value = syllables.random()
+        if (spokenSyllable.isEmpty()) {
+            _spokenSyllable.value = syllables.random()
+        }
     }
 
     fun processAnswer(syllable: String): Result {
@@ -83,6 +85,7 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     private fun setNextSpokenSyllable() {
         val tempSet = syllables.minus(spokenSyllable)
         _spokenSyllable.value = tempSet.random()
+        speakText(spokenSyllable)
     }
 
     fun speakText(text: String) = textToSpeech.speak(
