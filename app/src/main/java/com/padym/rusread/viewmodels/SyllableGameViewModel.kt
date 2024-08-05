@@ -51,7 +51,7 @@ class SyllableGameViewModel(application: Application) : AndroidViewModel(applica
     fun processAnswer(syllable: String): Result {
         val isAnswerCorrect = syllable == spokenSyllable
         if (isAnswerCorrect) increaseCorrectAnswers() else decreaseCorrectAnswers()
-        setNextSpokenSyllable()
+        if (isGameOn) setNextSpokenSyllable()
         return if (isAnswerCorrect) Result.CORRECT else Result.WRONG
     }
 
