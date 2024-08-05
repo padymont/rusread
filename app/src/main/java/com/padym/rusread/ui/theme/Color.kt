@@ -3,6 +3,7 @@ package com.padym.rusread.ui.theme
 import androidx.compose.ui.graphics.Color
 
 object AppColors {
+    val SoftSand = Color(0xFFE0D3BD)
     val Almond = Color(0xFFEFE2CC)
     val Linen = Color(0xFFF8EDDA)
 

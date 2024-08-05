@@ -8,22 +8,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -31,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
@@ -45,6 +40,7 @@ import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.MAX_CHOSEN_SYLLABLES
 import com.padym.rusread.viewmodels.SyllableListViewModel
 import com.padym.rusread.viewmodels.SyllableListViewModel.SyllableGroup
+import kotlin.random.Random
 
 @Composable
 fun SyllableSelectionScreen(navController: NavHostController) {
@@ -88,21 +84,29 @@ fun SyllableSelectionScreen(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClearSelectionTopAppBar(
-    isVisible: Boolean,
+    isEnabled: Boolean,
     onAction: () -> Unit = {}
 ) {
     TopAppBar(
         title = { Text("") },
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(16.dp),
         actions = {
-            if (isVisible) {
-                IconButton(onClick = onAction) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Clear",
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
+            Button(
+                onClick = onAction,
+                contentPadding = PaddingValues(12.dp),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .widthIn(min = 24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppColors.IndianRed,
+                    disabledContentColor = AppColors.SoftSand
+                ),
+                enabled = isEnabled
+            ) {
+                Text(
+                    text = "🧽",
+                    fontSize = 32.sp,
+                )
             }
         },
     )
@@ -133,14 +137,14 @@ fun ProgressBarButton(progress: Int, maxProgress: Int, isEnabled: Boolean, onCli
                     cornerRadius = cornerRadius
                 )
                 drawRoundRect(
-                    color = AppColors.IndianRed,
+                    color = if (isEnabled) AppColors.IndianRed else AppColors.SoftSand,
                     size = Size(width, size.height),
                     cornerRadius = cornerRadius
                 )
             }) {
         Text(
-            text = "Начать",
-            fontSize = 36.sp,
+            text = "😎👉",
+            fontSize = 32.sp,
             modifier = Modifier.padding(8.dp)
         )
     }
@@ -217,13 +221,13 @@ fun SyllableSelectionScreenPreview() {
 
     RusreadTheme {
         Scaffold(
-            topBar = { ClearSelectionTopAppBar(true) {} },
+            topBar = { ClearSelectionTopAppBar(Random.nextBoolean()) {} },
             floatingActionButtonPosition = FabPosition.Center,
             floatingActionButton = {
                 ProgressBarButton(
                     progress = MAX_CHOSEN_SYLLABLES - 2,
                     maxProgress = MAX_CHOSEN_SYLLABLES,
-                    isEnabled = true
+                    isEnabled = Random.nextBoolean()
                 ) {}
             }
         ) { paddingValues ->
