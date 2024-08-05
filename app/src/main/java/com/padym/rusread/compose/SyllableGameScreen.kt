@@ -234,7 +234,10 @@ fun ProgressBottomBar(progress: Float) {
 @Composable
 fun EndGameMessage() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Great job!", fontSize = 32.sp)
+        Text(
+            text = "🏆",
+            fontSize = 128.sp
+        )
     }
 }
 
@@ -323,6 +326,21 @@ fun DebugSyllablesAudioOffsetsPreview() {
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 DebugSyllablesAudioOffsets { }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EndGameMessagePreview() {
+    RusreadTheme {
+        Scaffold(
+            topBar = { SimpleCloseTopAppBar { } },
+            bottomBar = { ProgressBottomBar(0.7f) }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                EndGameMessage()
             }
         }
     }
