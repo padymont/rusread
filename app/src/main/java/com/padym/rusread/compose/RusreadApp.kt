@@ -18,8 +18,11 @@ fun RusreadApp() {
 fun RusreadNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.SyllableSelection.route
+        startDestination = Screen.NewGame.route
     ) {
+        composable(Screen.NewGame.route) {
+            NewGameScreen(navController)
+        }
         composable(Screen.SyllableSelection.route) {
             SyllableSelectionScreen(navController)
         }

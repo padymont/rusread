@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -36,12 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,7 +65,8 @@ fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<St
         Column(modifier = Modifier.padding(paddingValues)) {
             if (viewModel.isGameOn) {
 //                DebugSyllablesAudioOffsets { offset -> viewModel.speakText(offset) }
-                SpeakSyllableButton(viewModel.spokenSyllable) {
+//                SpeakSyllableButton("🎧") {
+                EmojiRoundButton(viewModel.spokenSyllable) {
                     viewModel.speakSyllable(viewModel.spokenSyllable)
                 }
                 ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
@@ -98,32 +95,6 @@ fun SimpleCloseTopAppBar(onClose: () -> Unit = {}) {
             }
         },
     )
-}
-
-@Composable
-fun SpeakSyllableButton(syllable: String, onButtonClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Button(
-            onClick = onButtonClick,
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(160.dp)
-        ) {
-            Text(
-                text = "🎧",
-//              text = syllable,
-                fontSize = 80.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-    }
 }
 
 @Composable
@@ -309,7 +280,7 @@ fun SyllableGameContentPreview() {
             bottomBar = { ProgressBottomBar(0.7f) }
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
-                SpeakSyllableButton("жа") {}
+                EmojiRoundButton("жа") {}
                 ScatteredSyllablesButtons(selectedSyllables) { _ -> Result.entries.random() }
             }
         }
