@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,11 +29,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.RusreadTheme
-import com.padym.rusread.viewmodels.SyllableListViewModel
+import com.padym.rusread.viewmodels.NewGameViewModel
 
 @Composable
 fun NewGameScreen(navController: NavHostController) {
-    val viewModel: SyllableListViewModel = viewModel()
+    val viewModel: NewGameViewModel = viewModel()
     val selectedSyllables = viewModel.selectedSyllables
 
     Scaffold { paddingValues ->
@@ -70,12 +69,9 @@ fun EmojiIconButton(text: String, onButtonClick: () -> Unit) {
 fun SingleSyllableClickable(text: String, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
-        contentPadding = PaddingValues(8.dp),
+        contentPadding = PaddingValues(12.dp),
         border = BorderStroke(width = 0.dp, color = Color.Transparent),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-        modifier = Modifier
-            .padding(end = 8.dp)
-            .widthIn(min = 48.dp)
     ) {
         Text(
             text = text,
@@ -96,8 +92,7 @@ fun SelectionActionRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 16.dp),
+            .padding(top = 160.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         EmojiIconButton(text = "👈", onButtonClick = previousSelectionAction)
@@ -113,8 +108,8 @@ fun SelectionSyllablesRow(selection: Set<String>, onClick: () -> Unit) {
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .heightIn(min = 240.dp)
+            .padding(horizontal = 32.dp)
+            .heightIn(min = 268.dp)
             .padding(bottom = 48.dp),
         horizontalArrangement = Arrangement.Center
     ) {
@@ -127,7 +122,7 @@ fun SelectionSyllablesRow(selection: Set<String>, onClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun NewGameScreenPreview() {
-    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "бы", "би", "бе").toSet()
+    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе").toSet()
 
     RusreadTheme {
         Scaffold { paddingValues ->
