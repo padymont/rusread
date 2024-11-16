@@ -33,9 +33,11 @@ class NewGameViewModel(application: Application) : AndroidViewModel(application)
 
     fun fetchData() {
         viewModelScope.launch {
-            if (dao.getEntryCount() == 0) generateGroup()
-            val result = dao.getEntries()!!
-            groups.value = result
+            if (dao.getEntryCount() == 0) {
+                generateGroup()
+            } else {
+                groups.value = dao.getEntries()!!
+            }
         }
     }
 
@@ -43,6 +45,8 @@ class NewGameViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val syllableList = getRandomSyllableSelection()
             dao.save(SyllableList(list = syllableList))
+            currentIndex.intValue = MIN_INDEX_VALUE
+            groups.value = dao.getEntries()!!
         }
     }
 
@@ -57,6 +61,7 @@ class NewGameViewModel(application: Application) : AndroidViewModel(application)
     fun fixCurrentGroup() {
         viewModelScope.launch {
             dao.update(currentGroup)
+            currentIndex.intValue = MIN_INDEX_VALUE
         }
     }
 
