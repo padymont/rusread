@@ -10,7 +10,7 @@ import androidx.room.TypeConverters
 @TypeConverters(StringSetConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun myDao(): SyllableListDao
+    abstract fun syllableListDao(): SyllableListDao
 
     companion object {
 

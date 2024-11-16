@@ -11,7 +11,13 @@ const val VOWELS = "аеёиоуыэюя"
 
 class SyllableListViewModel : ViewModel() {
 
-    private val _selectedSyllables = mutableStateOf<Set<String>>(emptySet())
+    //    private val _selectedSyllables = mutableStateOf<Set<String>>(emptySet())
+    private val _selectedSyllables = mutableStateOf(getRandomSet())
+    private fun getRandomSet() = listOf(
+        setOf("ба", "бо", "во", "вы", "га", "ги", "да", "до", "ду", "дь"),
+        setOf("бе", "би", "бу", "бы", "ва", "ве", "ви", "де", "ди", "дь")
+    ).random()
+
     val selectedSyllables: Set<String>
         get() = _selectedSyllables.value
 

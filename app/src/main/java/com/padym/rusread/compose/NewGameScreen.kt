@@ -34,6 +34,7 @@ import com.padym.rusread.viewmodels.NewGameViewModel
 @Composable
 fun NewGameScreen(navController: NavHostController) {
     val viewModel: NewGameViewModel = viewModel()
+    viewModel.fetchData()
     val selectedSyllables = viewModel.selectedSyllables
 
     Scaffold { paddingValues ->

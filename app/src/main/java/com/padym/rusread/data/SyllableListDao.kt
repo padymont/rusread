@@ -11,6 +11,9 @@ interface SyllableListDao {
     @Insert
     suspend fun insert(entity: SyllableList)
 
+    @Query("SELECT * FROM syllable_list_table ORDER BY id DESC")
+    suspend fun getEntries(): List<SyllableList>?
+
     @Query("SELECT * FROM syllable_list_table ORDER BY id ASC LIMIT 1")
     suspend fun getOldestEntry(): SyllableList?
 
