@@ -11,7 +11,10 @@ interface SyllableListDao {
     @Insert
     suspend fun insert(entity: SyllableList)
 
-    @Query("SELECT * FROM syllable_list_table ORDER BY id DESC")
+    @Query("UPDATE syllable_list_table SET modified_at = :modifiedAt WHERE id = :id")
+    suspend fun updateModifiedAt(id: Int, modifiedAt: Long)
+
+    @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC")
     suspend fun getEntries(): List<SyllableList>?
 
     @Query("SELECT * FROM syllable_list_table ORDER BY id ASC LIMIT 1")
@@ -34,5 +37,9 @@ interface SyllableListDao {
             val oldestEntry = getOldestEntry()
             oldestEntry?.let { deleteById(it.id) }
         }
+    }
+
+    suspend fun update(entity: SyllableList) {
+        updateModifiedAt(entity.id, System.currentTimeMillis())
     }
 }

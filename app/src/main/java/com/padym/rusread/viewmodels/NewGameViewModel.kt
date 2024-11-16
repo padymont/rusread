@@ -54,6 +54,12 @@ class NewGameViewModel(application: Application) : AndroidViewModel(application)
         currentIndex.intValue = (currentIndex.intValue - 1).coerceAtLeast(MIN_INDEX_VALUE)
     }
 
+    fun fixCurrentGroup() {
+        viewModelScope.launch {
+            dao.update(currentGroup)
+        }
+    }
+
     private fun getRandomSyllableSelection() = Syllable
         .getAll()
         .map { it.key }

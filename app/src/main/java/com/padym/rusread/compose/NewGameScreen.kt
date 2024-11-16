@@ -49,6 +49,7 @@ fun NewGameScreen(navController: NavHostController) {
             )
             SelectionSyllablesRow(viewModel.currentGroup.list) {}
             EmojiRoundButton(text = "🚀") {
+                viewModel.fixCurrentGroup()
                 navController.navigate(
                     Screen.SyllableGame.passChosenSyllables(viewModel.currentGroup.list)
                 )
