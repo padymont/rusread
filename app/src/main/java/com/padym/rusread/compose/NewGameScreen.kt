@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -35,21 +36,29 @@ import com.padym.rusread.viewmodels.NewGameViewModel
 fun NewGameScreen(navController: NavHostController) {
     val viewModel: NewGameViewModel = viewModel()
     viewModel.fetchData()
-    val selectedSyllables = viewModel.selectedSyllables
 
     Scaffold { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            SelectionActionRow({}, {}, {}, {})
-            SelectionSyllablesRow(selectedSyllables) {}
+            SelectionActionRow(
+                isPreviousSelectionEnabled = !viewModel.isLastGroup,
+                isNextSelectionEnabled = !viewModel.isFirstGroup,
+                previousSelectionAction = { viewModel.selectPreviousGroup() },
+                nextSelectionAction = { viewModel.selectNextGroup() },
+                createSelectionAction = {},
+                randomSelectionAction = { viewModel.generateGroup() }
+            )
+            SelectionSyllablesRow(viewModel.currentGroup.list) {}
             EmojiRoundButton(text = "🚀") {
-                navController.navigate(Screen.SyllableGame.passChosenSyllables(selectedSyllables))
+                navController.navigate(
+                    Screen.SyllableGame.passChosenSyllables(viewModel.currentGroup.list)
+                )
             }
         }
     }
 }
 
 @Composable
-fun EmojiIconButton(text: String, onButtonClick: () -> Unit) {
+fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -> Unit) {
     OutlinedButton(
         onClick = onButtonClick,
         contentPadding = PaddingValues(0.dp),
@@ -57,6 +66,7 @@ fun EmojiIconButton(text: String, onButtonClick: () -> Unit) {
         modifier = Modifier
             .clip(CircleShape)
             .size(64.dp)
+            .alpha(if (isVisible) 1f else 0f)
     ) {
         Text(
             text = text,
@@ -85,6 +95,8 @@ fun SingleSyllableClickable(text: String, onClick: () -> Unit) {
 
 @Composable
 fun SelectionActionRow(
+    isPreviousSelectionEnabled: Boolean,
+    isNextSelectionEnabled: Boolean,
     previousSelectionAction: () -> Unit,
     nextSelectionAction: () -> Unit,
     createSelectionAction: () -> Unit,
@@ -96,8 +108,16 @@ fun SelectionActionRow(
             .padding(top = 160.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        EmojiIconButton(text = "👈", onButtonClick = previousSelectionAction)
-        EmojiIconButton(text = "👉", onButtonClick = nextSelectionAction)
+        EmojiIconButton(
+            text = "👈",
+            isVisible = isPreviousSelectionEnabled,
+            onButtonClick = previousSelectionAction
+        )
+        EmojiIconButton(
+            text = "👉",
+            isVisible = isNextSelectionEnabled,
+            onButtonClick = nextSelectionAction
+        )
         EmojiIconButton(text = "🖍", onButtonClick = createSelectionAction)
         EmojiIconButton(text = "🎲", onButtonClick = randomSelectionAction)
     }
@@ -128,7 +148,7 @@ fun NewGameScreenPreview() {
     RusreadTheme {
         Scaffold { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
-                SelectionActionRow({}, {}, {}, {})
+                SelectionActionRow(true, true, {}, {}, {}, {})
                 SelectionSyllablesRow(chosenSyllables) {}
                 EmojiRoundButton(text = "🚀", onButtonClick = {})
             }
