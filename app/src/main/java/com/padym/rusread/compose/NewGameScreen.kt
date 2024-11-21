@@ -27,14 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.NewGameViewModel
 
 @Composable
 fun NewGameScreen(navController: NavHostController) {
-    val viewModel: NewGameViewModel = viewModel()
+    val viewModel: NewGameViewModel = hiltViewModel()
     viewModel.fetchData()
 
     Scaffold { paddingValues ->

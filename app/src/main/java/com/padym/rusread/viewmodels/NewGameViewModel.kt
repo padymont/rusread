@@ -1,23 +1,23 @@
 package com.padym.rusread.viewmodels
 
-import android.app.Application
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.padym.rusread.data.AppDatabase
 import com.padym.rusread.data.SyllableList
+import com.padym.rusread.data.SyllableListDao
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 const val MIN_INDEX_VALUE = 0
 
-class NewGameViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val db = AppDatabase.getDatabase(application.applicationContext)
-    private val dao = db.syllableListDao()
-
+@HiltViewModel
+class NewGameViewModel @Inject constructor(
+    private val dao: SyllableListDao
+) : ViewModel() {
     private val groups = mutableStateOf(listOf(SyllableList.empty()))
     private val currentIndex = mutableIntStateOf(0)
     private val maxIndexValue = derivedStateOf { groups.value.size - 1 }
