@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.padym.rusread.data.AppDatabase
 import com.padym.rusread.data.SyllableListDao
+import com.padym.rusread.data.SyllableScoreDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,5 +29,10 @@ object DatabaseModule {
     @Provides
     fun provideSyllableListDao(appDatabase: AppDatabase): SyllableListDao {
         return appDatabase.syllableListDao()
+    }
+
+    @Provides
+    fun provideSyllableScoreDao(appDatabase: AppDatabase): SyllableScoreDao {
+        return appDatabase.syllableScoreDao()
     }
 }
