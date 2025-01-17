@@ -18,17 +18,17 @@ fun RusreadApp() {
 fun RusreadNavHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screen.NewGame.route
+        startDestination = Screen.Start.route
     ) {
-        composable(Screen.NewGame.route) {
-            NewGameScreen(navController)
+        composable(Screen.Start.route) {
+            StartScreen(navController)
         }
         composable(Screen.SyllableSelection.route) {
             SyllableSelectionScreen(navController)
         }
-        composable(Screen.SyllableGame.route) { backStackEntry ->
-            val chosenSyllables = Screen.SyllableGame.parseChosenSyllables(backStackEntry)
-            SyllableGameScreen(navController, chosenSyllables)
+        composable(Screen.Game.route) { backStackEntry ->
+            val chosenSyllables = Screen.Game.parseChosenSyllables(backStackEntry)
+            GameScreen(navController, chosenSyllables)
         }
     }
 }

@@ -30,11 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.RusreadTheme
-import com.padym.rusread.viewmodels.NewGameViewModel
+import com.padym.rusread.viewmodels.StartViewModel
 
 @Composable
-fun NewGameScreen(navController: NavHostController) {
-    val viewModel: NewGameViewModel = hiltViewModel()
+fun StartScreen(navController: NavHostController) {
+    val viewModel: StartViewModel = hiltViewModel()
     viewModel.fetchData()
 
     Scaffold { paddingValues ->
@@ -51,7 +51,7 @@ fun NewGameScreen(navController: NavHostController) {
             EmojiRoundButton(text = "🚀") {
                 viewModel.fixCurrentGroup()
                 navController.navigate(
-                    Screen.SyllableGame.passChosenSyllables(viewModel.currentGroup.list)
+                    Screen.Game.passChosenSyllables(viewModel.currentGroup.list)
                 )
             }
         }

@@ -15,7 +15,7 @@ import javax.inject.Inject
 const val MIN_INDEX_VALUE = 0
 
 @HiltViewModel
-class NewGameViewModel @Inject constructor(
+class StartViewModel @Inject constructor(
     private val dao: SyllableListDao
 ) : ViewModel() {
     private val groups = mutableStateOf(listOf(SyllableList.empty()))

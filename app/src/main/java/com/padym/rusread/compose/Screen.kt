@@ -8,9 +8,9 @@ const val STRING_DELIMITER = ", "
 sealed class Screen(val route: String) {
     data object SyllableSelection : Screen("syllable_selection")
 
-    data object NewGame : Screen("new_game")
+    data object Start : Screen("start")
 
-    data object SyllableGame : Screen("syllable_game/{$CHOSEN_SYLLABLES_KEY}") {
+    data object Game : Screen("game/{$CHOSEN_SYLLABLES_KEY}") {
 
         fun passChosenSyllables(selectedSyllables: Set<String>): String {
             val string = selectedSyllables.joinToString(separator = STRING_DELIMITER)

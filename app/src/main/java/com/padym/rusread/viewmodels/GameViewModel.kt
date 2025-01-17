@@ -15,7 +15,7 @@ const val RIGHT_ANSWER_NUMBER = 10
 const val PROGRESS_OFFSET = 0.3f
 const val SYLLABLE_LENGTH_MILLIS = 1200L
 
-class SyllableGameViewModel(application: Application) : AndroidViewModel(application) {
+class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = application
     private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)

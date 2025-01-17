@@ -46,14 +46,14 @@ import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.Result
-import com.padym.rusread.viewmodels.SyllableGameViewModel
+import com.padym.rusread.viewmodels.GameViewModel
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 import kotlin.random.Random
 
 @Composable
-fun SyllableGameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
-    val viewModel: SyllableGameViewModel = viewModel()
+fun GameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
+    val viewModel: GameViewModel = viewModel()
     viewModel.initializeData(chosenSyllables)
 
     Scaffold(

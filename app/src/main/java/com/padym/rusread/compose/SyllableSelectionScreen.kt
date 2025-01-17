@@ -60,7 +60,7 @@ fun SyllableSelectionScreen(navController: NavHostController) {
                 maxProgress = MAX_CHOSEN_SYLLABLES,
                 isEnabled = viewModel.isEnoughSyllablesSelected
             ) {
-                navController.navigate(Screen.SyllableGame.passChosenSyllables(selectedSyllables))
+                navController.navigate(Screen.Game.passChosenSyllables(selectedSyllables))
                 viewModel.clearChosenSyllables()
             }
         }
