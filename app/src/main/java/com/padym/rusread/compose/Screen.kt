@@ -6,8 +6,6 @@ const val CHOSEN_SYLLABLES_KEY = "chosenSyllables"
 const val STRING_DELIMITER = ", "
 
 sealed class Screen(val route: String) {
-    data object SyllableSelection : Screen("syllable_selection")
-
     data object Start : Screen("start")
 
     data object Game : Screen("game/{$CHOSEN_SYLLABLES_KEY}") {
