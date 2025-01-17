@@ -26,5 +26,8 @@ fun RusreadNavHost(navController: NavHostController) {
         composable(Screen.Game.route) {
             GameScreen(navController)
         }
+        composable(Screen.ManualList.route) {
+            ManualListScreen(navController)
+        }
     }
 }

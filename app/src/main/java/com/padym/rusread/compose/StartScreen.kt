@@ -3,12 +3,9 @@ package com.padym.rusread.compose
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -44,7 +41,7 @@ fun StartScreen(navController: NavHostController) {
                 isNextSelectionEnabled = !viewModel.isFirstGroup,
                 previousSelectionAction = { viewModel.selectPreviousGroup() },
                 nextSelectionAction = { viewModel.selectNextGroup() },
-                createSelectionAction = {},
+                createSelectionAction = { navController.navigate(Screen.ManualList.route) },
                 randomSelectionAction = { viewModel.generateGroup() }
             )
             SelectionSyllablesRow(viewModel.currentGroup.list) {}
@@ -122,26 +119,9 @@ fun SelectionActionRow(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun SelectionSyllablesRow(selection: Set<String>, onClick: () -> Unit) {
-    FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 32.dp)
-            .heightIn(min = 268.dp)
-            .padding(bottom = 48.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        selection.forEach { syllable ->
-            SingleSyllableClickable(text = syllable, onClick = onClick)
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
-fun NewGameScreenPreview() {
+fun StartScreenPreview() {
     val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе").toSet()
 
     RusreadTheme {

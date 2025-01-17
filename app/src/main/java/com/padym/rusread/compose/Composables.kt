@@ -1,7 +1,11 @@
 package com.padym.rusread.compose
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -39,5 +43,21 @@ fun EmojiRoundButton(text: String, onButtonClick: () -> Unit) {
             )
         }
     }
+}
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SelectionSyllablesRow(selection: Set<String>, onClick: () -> Unit) {
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp)
+            .heightIn(min = 268.dp)
+            .padding(bottom = 48.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        selection.forEach { syllable ->
+            SingleSyllableClickable(text = syllable, onClick = onClick)
+        }
+    }
 }
