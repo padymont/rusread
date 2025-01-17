@@ -25,8 +25,7 @@ const val SYLLABLE_LENGTH_MILLIS = 1200L
 class GameViewModel @Inject constructor(
     private val dao: SyllableScoreDao,
     @ApplicationContext private val context: Context
-) : ViewModel()
-{
+) : ViewModel() {
     private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
     private var _syllables = emptySet<String>()
@@ -62,15 +61,33 @@ class GameViewModel @Inject constructor(
 
     fun processAnswer(syllable: String): Result {
         val isAnswerCorrect = syllable == spokenSyllable
-        if (isAnswerCorrect) increaseCorrectAnswers() else decreaseCorrectAnswers()
         if (isGameOn) setNextSpokenSyllable()
-        return if (isAnswerCorrect) Result.CORRECT else Result.WRONG
+        return when (isAnswerCorrect) {
+            true -> {
+                increaseSyllableScore(syllable)
+                increaseCorrectAnswers()
+                Result.CORRECT
+            }
+            false -> {
+                lowerSyllableScore(syllable)
+                decreaseCorrectAnswers()
+                Result.WRONG
+            }
+        }
     }
 
     private fun increaseCorrectAnswers() = _correctAnswers.intValue++
 
     private fun decreaseCorrectAnswers() {
         if (correctAnswers > 0) _correctAnswers.intValue--
+    }
+
+    private fun increaseSyllableScore(syllable: String) = viewModelScope.launch {
+        dao.increaseScore(syllable)
+    }
+
+    private fun lowerSyllableScore(syllable: String) = viewModelScope.launch {
+        dao.lowerScore(syllable)
     }
 
     private fun setNextSpokenSyllable() {

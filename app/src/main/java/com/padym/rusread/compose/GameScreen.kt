@@ -65,8 +65,8 @@ fun GameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
         Column(modifier = Modifier.padding(paddingValues)) {
             if (viewModel.isGameOn) {
 //                DebugSyllablesAudioOffsets { offset -> viewModel.speakText(offset) }
-                EmojiRoundButton("🎧") {
-//                EmojiRoundButton(viewModel.spokenSyllable) {
+//                EmojiRoundButton("🎧") {
+                EmojiRoundButton(viewModel.spokenSyllable) {
                     viewModel.speakSyllable(viewModel.spokenSyllable)
                 }
                 ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
