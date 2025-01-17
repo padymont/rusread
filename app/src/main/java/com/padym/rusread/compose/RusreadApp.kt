@@ -23,9 +23,8 @@ fun RusreadNavHost(navController: NavHostController) {
         composable(Screen.Start.route) {
             StartScreen(navController)
         }
-        composable(Screen.Game.route) { backStackEntry ->
-            val chosenSyllables = Screen.Game.parseChosenSyllables(backStackEntry)
-            GameScreen(navController, chosenSyllables)
+        composable(Screen.Game.route) {
+            GameScreen(navController)
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.R
+import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,7 +24,8 @@ const val SYLLABLE_LENGTH_MILLIS = 1200L
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val dao: SyllableScoreDao,
+    private val listDao: SyllableListDao,
+    private val scoreDao: SyllableScoreDao,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
@@ -49,11 +51,9 @@ class GameViewModel @Inject constructor(
         correctAnswers < RIGHT_ANSWER_NUMBER
     }
 
-    fun initializeData(data: Set<String>) {
-        _syllables = data
-        viewModelScope.launch {
-            syllables.forEach { dao.save(it) }
-        }
+    fun initializeData() = viewModelScope.launch {
+        _syllables = listDao.getLatestEntry().list
+        syllables.forEach { scoreDao.save(it) }
         if (spokenSyllable.isEmpty()) {
             _spokenSyllable.value = syllables.random()
         }
@@ -68,6 +68,7 @@ class GameViewModel @Inject constructor(
                 increaseCorrectAnswers()
                 Result.CORRECT
             }
+
             false -> {
                 lowerSyllableScore(syllable)
                 decreaseCorrectAnswers()
@@ -83,11 +84,11 @@ class GameViewModel @Inject constructor(
     }
 
     private fun increaseSyllableScore(syllable: String) = viewModelScope.launch {
-        dao.increaseScore(syllable)
+        scoreDao.increaseScore(syllable)
     }
 
     private fun lowerSyllableScore(syllable: String) = viewModelScope.launch {
-        dao.lowerScore(syllable)
+        scoreDao.lowerScore(syllable)
     }
 
     private fun setNextSpokenSyllable() {

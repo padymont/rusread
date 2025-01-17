@@ -17,8 +17,11 @@ interface SyllableListDao {
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC")
     suspend fun getEntries(): List<SyllableList>?
 
-    @Query("SELECT * FROM syllable_list_table ORDER BY id ASC LIMIT 1")
+    @Query("SELECT * FROM syllable_list_table ORDER BY modified_at ASC LIMIT 1")
     suspend fun getOldestEntry(): SyllableList?
+
+    @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC LIMIT 1")
+    suspend fun getLatestEntry(): SyllableList
 
     @Query("DELETE FROM syllable_list_table")
     suspend fun deleteAll()

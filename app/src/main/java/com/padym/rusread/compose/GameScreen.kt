@@ -52,9 +52,9 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 @Composable
-fun GameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
+fun GameScreen(navController: NavHostController) {
     val viewModel: GameViewModel = hiltViewModel()
-    viewModel.initializeData(chosenSyllables)
+    viewModel.initializeData()
 
     Scaffold(
         topBar = {
