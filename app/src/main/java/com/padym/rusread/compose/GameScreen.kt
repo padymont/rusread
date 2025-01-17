@@ -41,19 +41,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
-import com.padym.rusread.viewmodels.Result
 import com.padym.rusread.viewmodels.GameViewModel
+import com.padym.rusread.viewmodels.Result
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 import kotlin.random.Random
 
 @Composable
 fun GameScreen(navController: NavHostController, chosenSyllables: Set<String>) {
-    val viewModel: GameViewModel = viewModel()
+    val viewModel: GameViewModel = hiltViewModel()
     viewModel.initializeData(chosenSyllables)
 
     Scaffold(

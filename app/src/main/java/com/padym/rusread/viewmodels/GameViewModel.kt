@@ -1,6 +1,6 @@
 package com.padym.rusread.viewmodels
 
-import android.app.Application
+import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
@@ -8,16 +8,25 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.padym.rusread.R
+import com.padym.rusread.data.SyllableScoreDao
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 const val RIGHT_ANSWER_NUMBER = 10
 const val PROGRESS_OFFSET = 0.3f
 const val SYLLABLE_LENGTH_MILLIS = 1200L
 
-class GameViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val context = application
+@HiltViewModel
+class GameViewModel @Inject constructor(
+    private val dao: SyllableScoreDao,
+    @ApplicationContext private val context: Context
+) : ViewModel()
+{
     private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
     private var _syllables = emptySet<String>()
@@ -43,6 +52,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun initializeData(data: Set<String>) {
         _syllables = data
+        viewModelScope.launch {
+            syllables.forEach { dao.save(it) }
+        }
         if (spokenSyllable.isEmpty()) {
             _spokenSyllable.value = syllables.random()
         }
