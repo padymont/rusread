@@ -1,5 +1,7 @@
 package com.padym.rusread.viewmodels
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +10,9 @@ import com.padym.rusread.data.SyllableListDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+const val MIN_SYLLABLES_COUNT = 3
+const val MAX_SYLLABLES_COUNT = 10
 
 @HiltViewModel
 class ManualListViewModel @Inject constructor(
@@ -25,6 +30,9 @@ class ManualListViewModel @Inject constructor(
     private var _chosenSyllables = mutableStateOf(setOf<String>())
     val chosenSyllables: Set<String>
         get() = _chosenSyllables.value
+
+    val isSavingListAvailable by derivedStateOf { chosenSyllables.size >= MIN_SYLLABLES_COUNT }
+    val isChoosingAvailable by derivedStateOf { chosenSyllables.size < MAX_SYLLABLES_COUNT }
 
     private val firstLetter = mutableStateOf("")
     private val secondLetter = mutableStateOf("")

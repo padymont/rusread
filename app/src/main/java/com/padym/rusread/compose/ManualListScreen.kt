@@ -49,21 +49,25 @@ fun ManualListScreen(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            SyllableCreator(
-                firstLetterList = viewModel.firstLetterList,
-                secondLetterList = viewModel.secondLetterOptions,
-                onFirstLetterSelected = { _, item ->
-                    viewModel.processChosenLetter(Position.FIRST, item)
-                },
-                onSecondLetterSelected = { _, item ->
-                    viewModel.processChosenLetter(Position.SECOND, item)
-                },
-                onSaveSyllable = viewModel::saveSyllable
-            )
+            if (viewModel.isChoosingAvailable) {
+                SyllableCreator(
+                    firstLetterList = viewModel.firstLetterList,
+                    secondLetterList = viewModel.secondLetterOptions,
+                    onFirstLetterSelected = { _, item ->
+                        viewModel.processChosenLetter(Position.FIRST, item)
+                    },
+                    onSecondLetterSelected = { _, item ->
+                        viewModel.processChosenLetter(Position.SECOND, item)
+                    },
+                    onSaveSyllable = viewModel::saveSyllable
+                )
+            }
             SelectionSyllablesRow(viewModel.chosenSyllables) {}
-            EmojiRoundButton(text = "👍") {
-                viewModel.saveSyllableList()
-                navController.popBackStack()
+            if (viewModel.isSavingListAvailable) {
+                EmojiRoundButton(text = "👍") {
+                    viewModel.saveSyllableList()
+                    navController.popBackStack()
+                }
             }
         }
     }
