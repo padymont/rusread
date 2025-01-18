@@ -37,6 +37,7 @@ import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.ManualListViewModel
+import com.padym.rusread.viewmodels.Position
 
 @Composable
 fun ManualListScreen(navController: NavHostController) {
@@ -49,9 +50,20 @@ fun ManualListScreen(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            SyllableCreator()
+            SyllableCreator(
+                firstLetterList = viewModel.firstLetterList,
+                secondLetterList = viewModel.secondLetterOptions,
+                onFirstLetterSelected = { _, item ->
+                    viewModel.processChosenLetter(Position.FIRST, item)
+                },
+                onSecondLetterSelected = { _, item ->
+                    viewModel.processChosenLetter(Position.SECOND, item)
+                },
+                onSaveSyllable = viewModel::saveSyllable
+            )
             SelectionSyllablesRow(chosenSyllables) {}
             EmojiRoundButton(text = "👍") {
+                viewModel.saveSyllableList()
                 navController.popBackStack()
             }
         }
@@ -59,7 +71,13 @@ fun ManualListScreen(navController: NavHostController) {
 }
 
 @Composable
-fun SyllableCreator() {
+fun SyllableCreator(
+    firstLetterList: List<String>,
+    secondLetterList: List<String>,
+    onFirstLetterSelected: (index: Int, item: String) -> Unit = { _, _ -> },
+    onSecondLetterSelected: (index: Int, item: String) -> Unit = { _, _ -> },
+    onSaveSyllable: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,31 +87,11 @@ fun SyllableCreator() {
         horizontalArrangement = Arrangement.Center
     )
     {
-        FirstLetterPicker()
-        SecondLetterPicker()
+        StyledScrollPicker(firstLetterList, onFirstLetterSelected)
+        StyledScrollPicker(secondLetterList, onSecondLetterSelected)
         Box(modifier = Modifier.padding(horizontal = 16.dp))
-        EmojiIconButton(
-            text = "👌",
-            isVisible = true,
-            onButtonClick = { }
-        )
+        EmojiIconButton(text = "👌", onButtonClick = onSaveSyllable)
     }
-}
-
-@Composable
-fun FirstLetterPicker() {
-    StyledScrollPicker(
-        items = listOf("ж", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н", "п", "р", "с"),
-        onItemSelected = { i, item -> }
-    )
-}
-
-@Composable
-fun SecondLetterPicker() {
-    StyledScrollPicker(
-        items = listOf("а", "ы", "ё", "и", "о", "у", "ы", "э", "ю", "я"),
-        onItemSelected = { i, item -> }
-    )
 }
 
 @Composable
@@ -173,15 +171,17 @@ fun ScrollPicker(
 @Composable
 fun ManualListScreenPreview() {
     val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе").toSet()
+    val firstLetterList = listOf("ж", "в", "г", "д", "з", "к", "л", "м", "н", "п", "р")
+    val secondLetterList = listOf("а", "ы", "е", "и", "о", "у", "э", "ю", "я")
 
     RusreadTheme {
         Scaffold(
             topBar = {
-                SimpleCloseTopAppBar() { }
+                SimpleCloseTopAppBar { }
             }
         ) { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
-                SyllableCreator()
+                SyllableCreator(firstLetterList, secondLetterList)
                 SelectionSyllablesRow(chosenSyllables) {}
                 EmojiRoundButton(text = "👍") {}
             }

@@ -26,11 +26,6 @@ class StartViewModel @Inject constructor(
     val isFirstGroup by derivedStateOf { currentIndex.intValue == MIN_INDEX_VALUE }
     val isLastGroup by derivedStateOf { currentIndex.intValue == maxIndexValue.value }
 
-//    private fun getRandomSyllableSelection() = listOf(
-//        setOf("ба", "бо", "во", "вы", "га", "ги", "да", "до", "ду", "дь"),
-//        setOf("бе", "би", "бу", "бы", "ва", "ве", "ви", "де", "ди", "дь")
-//    ).random()
-
     fun fetchData() {
         viewModelScope.launch {
             if (dao.getEntryCount() == 0) {
