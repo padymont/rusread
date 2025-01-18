@@ -42,7 +42,6 @@ import com.padym.rusread.viewmodels.Position
 @Composable
 fun ManualListScreen(navController: NavHostController) {
     val viewModel: ManualListViewModel = hiltViewModel()
-    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе").toSet()
 
     Scaffold(
         topBar = {
@@ -61,7 +60,7 @@ fun ManualListScreen(navController: NavHostController) {
                 },
                 onSaveSyllable = viewModel::saveSyllable
             )
-            SelectionSyllablesRow(chosenSyllables) {}
+            SelectionSyllablesRow(viewModel.chosenSyllables) {}
             EmojiRoundButton(text = "👍") {
                 viewModel.saveSyllableList()
                 navController.popBackStack()
@@ -170,7 +169,7 @@ fun ScrollPicker(
 @Preview(showBackground = true)
 @Composable
 fun ManualListScreenPreview() {
-    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе").toSet()
+    val chosenSyllables = setOf("ба", "бо", "бу", "бя", "ша", "фу", "бе")
     val firstLetterList = listOf("ж", "в", "г", "д", "з", "к", "л", "м", "н", "п", "р")
     val secondLetterList = listOf("а", "ы", "е", "и", "о", "у", "э", "ю", "я")
 

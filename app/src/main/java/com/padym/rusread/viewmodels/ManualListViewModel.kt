@@ -22,9 +22,12 @@ class ManualListViewModel @Inject constructor(
         "а", "е", "и", "о", "у", "ы", "э", "ю", "я"
     )
 
+    private var _chosenSyllables = mutableStateOf(setOf<String>())
+    val chosenSyllables: Set<String>
+        get() = _chosenSyllables.value
+
     private val firstLetter = mutableStateOf("")
     private val secondLetter = mutableStateOf("")
-    private val chosenSyllables = mutableStateOf(setOf<String>())
 
     fun processChosenLetter(position: Position, letter: String) {
         when (position) {
@@ -35,12 +38,12 @@ class ManualListViewModel @Inject constructor(
 
     fun saveSyllable() {
         val syllable = "${firstLetter.value}${secondLetter.value}"
-        chosenSyllables.value += syllable
+        _chosenSyllables.value += syllable
     }
 
     fun saveSyllableList() {
         viewModelScope.launch {
-            dao.save(SyllableList(list = chosenSyllables.value))
+            dao.save(SyllableList(list = chosenSyllables))
         }
     }
 }
