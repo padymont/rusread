@@ -21,11 +21,11 @@ class ManualListViewModel @Inject constructor(
 ) : ViewModel() {
 
     val firstLetterList = listOf(
-        "б", "в", "г", "д", "ж", "з", "к", "л", "м", "н", "п", "р",
+        "б", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н", "п", "р",
         "с", "т", "ф", "х", "ц", "ч", "ш", "щ", EMPTY_SIGN
     )
     val secondLetterOptions = listOf(
-        "а", "е", "ё", "и", "о", "у", "ы", "ь", "э", "ю", "я", EMPTY_SIGN
+        "а", "е", "ё", "и", "о", "у", "ы", "ь", "ъ", "э", "ю", "я", EMPTY_SIGN
     )
 
     private var _chosenSyllables = mutableStateOf(setOf<String>())
