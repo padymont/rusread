@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -198,7 +199,10 @@ fun ProgressBottomBar(progress: Float) {
             .fillMaxWidth()
             .height(12.dp),
         color = AppColors.MetallicGold,
-        trackColor = AppColors.Almond
+        trackColor = AppColors.Almond,
+        strokeCap = StrokeCap.Butt,
+        gapSize = 0.dp,
+        drawStopIndicator = {}
     )
 }
 
