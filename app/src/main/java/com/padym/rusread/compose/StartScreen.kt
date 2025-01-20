@@ -3,6 +3,7 @@ package com.padym.rusread.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -31,7 +32,8 @@ fun StartScreen(navController: NavHostController) {
                 randomSelectionAction = { viewModel.generateGroup() }
             )
             SelectionSyllablesRow(viewModel.currentGroup.list) {}
-            EmojiRoundButton(text = "🚀") {
+            Spacer(modifier = Modifier.weight(1f))
+            BottomEmojiRoundButton(text = "🚀") {
                 viewModel.fixCurrentGroup()
                 navController.navigate(Screen.Game.route)
             }
@@ -79,7 +81,8 @@ fun StartScreenPreview() {
             Column(Modifier.padding(paddingValues)) {
                 SelectionActionRow(true, true, {}, {}, {}, {})
                 SelectionSyllablesRow(chosenSyllables) {}
-                EmojiRoundButton(text = "🚀", onButtonClick = {})
+                Spacer(modifier = Modifier.weight(1f))
+                BottomEmojiRoundButton(text = "🚀", onButtonClick = {})
             }
         }
     }

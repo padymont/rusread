@@ -28,11 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EmojiRoundButton(text: String, onButtonClick: () -> Unit) {
+fun EmojiRoundButton(text: String, paddingBottom: Int = 0, onButtonClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = paddingBottom.dp),
         contentAlignment = Alignment.Center
     ) {
         Button(
@@ -51,6 +51,10 @@ fun EmojiRoundButton(text: String, onButtonClick: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun BottomEmojiRoundButton(text: String, onButtonClick: () -> Unit) =
+    EmojiRoundButton(text, paddingBottom = 80, onButtonClick)
 
 @Composable
 fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -> Unit) {
