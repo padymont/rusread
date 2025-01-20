@@ -50,19 +50,18 @@ fun ManualListScreen(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            if (viewModel.isChoosingAvailable) {
-                SyllableCreator(
-                    firstLetterList = viewModel.firstLetterList,
-                    secondLetterList = viewModel.secondLetterOptions,
-                    onFirstLetterSelected = { _, item ->
-                        viewModel.processChosenLetter(Position.FIRST, item)
-                    },
-                    onSecondLetterSelected = { _, item ->
-                        viewModel.processChosenLetter(Position.SECOND, item)
-                    },
-                    onSaveSyllable = viewModel::saveSyllable
-                )
-            }
+            SyllableCreator(
+                isVisible = viewModel.isChoosingAvailable,
+                firstLetterList = viewModel.firstLetterList,
+                secondLetterList = viewModel.secondLetterOptions,
+                onFirstLetterSelected = { _, item ->
+                    viewModel.processChosenLetter(Position.FIRST, item)
+                },
+                onSecondLetterSelected = { _, item ->
+                    viewModel.processChosenLetter(Position.SECOND, item)
+                },
+                onSaveSyllable = viewModel::saveSyllable
+            )
             SelectionSyllablesRow(viewModel.chosenSyllables) {}
             Spacer(modifier = Modifier.weight(1f))
             if (viewModel.isSavingListAvailable) {
@@ -81,21 +80,25 @@ fun SyllableCreator(
     secondLetterList: List<String>,
     onFirstLetterSelected: (index: Int, item: String) -> Unit = { _, _ -> },
     onSecondLetterSelected: (index: Int, item: String) -> Unit = { _, _ -> },
-    onSaveSyllable: () -> Unit = {}
+    onSaveSyllable: () -> Unit = {},
+    isVisible: Boolean = true
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(200.dp)
             .padding(top = 40.dp, bottom = 16.dp)
-            .background(AppColors.Almond),
+            .background(if (isVisible) AppColors.Almond else Color.Transparent),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     )
     {
-        StyledScrollPicker(firstLetterList, onFirstLetterSelected)
-        StyledScrollPicker(secondLetterList, onSecondLetterSelected)
-        Box(modifier = Modifier.padding(horizontal = 16.dp))
-        EmojiIconButton(text = "👌", onButtonClick = onSaveSyllable)
+        if (isVisible) {
+            StyledScrollPicker(firstLetterList, onFirstLetterSelected)
+            StyledScrollPicker(secondLetterList, onSecondLetterSelected)
+            Box(modifier = Modifier.padding(horizontal = 16.dp))
+            EmojiIconButton(text = "👌", onButtonClick = onSaveSyllable)
+        }
     }
 }
 
