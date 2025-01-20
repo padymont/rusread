@@ -13,6 +13,7 @@ import javax.inject.Inject
 
 const val MIN_SYLLABLES_COUNT = 3
 const val MAX_SYLLABLES_COUNT = 10
+const val EMPTY_SIGN = "🎈"
 
 @HiltViewModel
 class ManualListViewModel @Inject constructor(
@@ -21,10 +22,10 @@ class ManualListViewModel @Inject constructor(
 
     val firstLetterList = listOf(
         "б", "в", "г", "д", "ж", "з", "к", "л", "м", "н", "п", "р",
-        "с", "т", "ф", "х", "ц", "ч", "ш", "щ"
+        "с", "т", "ф", "х", "ц", "ч", "ш", "щ", EMPTY_SIGN
     )
     val secondLetterOptions = listOf(
-        "а", "е", "ё", "и", "о", "у", "ы", "ь", "э", "ю", "я"
+        "а", "е", "ё", "и", "о", "у", "ы", "ь", "э", "ю", "я", EMPTY_SIGN
     )
 
     private var _chosenSyllables = mutableStateOf(setOf<String>())
@@ -45,8 +46,11 @@ class ManualListViewModel @Inject constructor(
     }
 
     fun saveSyllable() {
-        val syllable = "${firstLetter.value}${secondLetter.value}"
-        _chosenSyllables.value += syllable
+        val unfilteredString = "${firstLetter.value}${secondLetter.value}"
+        val syllable = unfilteredString.replace(EMPTY_SIGN, "")
+        if (syllable.isNotEmpty()) {
+            _chosenSyllables.value += syllable
+        }
     }
 
     fun saveSyllableList() {
