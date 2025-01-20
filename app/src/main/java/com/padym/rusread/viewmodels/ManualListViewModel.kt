@@ -24,7 +24,7 @@ class ManualListViewModel @Inject constructor(
         "с", "т", "ф", "х", "ц", "ч", "ш", "щ"
     )
     val secondLetterOptions = listOf(
-        "а", "е", "и", "о", "у", "ы", "э", "ю", "я"
+        "а", "е", "ё", "и", "о", "у", "ы", "ь", "э", "ю", "я"
     )
 
     private var _chosenSyllables = mutableStateOf(setOf<String>())
