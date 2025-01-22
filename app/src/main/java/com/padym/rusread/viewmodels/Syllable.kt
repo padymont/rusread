@@ -26,11 +26,12 @@ data class Syllable(
             return getAll().find { it.key == syllable }?.millisOffset ?: 0
         }
 
-        fun getFirstTimeGroup(): Set<String>  = setOf("ма", "мо", "му", "па", "по", "пу")
+        fun getFirstTimeGroup() = setOf("ма", "мо", "му", "па", "по", "пу")
 
-        fun getPreselectedGroups(): List<List<String>> {
-            return buildNormalGroups() + getSingleLetterGroups() + getHissConsonantGroups()
-        }
+        fun getPreselectedGroups() = buildNormalGroups() +
+                getSingleLetterGroups() +
+                getHissConsonantGroups() +
+                getSoftSignGroups()
 
         private fun buildNormalGroups(): List<List<String>> {
             return vowelGroups.flatMap { vowels ->
@@ -65,6 +66,13 @@ data class Syllable(
                 "ше", "шё", "ши",
                 "ще", "щё", "щи",
             )
+        )
+
+        private fun getSoftSignGroups() = listOf(
+            listOf("б", "в", "г", "д", "бь", "вь", "гь", "дь"),
+            listOf("к", "л", "м", "н", "кь", "ль", "мь", "нь"),
+            listOf("п", "р", "с", "т", "пь", "рь", "сь", "ть"),
+            listOf("з", "зь", "ж", "жь", "ч", "чь", "ш", "шь", "щ", "щь"),
         )
 
         fun getAll(): List<Syllable> = listOf(
