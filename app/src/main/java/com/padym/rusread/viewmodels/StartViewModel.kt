@@ -61,5 +61,5 @@ class StartViewModel @Inject constructor(
     }
 
     private fun getRandomSyllableSelection() =
-        Syllable.getGroup().random().shuffled().take(10).toSet()
+        Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
 }
