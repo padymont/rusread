@@ -26,6 +26,8 @@ data class Syllable(
             return getAll().find { it.key == syllable }?.millisOffset ?: 0
         }
 
+        fun getFirstTimeGroup(): Set<String>  = setOf("ма", "мо", "му", "па", "по", "пу")
+
         fun getPreselectedGroups(): List<List<String>> {
             return buildNormalGroups() + getSingleLetterGroups() + getHissConsonantGroups()
         }

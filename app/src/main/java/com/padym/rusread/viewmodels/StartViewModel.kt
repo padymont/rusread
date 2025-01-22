@@ -29,21 +29,14 @@ class StartViewModel @Inject constructor(
     fun fetchData() {
         viewModelScope.launch {
             if (dao.getEntryCount() == 0) {
-                generateGroup()
+                setNewGroup(Syllable.getFirstTimeGroup())
             } else {
                 groups.value = dao.getEntries()!!
             }
         }
     }
 
-    fun generateGroup() {
-        viewModelScope.launch {
-            val syllableList = getRandomSyllableSelection()
-            dao.save(SyllableList(list = syllableList))
-            currentIndex.intValue = MIN_INDEX_VALUE
-            groups.value = dao.getEntries()!!
-        }
-    }
+    fun generateGroup() = setNewGroup(getRandomGroup())
 
     fun selectPreviousGroup() {
         currentIndex.intValue = (currentIndex.intValue + 1).coerceAtMost(maxIndexValue.value)
@@ -60,6 +53,13 @@ class StartViewModel @Inject constructor(
         }
     }
 
-    private fun getRandomSyllableSelection() =
-        Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
+    private fun setNewGroup(group: Set<String>) = viewModelScope.launch {
+        dao.save(SyllableList(list = group))
+        currentIndex.intValue = MIN_INDEX_VALUE
+        groups.value = dao.getEntries()!!
+    }
+
+    private fun getRandomGroup(): Set<String> {
+        return Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
+    }
 }
