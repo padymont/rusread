@@ -60,12 +60,6 @@ class StartViewModel @Inject constructor(
         }
     }
 
-    private fun getRandomSyllableSelection() = Syllable
-        .getAll()
-        .map { it.key }
-        .filter { it.length > 1 }
-        .shuffled()
-        .slice(0..9)
-        .sorted()
-        .toSet()
+    private fun getRandomSyllableSelection() =
+        Syllable.getGroup().random().shuffled().take(10).toSet()
 }

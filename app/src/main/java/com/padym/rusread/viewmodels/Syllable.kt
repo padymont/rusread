@@ -11,6 +11,73 @@ data class Syllable(
             return getAll().find { it.key == syllable }?.millisOffset ?: 0
         }
 
+        private val hardVowels = listOf("а", "о", "у", "ы", "э")
+        private val softVowels = listOf("е", "ё", "и", "ю", "я")
+        private val firstConsonants = listOf("б", "в", "г", "д", "з")
+        private val secondConsonants = listOf("к", "л", "м", "н")
+        private val thirdConsonants = listOf("п", "р", "с", "т")
+        private val sonorConsonants = listOf("л", "м", "н", "р")
+        private val pairConsonants = listOf(
+            Pair("б", "п"),
+            Pair("в", "ф"),
+            Pair("г", "к"),
+            Pair("д", "т"),
+        )
+
+        private fun buildPairConsonants(vowels: List<String>): List<List<String>> {
+            val result = mutableListOf<List<String>>()
+            for (pair in pairConsonants) {
+                val innerList = mutableListOf<String>()
+                for (vowel in vowels) {
+                    innerList.add(pair.first + vowel)
+                    innerList.add(pair.second + vowel)
+                }
+                result.add(innerList)
+            }
+            return result
+        }
+
+        private fun generateSonorPairs(consonants: List<String>, vowels: List<String>): List<String> {
+            val result = mutableListOf<String>()
+
+            for (consonant in consonants) {
+                for (vowel in vowels) {
+                    result.add(consonant + vowel)}
+            }
+
+            return result
+        }
+
+        fun getGroup(): List<List<String>> = listOf(
+            listOf("а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я"),
+            listOf("б", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н"),
+            listOf("п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ"),
+            firstConsonants.flatMap { c -> hardVowels.map { v -> c + v } },
+            firstConsonants.flatMap { c -> softVowels.map { v -> c + v } },
+            secondConsonants.flatMap { c -> hardVowels.map { v -> c + v } },
+            secondConsonants.flatMap { c -> softVowels.map { v -> c + v } },
+            thirdConsonants.flatMap { c -> hardVowels.map { v -> c + v } },
+            thirdConsonants.flatMap { c -> softVowels.map { v -> c + v } },
+            sonorConsonants.flatMap { c -> hardVowels.map { v -> c + v } },
+            sonorConsonants.flatMap { c -> softVowels.map { v -> c + v } },
+            listOf(
+                "жа", "жо", "жу", "хэ",
+                "ха", "хо", "ху", "хы", "хэ",
+                "ца", "цо", "цу", "цы", "цэ",
+                "ча", "чо", "чу",
+                "ша", "шо", "шу",
+                "ща", "що", "щу"
+            ),
+            listOf(
+                "же", "жё", "жи",
+                "хе", "хё", "хи", "хю", "хя",
+                "це", "ци",
+                "че", "чё", "чи",
+                "ше", "шё", "ши",
+                "ще", "щё", "щи",
+            ),
+        ) + buildPairConsonants(hardVowels) + buildPairConsonants(softVowels)
+
         fun getAll(): List<Syllable> = listOf(
             Syllable("ба", millisOffset = 660, occurrenceCount = 21),
             Syllable("бе", millisOffset = 2500, occurrenceCount = 29),
