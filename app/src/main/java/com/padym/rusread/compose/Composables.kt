@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.padym.rusread.viewmodels.SyllablePreview
 
 @Composable
 fun EmojiRoundButton(text: String, paddingBottom: Int = 0, onButtonClick: () -> Unit) {
@@ -77,7 +79,7 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SelectionSyllablesRow(selection: Set<String>, onClick: () -> Unit) {
+fun SelectionSyllablesRow(syllables: List<SyllablePreview>) {
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -86,25 +88,32 @@ fun SelectionSyllablesRow(selection: Set<String>, onClick: () -> Unit) {
             .padding(bottom = 48.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        selection.forEach { syllable ->
-            SingleSyllableClickable(text = syllable, onClick = onClick)
-        }
+        syllables.forEach { SingleSyllableClickable(it) }
     }
 }
 
 @Composable
-fun SingleSyllableClickable(text: String, onClick: () -> Unit) {
+fun SingleSyllableClickable(syllable: SyllablePreview) {
     OutlinedButton(
-        onClick = onClick,
+        onClick = syllable.onClick,
         contentPadding = PaddingValues(12.dp),
         border = BorderStroke(width = 0.dp, color = Color.Transparent),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
     ) {
-        Text(
-            text = text,
-            fontWeight = FontWeight.Bold,
-            fontSize = 40.sp,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        Box(contentAlignment = Alignment.TopEnd) {
+            Text(
+                text = syllable.text,
+                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            if (syllable.isStarred) {
+                Text(
+                    text = "⭐️",
+                    fontSize = 20.sp,
+                    modifier = Modifier.offset(x = 12.dp, y = (-2).dp)
+                )
+            }
+        }
     }
 }

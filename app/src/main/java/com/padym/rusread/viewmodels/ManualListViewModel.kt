@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
+import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +18,8 @@ const val EMPTY_SIGN = "🎈"
 
 @HiltViewModel
 class ManualListViewModel @Inject constructor(
-    private val dao: SyllableListDao
+    private val listDao: SyllableListDao,
+    private val scoreDao: SyllableScoreDao
 ) : ViewModel() {
 
     val firstLetterList = listOf(
@@ -32,11 +34,25 @@ class ManualListViewModel @Inject constructor(
     val chosenSyllables: Set<String>
         get() = _chosenSyllables.value
 
+    val syllablePreviewGroup by derivedStateOf {
+        chosenSyllables.map {
+            SyllablePreview(it, it in highScoreSyllables)
+        }
+    }
+
     val isSavingListAvailable by derivedStateOf { chosenSyllables.size >= MIN_SYLLABLES_COUNT }
     val isChoosingAvailable by derivedStateOf { chosenSyllables.size < MAX_SYLLABLES_COUNT }
 
     private val firstLetter = mutableStateOf("")
     private val secondLetter = mutableStateOf("")
+
+    private lateinit var highScoreSyllables: List<String>
+
+    init {
+        viewModelScope.launch {
+            highScoreSyllables = scoreDao.getHighScoreSyllables() ?: emptyList()
+        }
+    }
 
     fun processChosenLetter(position: Position, letter: String) {
         when (position) {
@@ -55,7 +71,7 @@ class ManualListViewModel @Inject constructor(
 
     fun saveSyllableList() {
         viewModelScope.launch {
-            dao.save(SyllableList(list = chosenSyllables))
+            listDao.save(SyllableList(list = chosenSyllables))
         }
     }
 }

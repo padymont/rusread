@@ -39,6 +39,8 @@ import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.ManualListViewModel
 import com.padym.rusread.viewmodels.Position
+import com.padym.rusread.viewmodels.SyllablePreview
+import kotlin.random.Random
 
 @Composable
 fun ManualListScreen(navController: NavHostController) {
@@ -62,7 +64,7 @@ fun ManualListScreen(navController: NavHostController) {
                 },
                 onSaveSyllable = viewModel::saveSyllable
             )
-            SelectionSyllablesRow(viewModel.chosenSyllables) {}
+            SelectionSyllablesRow(viewModel.syllablePreviewGroup)
             Spacer(modifier = Modifier.weight(1f))
             if (viewModel.isSavingListAvailable) {
                 BottomEmojiRoundButton(text = "👍") {
@@ -179,6 +181,9 @@ fun ScrollPicker(
 @Composable
 fun ManualListScreenPreview() {
     val chosenSyllables = setOf("ба", "бо", "бу", "бя", "ша", "фу", "бе")
+    val scoredSyllables = chosenSyllables.map {
+        SyllablePreview(it, Random.nextBoolean())
+    }
     val firstLetterList = listOf("ж", "в", "г", "д", "з", "к", "л", "м", "н", "п", "р")
     val secondLetterList = listOf("а", "ы", "е", "и", "о", "у", "э", "ю", "я")
 
@@ -190,7 +195,7 @@ fun ManualListScreenPreview() {
         ) { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
                 SyllableCreator(firstLetterList, secondLetterList)
-                SelectionSyllablesRow(chosenSyllables) {}
+                SelectionSyllablesRow(scoredSyllables)
                 Spacer(modifier = Modifier.weight(1f))
                 BottomEmojiRoundButton(text = "👍") {}
             }

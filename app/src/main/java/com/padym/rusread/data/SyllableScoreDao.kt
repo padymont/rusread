@@ -17,6 +17,9 @@ interface SyllableScoreDao {
     @Query("SELECT * FROM syllable_score_table WHERE syllable = :syllable")
     suspend fun getEntry(syllable: String): SyllableScore
 
+    @Query("SELECT * FROM syllable_score_table WHERE score > 9")
+    suspend fun getHighScoreEntries(): List<SyllableScore>?
+
     suspend fun save(syllable: String) = insert(SyllableScore(syllable))
 
     suspend fun update(syllable: String, score: Int) {
@@ -34,4 +37,6 @@ interface SyllableScoreDao {
         val entry = getEntry(syllable)
         update(entry.syllable, entry.score + 1)
     }
+
+    suspend fun getHighScoreSyllables() = getHighScoreEntries()?.map { it.syllable }
 }

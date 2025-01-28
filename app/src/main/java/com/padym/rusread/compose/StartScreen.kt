@@ -15,6 +15,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.StartViewModel
+import com.padym.rusread.viewmodels.SyllablePreview
+import kotlin.random.Random
 
 @Composable
 fun StartScreen(navController: NavHostController) {
@@ -31,7 +33,7 @@ fun StartScreen(navController: NavHostController) {
                 createSelectionAction = { navController.navigate(Screen.ManualList.route) },
                 randomSelectionAction = { viewModel.generateGroup() }
             )
-            SelectionSyllablesRow(viewModel.currentGroup.list) {}
+            SelectionSyllablesRow(viewModel.syllablePreviewGroup)
             Spacer(modifier = Modifier.weight(1f))
             BottomEmojiRoundButton(text = "🚀") {
                 viewModel.fixCurrentGroup()
@@ -74,13 +76,16 @@ fun SelectionActionRow(
 @Preview(showBackground = true)
 @Composable
 fun StartScreenPreview() {
-    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе").toSet()
+    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе")
+    val scoredSyllables = chosenSyllables.map {
+        SyllablePreview(it, Random.nextBoolean())
+    }
 
     RusreadTheme {
         Scaffold { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
                 SelectionActionRow(true, true, {}, {}, {}, {})
-                SelectionSyllablesRow(chosenSyllables) {}
+                SelectionSyllablesRow(scoredSyllables)
                 Spacer(modifier = Modifier.weight(1f))
                 BottomEmojiRoundButton(text = "🚀", onButtonClick = {})
             }
