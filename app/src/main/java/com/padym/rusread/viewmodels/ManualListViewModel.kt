@@ -30,18 +30,16 @@ class ManualListViewModel @Inject constructor(
         "а", "е", "ё", "и", "о", "у", "ы", "ь", "ъ", "э", "ю", "я", EMPTY_SIGN
     )
 
-    private var _chosenSyllables = mutableStateOf(setOf<String>())
-    val chosenSyllables: Set<String>
-        get() = _chosenSyllables.value
+    private val chosenSyllables = mutableStateOf(listOf<String>())
 
     val syllablePreviewGroup by derivedStateOf {
-        chosenSyllables.map {
+        chosenSyllables.value.map {
             SyllablePreview(it, it in highScoreSyllables)
         }
     }
 
-    val isSavingListAvailable by derivedStateOf { chosenSyllables.size >= MIN_SYLLABLES_COUNT }
-    val isChoosingAvailable by derivedStateOf { chosenSyllables.size < MAX_SYLLABLES_COUNT }
+    val isSavingListAvailable by derivedStateOf { chosenSyllables.value.size >= MIN_SYLLABLES_COUNT }
+    val isChoosingAvailable by derivedStateOf { chosenSyllables.value.size < MAX_SYLLABLES_COUNT }
 
     private val firstLetter = mutableStateOf("")
     private val secondLetter = mutableStateOf("")
@@ -64,15 +62,19 @@ class ManualListViewModel @Inject constructor(
     fun saveSyllable() {
         val unfilteredString = "${firstLetter.value}${secondLetter.value}"
         val syllable = unfilteredString.replace(EMPTY_SIGN, "")
-        if (syllable.isNotEmpty()) {
-            _chosenSyllables.value += syllable
+        if (syllable.isNotEmpty() && syllable !in chosenSyllables.value) {
+            chosenSyllables.value += syllable
         }
     }
 
     fun saveSyllableList() {
         viewModelScope.launch {
-            listDao.save(SyllableList(list = chosenSyllables))
+            listDao.save(SyllableList(list = chosenSyllables.value.toSet()))
         }
+    }
+
+    fun deleteSyllable() {
+        chosenSyllables.value -= chosenSyllables.value.last()
     }
 }
 

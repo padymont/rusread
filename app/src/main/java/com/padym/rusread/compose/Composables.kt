@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
@@ -79,34 +80,26 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SelectionSyllablesRow(syllables: List<SyllablePreview>) {
-    FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 32.dp)
-            .heightIn(min = 268.dp)
-            .padding(bottom = 48.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        syllables.forEach { SingleSyllableClickable(it) }
-    }
+fun SelectionSyllablesRow(content: @Composable() (RowScope.() -> Unit)) = FlowRow(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 32.dp)
+        .heightIn(min = 268.dp)
+        .padding(bottom = 48.dp),
+    horizontalArrangement = Arrangement.Center,
+    content = content
+)
+
+@Composable
+fun SyllableSelection(syllables: List<SyllablePreview>) {
+    return syllables.forEach { SyllableFlowRowButton(it) }
 }
 
 @Composable
-fun SingleSyllableClickable(syllable: SyllablePreview) {
-    OutlinedButton(
-        onClick = syllable.onClick,
-        contentPadding = PaddingValues(12.dp),
-        border = BorderStroke(width = 0.dp, color = Color.Transparent),
-        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-    ) {
+fun SyllableFlowRowButton(syllable: SyllablePreview) {
+    FlowRowButton(onClick = syllable.onClick) {
         Box(contentAlignment = Alignment.TopEnd) {
-            Text(
-                text = syllable.text,
-                fontWeight = FontWeight.Bold,
-                fontSize = 40.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            FlowRowButtonText(syllable.text)
             if (syllable.isStarred) {
                 Text(
                     text = "⭐️",
@@ -117,3 +110,31 @@ fun SingleSyllableClickable(syllable: SyllablePreview) {
         }
     }
 }
+
+@Composable
+fun ActionFlowRowButton(text: String, onClick: () -> Unit) {
+    FlowRowButton(onClick = onClick) {
+        Box(contentAlignment = Alignment.TopEnd) {
+            FlowRowButtonText(text)
+        }
+    }
+}
+
+@Composable
+fun FlowRowButton(onClick: () -> Unit = {}, content: @Composable() (RowScope.() -> Unit)) {
+    OutlinedButton(
+        onClick = onClick,
+        contentPadding = PaddingValues(12.dp),
+        border = BorderStroke(width = 0.dp, color = Color.Transparent),
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
+        content = content
+    )
+}
+
+@Composable
+fun FlowRowButtonText(text: String) = Text(
+    text = text,
+    fontWeight = FontWeight.Bold,
+    fontSize = 40.sp,
+    color = MaterialTheme.colorScheme.onBackground,
+)

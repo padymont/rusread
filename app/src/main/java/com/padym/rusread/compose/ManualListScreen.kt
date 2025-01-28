@@ -64,7 +64,10 @@ fun ManualListScreen(navController: NavHostController) {
                 },
                 onSaveSyllable = viewModel::saveSyllable
             )
-            SelectionSyllablesRow(viewModel.syllablePreviewGroup)
+            SelectedSyllables(
+                syllables = viewModel.syllablePreviewGroup,
+                onDelete = { viewModel.deleteSyllable() }
+            )
             Spacer(modifier = Modifier.weight(1f))
             if (viewModel.isSavingListAvailable) {
                 BottomEmojiRoundButton(text = "👍") {
@@ -90,16 +93,20 @@ fun SyllableCreator(
             .fillMaxWidth()
             .height(200.dp)
             .padding(top = 40.dp, bottom = 16.dp)
-            .background(if (isVisible) AppColors.Almond else Color.Transparent),
+            .background(AppColors.Almond),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     )
     {
-        if (isVisible) {
-            StyledScrollPicker(firstLetterList, onFirstLetterSelected)
-            StyledScrollPicker(secondLetterList, onSecondLetterSelected)
-            Box(modifier = Modifier.padding(horizontal = 16.dp))
-            EmojiIconButton(text = "👌", onButtonClick = onSaveSyllable)
+        StyledScrollPicker(firstLetterList, onFirstLetterSelected)
+        StyledScrollPicker(secondLetterList, onSecondLetterSelected)
+        Box(
+            modifier = Modifier.width(80.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            if (isVisible) {
+                EmojiIconButton(text = "👌", onButtonClick = onSaveSyllable)
+            }
         }
     }
 }
@@ -177,6 +184,14 @@ fun ScrollPicker(
     }
 }
 
+@Composable
+fun SelectedSyllables(syllables: List<SyllablePreview>, onDelete: () -> Unit = {}) {
+    return SelectionSyllablesRow {
+        SyllableSelection(syllables)
+        if (syllables.isNotEmpty()) ActionFlowRowButton(text = "💣", onClick = onDelete)
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ManualListScreenPreview() {
@@ -195,7 +210,7 @@ fun ManualListScreenPreview() {
         ) { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
                 SyllableCreator(firstLetterList, secondLetterList)
-                SelectionSyllablesRow(scoredSyllables)
+                SelectedSyllables(scoredSyllables)
                 Spacer(modifier = Modifier.weight(1f))
                 BottomEmojiRoundButton(text = "👍") {}
             }

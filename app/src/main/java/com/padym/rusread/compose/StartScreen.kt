@@ -33,7 +33,7 @@ fun StartScreen(navController: NavHostController) {
                 createSelectionAction = { navController.navigate(Screen.ManualList.route) },
                 randomSelectionAction = { viewModel.generateGroup() }
             )
-            SelectionSyllablesRow(viewModel.syllablePreviewGroup)
+            SelectedPreview(viewModel.syllablePreviewGroup)
             Spacer(modifier = Modifier.weight(1f))
             BottomEmojiRoundButton(text = "🚀") {
                 viewModel.fixCurrentGroup()
@@ -41,6 +41,11 @@ fun StartScreen(navController: NavHostController) {
             }
         }
     }
+}
+
+@Composable
+fun SelectedPreview(syllables: List<SyllablePreview>) = SelectionSyllablesRow {
+        SyllableSelection(syllables)
 }
 
 @Composable
@@ -85,7 +90,7 @@ fun StartScreenPreview() {
         Scaffold { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
                 SelectionActionRow(true, true, {}, {}, {}, {})
-                SelectionSyllablesRow(scoredSyllables)
+                SelectedPreview(scoredSyllables)
                 Spacer(modifier = Modifier.weight(1f))
                 BottomEmojiRoundButton(text = "🚀", onButtonClick = {})
             }
