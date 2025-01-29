@@ -102,6 +102,10 @@ class GameViewModel @Inject constructor(
         playAudio(offset)
     }
 
+    fun speakSyllable(offset: Int) {
+        playAudio(offset)
+    }
+
     private fun playAudio(offset: Int) {
         mediaPlayer.seekTo(offset)
         mediaPlayer.start()

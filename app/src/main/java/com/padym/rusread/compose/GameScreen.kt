@@ -65,14 +65,14 @@ fun GameScreen(navController: NavHostController) {
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             if (viewModel.isGameOn) {
-//                DebugSyllablesAudioOffsets { offset -> viewModel.speakText(offset) }
+                DebugSyllablesAudioOffsets { offset -> viewModel.speakSyllable(offset) }
 //                EmojiRoundButton("🎧") {
-                EmojiRoundButton(viewModel.spokenSyllable) {
-                    viewModel.speakSyllable(viewModel.spokenSyllable)
-                }
-                ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
-                    viewModel.processAnswer(syllable)
-                }
+//                EmojiRoundButton(viewModel.spokenSyllable) {
+//                    viewModel.speakSyllable(viewModel.spokenSyllable)
+//                }
+//                ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
+//                    viewModel.processAnswer(syllable)
+//                }
             } else {
                 EndGameMessage()
             }
