@@ -30,9 +30,9 @@ class GameViewModel @Inject constructor(
 ) : ViewModel() {
     private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
-    private var _syllables = emptySet<String>()
+    private var _syllables = mutableStateOf(emptySet<String>())
     val syllables: Set<String>
-        get() = _syllables
+        get() = _syllables.value
 
     private val _spokenSyllable = mutableStateOf("")
     val spokenSyllable: String
@@ -51,11 +51,13 @@ class GameViewModel @Inject constructor(
         correctAnswers < RIGHT_ANSWER_NUMBER
     }
 
-    fun initializeData() = viewModelScope.launch {
-        _syllables = listDao.getLatestEntry().list
-        syllables.forEach { scoreDao.save(it) }
-        if (spokenSyllable.isEmpty()) {
-            _spokenSyllable.value = syllables.random()
+    init {
+        viewModelScope.launch {
+            _syllables.value = listDao.getLatestEntry().list
+            syllables.forEach { scoreDao.save(it) }
+            if (spokenSyllable.isEmpty()) {
+                _spokenSyllable.value = syllables.random()
+            }
         }
     }
 

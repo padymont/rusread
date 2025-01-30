@@ -55,7 +55,6 @@ import kotlin.random.Random
 @Composable
 fun GameScreen(navController: NavHostController) {
     val viewModel: GameViewModel = hiltViewModel()
-    viewModel.initializeData()
 
     Scaffold(
         topBar = {
@@ -65,14 +64,14 @@ fun GameScreen(navController: NavHostController) {
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             if (viewModel.isGameOn) {
-                DebugSyllablesAudioOffsets { offset -> viewModel.speakSyllable(offset) }
-//                EmojiRoundButton("🎧") {
+//                DebugSyllablesAudioOffsets { offset -> viewModel.speakSyllable(offset) }
+                EmojiRoundButton("🎧") {
 //                EmojiRoundButton(viewModel.spokenSyllable) {
-//                    viewModel.speakSyllable(viewModel.spokenSyllable)
-//                }
-//                ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
-//                    viewModel.processAnswer(syllable)
-//                }
+                    viewModel.speakSyllable(viewModel.spokenSyllable)
+                }
+                ScatteredSyllablesButtons(viewModel.syllables) { syllable ->
+                    viewModel.processAnswer(syllable)
+                }
             } else {
                 EndGameMessage()
             }
@@ -284,7 +283,7 @@ fun SyllableGameContentPreview() {
             bottomBar = { ProgressBottomBar(0.7f) }
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
-                EmojiRoundButton("жа") {}
+                EmojiRoundButton("🎧") {}
                 ScatteredSyllablesButtons(selectedSyllables) { _ -> Result.entries.random() }
             }
         }
