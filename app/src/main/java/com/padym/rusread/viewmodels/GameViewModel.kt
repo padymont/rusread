@@ -66,21 +66,23 @@ class GameViewModel @Inject constructor(
     }
 
     fun processAnswer(syllable: String): Result {
+        val result: Result
         val isAnswerCorrect = syllable == spokenSyllable
-        if (isGameOn) setNextSpokenSyllable()
-        return when (isAnswerCorrect) {
+        when (isAnswerCorrect) {
             true -> {
                 increaseSyllableScore(syllable)
                 increaseCorrectAnswers()
-                Result.CORRECT
+                result = Result.CORRECT
             }
 
             false -> {
                 lowerSyllableScore(syllable)
                 decreaseCorrectAnswers()
-                Result.WRONG
+                result = Result.WRONG
             }
         }
+        if (isGameOn) setNextSpokenSyllable()
+        return result
     }
 
     private fun increaseCorrectAnswers() = _correctAnswers.intValue++
