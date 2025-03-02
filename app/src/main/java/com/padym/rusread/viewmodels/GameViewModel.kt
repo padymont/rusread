@@ -55,6 +55,8 @@ class GameViewModel @Inject constructor(
         correctAnswers < RIGHT_ANSWER_NUMBER
     }
 
+    private var currentOffset = 0
+
     init {
         viewModelScope.launch {
             _syllables.value = listDao.getLatestEntry().list
@@ -115,11 +117,16 @@ class GameViewModel @Inject constructor(
     }
 
     private fun playAudio(offset: Int) {
+        currentOffset = offset
         mediaPlayer.seekTo(offset)
         mediaPlayer.start()
         Handler(Looper.getMainLooper())
             .postDelayed(
-                { mediaPlayer.pause() },
+                {
+                    if (offset == currentOffset) {
+                        mediaPlayer.pause()
+                    }
+                },
                 SYLLABLE_LENGTH_MILLIS
             )
     }
