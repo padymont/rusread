@@ -56,6 +56,12 @@ import kotlin.random.Random
 fun GameScreen(navController: NavHostController) {
     val viewModel: GameViewModel = hiltViewModel()
 
+    LaunchedEffect(key1 = viewModel.isAudioLoading) {
+        if (!viewModel.isAudioLoading) {
+            viewModel.speakSyllable(viewModel.spokenSyllable)
+        }
+    }
+
     Scaffold(
         topBar = {
             SimpleCloseTopAppBar() { navController.popBackStack() }

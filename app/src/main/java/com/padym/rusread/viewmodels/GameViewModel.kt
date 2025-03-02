@@ -43,6 +43,10 @@ class GameViewModel @Inject constructor(
     val correctAnswers: Int
         get() = _correctAnswers.intValue
 
+    val isAudioLoading by derivedStateOf {
+        spokenSyllable.isEmpty()
+    }
+
     val gameProgress by derivedStateOf {
         (correctAnswers + PROGRESS_OFFSET) / (RIGHT_ANSWER_NUMBER + PROGRESS_OFFSET)
     }
