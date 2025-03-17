@@ -1,15 +1,16 @@
 package com.padym.rusread.viewmodels
 
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,58 +21,66 @@ class StartViewModel @Inject constructor(
     private val listDao: SyllableListDao,
     private val scoreDao: SyllableScoreDao
 ) : ViewModel() {
-    private val groups = mutableStateOf(listOf(SyllableList.empty()))
-    private val currentIndex = mutableIntStateOf(0)
-    private val maxIndexValue = derivedStateOf { groups.value.size - 1 }
-    private val currentGroup by derivedStateOf { groups.value[currentIndex.intValue] }
 
-    val syllablePreviewGroup by derivedStateOf {
-        currentGroup.list.map {
-            SyllablePreview(it, it in highScoreSyllables)
-        }
-    }
-    val isFirstGroup by derivedStateOf { currentIndex.intValue == MIN_INDEX_VALUE }
-    val isLastGroup by derivedStateOf { currentIndex.intValue == maxIndexValue.value }
+    private val currentIndex = MutableStateFlow(0)
+    private var maxIndexValue = 0
 
-    private lateinit var highScoreSyllables: List<String>
-
-    init {
-        viewModelScope.launch {
-            highScoreSyllables = scoreDao.getHighScoreSyllables() ?: emptyList()
-        }
-    }
-
-    fun fetchData() {
-        viewModelScope.launch {
-            if (listDao.getEntryCount() == 0) {
-                setNewGroup(Syllable.getFirstTimeGroup())
-            } else {
-                groups.value = listDao.getEntries()!!
+    val currentGroup = listDao.getEntries()
+        .map {
+            it.ifEmpty {
+                SyllableList(list = Syllable.getFirstTimeGroup())
+                    .run {
+                        listDao.save(this)
+                        listOf(this)
+                    }
             }
-        }
-    }
+        }.map { list ->
+            maxIndexValue = list.lastIndex
+            list.sortedByDescending { it.modifiedAt }
+        }.combine(scoreDao.getHighScoreSyllables()) { groups, scores ->
+            groups.mapIndexed { index, group ->
+                PreviewGroup(
+                    isPreviousEnabled = index < groups.lastIndex,
+                    isNextEnabled = index > 0,
+                    syllables = group.list.map {
+                        SyllablePreview(it, it in scores)
+                    }
+                )
+            }
+        }.combine(currentIndex) { groups, index ->
+            groups[index]
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = PreviewGroup()
+        )
+
+    data class PreviewGroup(
+        val isPreviousEnabled: Boolean = false,
+        val isNextEnabled: Boolean = false,
+        val syllables: List<SyllablePreview> = emptyList()
+    )
 
     fun generateGroup() = setNewGroup(getRandomGroup())
 
     fun selectPreviousGroup() {
-        currentIndex.intValue = (currentIndex.intValue + 1).coerceAtMost(maxIndexValue.value)
+        currentIndex.value = (currentIndex.value + 1).coerceAtMost(maxIndexValue)
     }
 
     fun selectNextGroup() {
-        currentIndex.intValue = (currentIndex.intValue - 1).coerceAtLeast(MIN_INDEX_VALUE)
+        currentIndex.value = (currentIndex.value - 1).coerceAtLeast(MIN_INDEX_VALUE)
     }
 
     fun fixCurrentGroup() {
         viewModelScope.launch {
-            listDao.update(currentGroup)
-            currentIndex.intValue = MIN_INDEX_VALUE
+            listDao.update(currentGroup.value.syllables.map { it.text }.toSet())
+            currentIndex.value = MIN_INDEX_VALUE
         }
     }
 
     private fun setNewGroup(group: Set<String>) = viewModelScope.launch {
         listDao.save(SyllableList(list = group))
-        currentIndex.intValue = MIN_INDEX_VALUE
-        groups.value = listDao.getEntries()!!
+        currentIndex.value = MIN_INDEX_VALUE
     }
 
     private fun getRandomGroup(): Set<String> {

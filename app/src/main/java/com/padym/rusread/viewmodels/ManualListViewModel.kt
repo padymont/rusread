@@ -9,7 +9,9 @@ import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 const val MIN_SYLLABLES_COUNT = 3
@@ -48,7 +50,9 @@ class ManualListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            highScoreSyllables = scoreDao.getHighScoreSyllables() ?: emptyList()
+            withContext(Dispatchers.IO) {
+                highScoreSyllables = scoreDao.getHighScoreSyllablesOld() ?: emptyList()
+            }
         }
     }
 

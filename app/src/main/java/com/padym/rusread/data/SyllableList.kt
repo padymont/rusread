@@ -9,13 +9,7 @@ import androidx.room.TypeConverters
 @TypeConverters(StringSetConverter::class)
 data class SyllableList(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val list: Set<String>,
+    val list: Set<String> = setOf(),
     @ColumnInfo(name = "modified_at")
     val modifiedAt:Long = System.currentTimeMillis()
-) {
-    companion object {
-        fun empty(): SyllableList {
-            return SyllableList(list = emptySet())
-        }
-    }
-}
+)

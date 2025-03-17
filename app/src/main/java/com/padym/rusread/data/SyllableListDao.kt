@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SyllableListDao {
@@ -11,11 +12,11 @@ interface SyllableListDao {
     @Insert
     suspend fun insert(entity: SyllableList)
 
-    @Query("UPDATE syllable_list_table SET modified_at = :modifiedAt WHERE id = :id")
-    suspend fun updateModifiedAt(id: Int, modifiedAt: Long)
+    @Query("UPDATE syllable_list_table SET modified_at = :modifiedAt WHERE list = :list")
+    suspend fun updateModifiedAt(list: Set<String>, modifiedAt: Long)
 
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC")
-    suspend fun getEntries(): List<SyllableList>?
+    fun getEntries(): Flow<List<SyllableList>>
 
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at ASC LIMIT 1")
     suspend fun getOldestEntry(): SyllableList?
@@ -42,7 +43,7 @@ interface SyllableListDao {
         }
     }
 
-    suspend fun update(entity: SyllableList) {
-        updateModifiedAt(entity.id, System.currentTimeMillis())
+    suspend fun update(list: Set<String>) {
+        updateModifiedAt(list, System.currentTimeMillis())
     }
 }

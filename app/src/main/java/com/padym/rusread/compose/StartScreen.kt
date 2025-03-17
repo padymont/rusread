@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,19 +23,19 @@ import kotlin.random.Random
 @Composable
 fun StartScreen(navController: NavHostController) {
     val viewModel: StartViewModel = hiltViewModel()
-    viewModel.fetchData()
+    val currentGroup by viewModel.currentGroup.collectAsState()
 
     Scaffold { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             SelectionActionRow(
-                isPreviousSelectionEnabled = !viewModel.isLastGroup,
-                isNextSelectionEnabled = !viewModel.isFirstGroup,
+                isPreviousSelectionEnabled = currentGroup.isPreviousEnabled,
+                isNextSelectionEnabled = currentGroup.isNextEnabled,
                 previousSelectionAction = { viewModel.selectPreviousGroup() },
                 nextSelectionAction = { viewModel.selectNextGroup() },
                 createSelectionAction = { navController.navigate(Screen.ManualList.route) },
                 randomSelectionAction = { viewModel.generateGroup() }
             )
-            SelectedPreview(viewModel.syllablePreviewGroup)
+            SelectedPreview(currentGroup.syllables)
             Spacer(modifier = Modifier.weight(1f))
             BottomEmojiRoundButton(text = "🚀") {
                 viewModel.fixCurrentGroup()
