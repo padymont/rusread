@@ -22,9 +22,6 @@ interface SyllableScoreDao {
     suspend fun getEntry(syllable: String): SyllableScore
 
     @Query("SELECT * FROM syllable_score_table WHERE score > $HIGH_SCORE - 1")
-    fun getHighScoreEntriesOld(): List<SyllableScore>
-
-    @Query("SELECT * FROM syllable_score_table WHERE score > $HIGH_SCORE - 1")
     fun getHighScoreEntries(): Flow<List<SyllableScore>>
 
     @Query("SELECT * FROM syllable_score_table WHERE syllable IN (:syllables)")
@@ -51,8 +48,6 @@ interface SyllableScoreDao {
     suspend fun getScores(syllables: Set<String>) = getEntriesScores(syllables).map {
         Pair(it.syllable, it.score)
     }
-
-    suspend fun getHighScoreSyllablesOld() = getHighScoreEntriesOld()?.map { it.syllable }
 
     fun getHighScoreSyllables() = getHighScoreEntries().map {
         list -> list.map { it.syllable }

@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,9 @@ import kotlin.random.Random
 @Composable
 fun ManualListScreen(navController: NavHostController) {
     val viewModel: ManualListViewModel = hiltViewModel()
+    val syllables by viewModel.syllablePreviewGroup.collectAsState()
+    val isSavingListAvailable by viewModel.isSavingListAvailable.collectAsState()
+    val isChoosingAvailable by viewModel.isChoosingAvailable.collectAsState()
 
     Scaffold(
         topBar = {
@@ -53,7 +57,7 @@ fun ManualListScreen(navController: NavHostController) {
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             SyllableCreator(
-                isVisible = viewModel.isChoosingAvailable,
+                isVisible = isChoosingAvailable,
                 firstLetterList = viewModel.firstLetterList,
                 secondLetterList = viewModel.secondLetterOptions,
                 onFirstLetterSelected = { _, item ->
@@ -65,11 +69,11 @@ fun ManualListScreen(navController: NavHostController) {
                 onSaveSyllable = viewModel::saveSyllable
             )
             SelectedSyllables(
-                syllables = viewModel.syllablePreviewGroup,
+                syllables = syllables,
                 onDelete = { viewModel.deleteSyllable() }
             )
             Spacer(modifier = Modifier.weight(1f))
-            if (viewModel.isSavingListAvailable) {
+            if (isSavingListAvailable) {
                 BottomEmojiRoundButton(text = "👍") {
                     viewModel.saveSyllableList()
                     navController.popBackStack()
