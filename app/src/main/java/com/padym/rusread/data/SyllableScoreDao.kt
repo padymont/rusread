@@ -15,8 +15,8 @@ interface SyllableScoreDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: SyllableScore)
 
-    @Query("UPDATE syllable_score_table SET score = :score, modified_at = :modifiedAt WHERE syllable = :syllable")
-    suspend fun updateScore(syllable: String, score: Int, modifiedAt: Long)
+    @Query("UPDATE syllable_score_table SET score = :score WHERE syllable = :syllable")
+    suspend fun updateScore(syllable: String, score: Int)
 
     @Query("SELECT * FROM syllable_score_table WHERE syllable = :syllable")
     suspend fun getEntry(syllable: String): SyllableScore
@@ -30,7 +30,7 @@ interface SyllableScoreDao {
     suspend fun save(syllable: String) = insert(SyllableScore(syllable))
 
     suspend fun update(syllable: String, score: Int) {
-        updateScore(syllable, score, System.currentTimeMillis())
+        updateScore(syllable, score)
     }
 
     suspend fun lowerScore(syllable: String) {

@@ -18,17 +18,11 @@ interface SyllableListDao {
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC")
     fun getEntries(): Flow<List<SyllableList>>
 
-    @Query("SELECT * FROM syllable_list_table ORDER BY modified_at ASC LIMIT 1")
-    suspend fun getOldestEntry(): SyllableList?
-
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC LIMIT 1")
     suspend fun getLatestEntry(): SyllableList
 
-    @Query("DELETE FROM syllable_list_table")
-    suspend fun deleteAll()
-
-    @Query("DELETE FROM syllable_list_table WHERE id = :id")
-    suspend fun deleteById(id: Int)
+    @Query("DELETE FROM syllable_list_table WHERE list = (SELECT list FROM syllable_list_table ORDER BY modified_at ASC LIMIT 1)")
+    suspend fun deleteOldestEntry()
 
     @Query("SELECT COUNT(*) FROM syllable_list_table")
     suspend fun getEntryCount(): Int
@@ -38,8 +32,7 @@ interface SyllableListDao {
         insert(entity)
         val count = getEntryCount()
         if (count > 5) {
-            val oldestEntry = getOldestEntry()
-            oldestEntry?.let { deleteById(it.id) }
+            deleteOldestEntry()
         }
     }
 

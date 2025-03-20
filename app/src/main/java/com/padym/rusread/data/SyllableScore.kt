@@ -1,14 +1,11 @@
 package com.padym.rusread.data
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "syllable_score_table")
 data class SyllableScore(
     @PrimaryKey val syllable: String,
-    val score: Int = 0,
-    @ColumnInfo(name = "modified_at")
-    val modifiedAt:Long = System.currentTimeMillis()
+    val score: Int = 0
 ) {
 }
