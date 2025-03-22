@@ -12,8 +12,8 @@ interface SyllableListDao {
     @Insert
     suspend fun insert(entity: SyllableList)
 
-    @Query("UPDATE syllable_list_table SET modified_at = :modifiedAt WHERE list = :list")
-    suspend fun updateModifiedAt(list: Set<String>, modifiedAt: Long)
+    @Query("UPDATE syllable_list_table SET modified_at = :modifiedAt WHERE id = :id")
+    suspend fun updateModifiedAt(id: Int, modifiedAt: Long)
 
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC")
     fun getEntries(): Flow<List<SyllableList>>
@@ -21,7 +21,7 @@ interface SyllableListDao {
     @Query("SELECT * FROM syllable_list_table ORDER BY modified_at DESC LIMIT 1")
     suspend fun getLatestEntry(): SyllableList
 
-    @Query("DELETE FROM syllable_list_table WHERE list = (SELECT list FROM syllable_list_table ORDER BY modified_at ASC LIMIT 1)")
+    @Query("DELETE FROM syllable_list_table WHERE id = (SELECT id FROM syllable_list_table ORDER BY modified_at ASC LIMIT 1)")
     suspend fun deleteOldestEntry()
 
     @Query("SELECT COUNT(*) FROM syllable_list_table")
@@ -36,7 +36,7 @@ interface SyllableListDao {
         }
     }
 
-    suspend fun update(list: Set<String>) {
-        updateModifiedAt(list, System.currentTimeMillis())
+    suspend fun update(entityId: Int) {
+        updateModifiedAt(entityId, System.currentTimeMillis())
     }
 }

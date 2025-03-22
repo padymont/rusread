@@ -23,10 +23,11 @@ class StartViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val currentIndex = MutableStateFlow(0)
-    private var maxIndexValue = 0
+    private var maxIndexValue = MIN_INDEX_VALUE
 
     val currentGroup = listDao.getEntries()
         .map {
+            currentIndex.value = MIN_INDEX_VALUE
             it.ifEmpty {
                 SyllableList(list = Syllable.getFirstTimeGroup())
                     .run {
@@ -40,6 +41,7 @@ class StartViewModel @Inject constructor(
         }.combine(scoreDao.getHighScoreSyllables()) { groups, scores ->
             groups.mapIndexed { index, group ->
                 PreviewGroup(
+                    id = group.id,
                     isPreviousEnabled = index < groups.lastIndex,
                     isNextEnabled = index > 0,
                     syllables = group.list.map {
@@ -56,6 +58,7 @@ class StartViewModel @Inject constructor(
         )
 
     data class PreviewGroup(
+        val id: Int = 0,
         val isPreviousEnabled: Boolean = false,
         val isNextEnabled: Boolean = false,
         val syllables: List<SyllablePreview> = emptyList()
@@ -73,14 +76,12 @@ class StartViewModel @Inject constructor(
 
     fun fixCurrentGroup() {
         viewModelScope.launch {
-            listDao.update(currentGroup.value.syllables.map { it.text }.toSet())
-            currentIndex.value = MIN_INDEX_VALUE
+            listDao.update(currentGroup.value.id)
         }
     }
 
     private fun setNewGroup(group: Set<String>) = viewModelScope.launch {
         listDao.save(SyllableList(list = group))
-        currentIndex.value = MIN_INDEX_VALUE
     }
 
     private fun getRandomGroup(): Set<String> {
