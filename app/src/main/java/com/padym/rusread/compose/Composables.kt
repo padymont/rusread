@@ -26,9 +26,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.padym.rusread.ui.theme.AppColors
+import com.padym.rusread.ui.theme.RusreadTheme
+import com.padym.rusread.viewmodels.Syllable
 import com.padym.rusread.viewmodels.SyllablePreview
+import kotlin.random.Random
 
 @Composable
 fun EmojiRoundButton(text: String, paddingBottom: Int = 0, onButtonClick: () -> Unit) {
@@ -97,9 +102,16 @@ fun SyllableSelection(syllables: List<SyllablePreview>) {
 
 @Composable
 fun SyllableFlowRowButton(syllable: SyllablePreview) {
-    FlowRowButton(onClick = syllable.onClick) {
+    FlowRowButton(
+        isEnabled = syllable.isEnabled || syllable.isSelected,
+        onClick = syllable.onClick
+    ) {
         Box(contentAlignment = Alignment.TopEnd) {
-            FlowRowButtonText(syllable.text)
+            FlowRowButtonText(
+                text = syllable.text,
+                isSelected = syllable.isSelected,
+                isEnabled = syllable.isEnabled
+            )
             if (syllable.isStarred) {
                 Text(
                     text = "⭐️",
@@ -121,8 +133,13 @@ fun ActionFlowRowButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun FlowRowButton(onClick: () -> Unit = {}, content: @Composable() (RowScope.() -> Unit)) {
+fun FlowRowButton(
+    isEnabled: Boolean = true,
+    onClick: () -> Unit = {},
+    content: @Composable (RowScope.() -> Unit)
+) {
     OutlinedButton(
+        enabled = isEnabled,
         onClick = onClick,
         contentPadding = PaddingValues(12.dp),
         border = BorderStroke(width = 0.dp, color = Color.Transparent),
@@ -132,9 +149,43 @@ fun FlowRowButton(onClick: () -> Unit = {}, content: @Composable() (RowScope.() 
 }
 
 @Composable
-fun FlowRowButtonText(text: String) = Text(
-    text = text,
-    fontWeight = FontWeight.Bold,
-    fontSize = 40.sp,
-    color = MaterialTheme.colorScheme.onBackground,
-)
+fun FlowRowButtonText(
+    text: String = "",
+    isSelected: Boolean = false,
+    isEnabled: Boolean = true,
+) {
+    val textColor = if (isSelected) {
+        AppColors.IndianRed
+    } else if (isEnabled) {
+        MaterialTheme.colorScheme.onBackground
+    } else {
+        AppColors.SoftSand
+    }
+    Text(
+        text = text,
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
+        color = textColor,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SelectionSyllablesRowPreview() {
+    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(34).sorted()
+    val scoredSyllables = chosenSyllables.map {
+        val isSelected = Random.nextBoolean()
+        val isEnabled = if (isSelected) { true } else { Random.nextBoolean() }
+        SyllablePreview(
+            text = it,
+            isSelected = isSelected,
+            isEnabled = isEnabled,
+            isStarred = Random.nextBoolean()
+        )
+    }
+    RusreadTheme {
+        SelectionSyllablesRow {
+            SyllableSelection(scoredSyllables)
+        }
+    }
+}
