@@ -45,7 +45,7 @@ class StartViewModel @Inject constructor(
                     isPreviousEnabled = index < groups.lastIndex,
                     isNextEnabled = index > 0,
                     syllables = group.list.map {
-                        SyllablePreview(it, it in scores)
+                        SyllablePreview(text = it, isStarred = it in scores)
                     }
                 )
             }
@@ -56,13 +56,6 @@ class StartViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = PreviewGroup()
         )
-
-    data class PreviewGroup(
-        val id: Int = 0,
-        val isPreviousEnabled: Boolean = false,
-        val isNextEnabled: Boolean = false,
-        val syllables: List<SyllablePreview> = emptyList()
-    )
 
     fun generateGroup() = setNewGroup(getRandomGroup())
 
