@@ -44,7 +44,7 @@ class StartViewModel @Inject constructor(
                     id = group.id,
                     isPreviousEnabled = index < groups.lastIndex,
                     isNextEnabled = index > 0,
-                    syllables = group.list.map {
+                    syllables = group.list.sorted().map {
                         SyllablePreview(text = it, isStarred = it in scores)
                     }
                 )

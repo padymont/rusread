@@ -190,7 +190,7 @@ fun ScrollPicker(
 
 @Composable
 fun SelectedSyllables(syllables: List<SyllablePreview>, onDelete: () -> Unit = {}) {
-    return SelectionSyllablesRow {
+    SelectionSyllablesRow(paddingBottom = 48.dp) {
         SyllableSelection(syllables)
         if (syllables.isNotEmpty()) ActionFlowRowButton(text = "💣", onClick = onDelete)
     }

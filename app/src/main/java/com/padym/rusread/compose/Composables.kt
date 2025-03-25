@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.padym.rusread.ui.theme.AppColors
@@ -36,7 +37,12 @@ import com.padym.rusread.viewmodels.SyllablePreview
 import kotlin.random.Random
 
 @Composable
-fun EmojiRoundButton(text: String, paddingBottom: Int = 0, onButtonClick: () -> Unit) {
+fun EmojiRoundButton(
+    text: String = "",
+    isEnabled: Boolean = true,
+    paddingBottom: Int = 0,
+    onButtonClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,6 +51,7 @@ fun EmojiRoundButton(text: String, paddingBottom: Int = 0, onButtonClick: () -> 
     ) {
         Button(
             onClick = onButtonClick,
+            enabled = isEnabled,
             modifier = Modifier
                 .clip(CircleShape)
                 .size(160.dp)
@@ -61,8 +68,16 @@ fun EmojiRoundButton(text: String, paddingBottom: Int = 0, onButtonClick: () -> 
 }
 
 @Composable
-fun BottomEmojiRoundButton(text: String, onButtonClick: () -> Unit) =
-    EmojiRoundButton(text, paddingBottom = 80, onButtonClick)
+fun BottomEmojiRoundButton(
+    text: String = "",
+    isEnabled: Boolean = true,
+    onButtonClick: () -> Unit = {}
+) = EmojiRoundButton(
+    text = text,
+    isEnabled = isEnabled,
+    paddingBottom = 80,
+    onButtonClick = onButtonClick
+)
 
 @Composable
 fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -> Unit) {
@@ -85,12 +100,15 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SelectionSyllablesRow(content: @Composable() (RowScope.() -> Unit)) = FlowRow(
+fun SelectionSyllablesRow(
+    paddingBottom: Dp = 0.dp,
+    content: @Composable() (RowScope.() -> Unit)
+) = FlowRow(
     modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 32.dp)
         .heightIn(min = 268.dp)
-        .padding(bottom = 48.dp),
+        .padding(bottom = paddingBottom),
     horizontalArrangement = Arrangement.Center,
     content = content
 )

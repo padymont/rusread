@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -55,21 +54,21 @@ fun AllSyllablesScreenContent(
                 HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
             }
         },
-        floatingActionButton = {
-            if (isSavingEnabled) {
-                BottomEmojiRoundButton(text = "👍") { onSaveList() }
+        bottomBar = {
+            Column {
+                HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
+                Spacer(modifier = Modifier.height(16.dp))
+                val text = if (isSavingEnabled) "👍" else ""
+                BottomEmojiRoundButton(text = text, isEnabled = isSavingEnabled) { onSaveList() }
+                Spacer(modifier = Modifier.height(24.dp))
             }
-        },
-        floatingActionButtonPosition = FabPosition.Center
+        }
     ) { paddingValues ->
         LazyColumn(Modifier.padding(paddingValues)) {
             item {
                 SelectionSyllablesRow {
                     SyllableSelection(syllables)
                 }
-            }
-            item {
-                Spacer(Modifier.height(240.dp))
             }
         }
     }
@@ -78,7 +77,7 @@ fun AllSyllablesScreenContent(
 @Preview(showBackground = true)
 @Composable
 fun AllSyllablesScreenPreview() {
-    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(60).sorted()
+    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(30).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
         val isEnabled = if (isSelected) {

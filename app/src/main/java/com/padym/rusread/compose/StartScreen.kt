@@ -46,9 +46,10 @@ fun StartScreen(navController: NavHostController) {
 }
 
 @Composable
-fun SelectedPreview(syllables: List<SyllablePreview>) = SelectionSyllablesRow {
+fun SelectedPreview(syllables: List<SyllablePreview>) =
+    SelectionSyllablesRow(paddingBottom = 48.dp) {
         SyllableSelection(syllables)
-}
+    }
 
 @Composable
 fun SelectionActionRow(
