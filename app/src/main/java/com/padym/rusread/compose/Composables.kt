@@ -38,10 +38,7 @@ import kotlin.random.Random
 
 @Composable
 fun EmojiRoundButton(
-    text: String = "",
-    isEnabled: Boolean = true,
-    paddingBottom: Int = 0,
-    onButtonClick: () -> Unit
+    text: String = "", isEnabled: Boolean = true, paddingBottom: Int = 0, onButtonClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -69,14 +66,9 @@ fun EmojiRoundButton(
 
 @Composable
 fun BottomEmojiRoundButton(
-    text: String = "",
-    isEnabled: Boolean = true,
-    onButtonClick: () -> Unit = {}
+    text: String = "", isEnabled: Boolean = true, onButtonClick: () -> Unit = {}
 ) = EmojiRoundButton(
-    text = text,
-    isEnabled = isEnabled,
-    paddingBottom = 80,
-    onButtonClick = onButtonClick
+    text = text, isEnabled = isEnabled, paddingBottom = 80, onButtonClick = onButtonClick
 )
 
 @Composable
@@ -91,9 +83,7 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
             .alpha(if (isVisible) 1f else 0f)
     ) {
         Text(
-            text = text,
-            fontSize = 32.sp,
-            textAlign = TextAlign.Center
+            text = text, fontSize = 32.sp, textAlign = TextAlign.Center
         )
     }
 }
@@ -101,8 +91,7 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SelectionSyllablesRow(
-    paddingBottom: Dp = 0.dp,
-    content: @Composable() (RowScope.() -> Unit)
+    paddingBottom: Dp = 0.dp, content: @Composable() (RowScope.() -> Unit)
 ) = FlowRow(
     modifier = Modifier
         .fillMaxWidth()
@@ -120,9 +109,12 @@ fun SyllableSelection(syllables: List<SyllablePreview>) {
 
 @Composable
 fun SyllableFlowRowButton(syllable: SyllablePreview) {
-    FlowRowButton(
-        isEnabled = syllable.isEnabled || syllable.isSelected,
-        onClick = syllable.onClick
+    OutlinedButton(
+        enabled = syllable.isEnabled || syllable.isSelected,
+        onClick = syllable.onClick,
+        contentPadding = PaddingValues(12.dp),
+        border = BorderStroke(width = 0.dp, color = Color.Transparent),
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
             FlowRowButtonText(
@@ -139,31 +131,6 @@ fun SyllableFlowRowButton(syllable: SyllablePreview) {
             }
         }
     }
-}
-
-@Composable
-fun ActionFlowRowButton(text: String, onClick: () -> Unit) {
-    FlowRowButton(onClick = onClick) {
-        Box(contentAlignment = Alignment.TopEnd) {
-            FlowRowButtonText(text)
-        }
-    }
-}
-
-@Composable
-fun FlowRowButton(
-    isEnabled: Boolean = true,
-    onClick: () -> Unit = {},
-    content: @Composable (RowScope.() -> Unit)
-) {
-    OutlinedButton(
-        enabled = isEnabled,
-        onClick = onClick,
-        contentPadding = PaddingValues(12.dp),
-        border = BorderStroke(width = 0.dp, color = Color.Transparent),
-        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-        content = content
-    )
 }
 
 @Composable
@@ -193,7 +160,11 @@ fun SelectionSyllablesRowPreview() {
     val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(34).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
-        val isEnabled = if (isSelected) { true } else { Random.nextBoolean() }
+        val isEnabled = if (isSelected) {
+            true
+        } else {
+            Random.nextBoolean()
+        }
         SyllablePreview(
             text = it,
             isSelected = isSelected,

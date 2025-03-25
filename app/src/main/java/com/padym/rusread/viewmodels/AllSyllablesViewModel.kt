@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val MIN_SYLLABLES_COUNT = 3
+const val MAX_SYLLABLES_COUNT = 10
 const val PRELOAD_COUNT = 60
 
 @HiltViewModel
