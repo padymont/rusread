@@ -32,7 +32,7 @@ fun StartScreen(navController: NavHostController) {
                 isNextSelectionEnabled = currentGroup.isNextEnabled,
                 previousSelectionAction = { viewModel.selectPreviousGroup() },
                 nextSelectionAction = { viewModel.selectNextGroup() },
-                createSelectionAction = { navController.navigate(Screen.ManualList.route) },
+                createSelectionAction = { navController.navigate(Screen.AllSyllables.route) },
                 randomSelectionAction = { viewModel.generateGroup() }
             )
             SelectedPreview(currentGroup.syllables)
