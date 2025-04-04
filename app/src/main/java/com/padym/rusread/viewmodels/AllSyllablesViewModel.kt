@@ -2,6 +2,7 @@ package com.padym.rusread.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
@@ -23,7 +24,8 @@ const val PRELOAD_COUNT = 60
 @HiltViewModel
 class AllSyllablesViewModel @Inject constructor(
     private val listDao: SyllableListDao,
-    scoreDao: SyllableScoreDao
+    scoreDao: SyllableScoreDao,
+    private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
 
     private val chosenSyllables = MutableStateFlow(listOf<String>())
@@ -65,6 +67,7 @@ class AllSyllablesViewModel @Inject constructor(
         if (syllable in chosenSyllables.value) {
             chosenSyllables.value -= syllable
         } else {
+            mediaPlayer.speakSyllable(syllable)
             chosenSyllables.value += syllable
         }
     }

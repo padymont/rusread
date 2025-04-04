@@ -2,6 +2,7 @@ package com.padym.rusread.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
@@ -19,7 +20,8 @@ const val MIN_INDEX_VALUE = 0
 @HiltViewModel
 class StartViewModel @Inject constructor(
     private val listDao: SyllableListDao,
-    private val scoreDao: SyllableScoreDao
+    scoreDao: SyllableScoreDao,
+    private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
 
     private val currentIndex = MutableStateFlow(0)
@@ -45,7 +47,11 @@ class StartViewModel @Inject constructor(
                     isPreviousEnabled = index < groups.lastIndex,
                     isNextEnabled = index > 0,
                     syllables = group.list.sorted().map {
-                        SyllablePreview(text = it, isStarred = it in scores)
+                        SyllablePreview(
+                            text = it,
+                            isStarred = it in scores,
+                            onClick = { mediaPlayer.speakSyllable(it) }
+                        )
                     }
                 )
             }

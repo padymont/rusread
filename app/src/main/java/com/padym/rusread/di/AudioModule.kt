@@ -1,8 +1,7 @@
 package com.padym.rusread.di
 
 import android.content.Context
-import android.media.MediaPlayer
-import com.padym.rusread.R
+import com.padym.rusread.SyllableMediaPlayer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +15,7 @@ object AudioModule {
 
     @Provides
     @Singleton
-    fun provideMediaPlayer(@ApplicationContext context: Context): MediaPlayer {
-        return MediaPlayer.create(context, R.raw.all_syllables)
+    fun provideMediaPlayer(@ApplicationContext context: Context): SyllableMediaPlayer {
+        return SyllableMediaPlayer(context)
     }
 }

@@ -1,14 +1,12 @@
 package com.padym.rusread.viewmodels
 
-import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,13 +15,12 @@ import javax.inject.Inject
 
 const val RIGHT_ANSWER_NUMBER = 10
 const val PROGRESS_OFFSET = 0.3f
-const val SYLLABLE_LENGTH_MILLIS = 1200L
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val listDao: SyllableListDao,
     private val scoreDao: SyllableScoreDao,
-    private val mediaPlayer: MediaPlayer,
+    private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
 
     private var _syllables = mutableStateOf(emptySet<String>())
@@ -34,17 +31,14 @@ class GameViewModel @Inject constructor(
     val scores: List<Pair<String, Int>>
         get() = _scores.value
 
-    private val _spokenSyllable = mutableStateOf("")
-    val spokenSyllable: String
-        get() = _spokenSyllable.value
-
+    private val spokenSyllable = mutableStateOf("")
     private val _correctAnswers = mutableIntStateOf(0)
 
     val correctAnswers: Int
         get() = _correctAnswers.intValue
 
     val isAudioLoading by derivedStateOf {
-        spokenSyllable.isEmpty()
+        spokenSyllable.value.isEmpty()
     }
 
     val gameProgress by derivedStateOf {
@@ -61,15 +55,15 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             _syllables.value = listDao.getLatestEntry().list
             syllables.forEach { scoreDao.save(it) }
-            if (spokenSyllable.isEmpty()) {
-                _spokenSyllable.value = syllables.random()
+            if (spokenSyllable.value.isEmpty()) {
+                spokenSyllable.value = syllables.random()
             }
         }
     }
 
     fun processAnswer(syllable: String): Result {
         val result: Result
-        val isAnswerCorrect = syllable == spokenSyllable
+        val isAnswerCorrect = syllable == spokenSyllable.value
         when (isAnswerCorrect) {
             true -> {
                 increaseSyllableScore(syllable)
@@ -110,33 +104,13 @@ class GameViewModel @Inject constructor(
     }
 
     private fun setNextSpokenSyllable() {
-        val tempSet = syllables.minus(spokenSyllable)
-        _spokenSyllable.value = tempSet.random()
-        speakSyllable(spokenSyllable)
+        val tempSet = syllables.minus(spokenSyllable.value)
+        spokenSyllable.value = tempSet.random()
+        speakSyllable()
     }
 
-    fun speakSyllable(text: String) {
-        val offset = Syllable.findOffset(text)
-        playAudio(offset)
-    }
-
-    fun speakSyllable(offset: Int) {
-        playAudio(offset)
-    }
-
-    private fun playAudio(offset: Int) {
-        currentOffset = offset
-        mediaPlayer.seekTo(offset)
-        mediaPlayer.start()
-        Handler(Looper.getMainLooper())
-            .postDelayed(
-                {
-                    if (offset == currentOffset) {
-                        mediaPlayer.pause()
-                    }
-                },
-                SYLLABLE_LENGTH_MILLIS
-            )
+    fun speakSyllable() {
+        mediaPlayer.speakSyllable(spokenSyllable.value)
     }
 }
 
