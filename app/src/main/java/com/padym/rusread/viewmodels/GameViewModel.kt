@@ -1,8 +1,7 @@
 package com.padym.rusread.viewmodels
 
-import android.content.ContentResolver
 import android.content.Context
-import android.net.Uri
+import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.runtime.derivedStateOf
@@ -11,9 +10,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
 import com.padym.rusread.R
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
@@ -32,14 +28,7 @@ class GameViewModel @Inject constructor(
     private val scoreDao: SyllableScoreDao,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private val mediaPlayer: Player = ExoPlayer.Builder(context).build().apply {
-        val uri = Uri.Builder()
-            .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-            .path(R.raw.all_syllables.toString())
-            .build()
-        setMediaItem(MediaItem.fromUri(uri))
-        prepare()
-    }
+    private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
     private var _syllables = mutableStateOf(emptySet<String>())
     val syllables: Set<String>
@@ -141,8 +130,8 @@ class GameViewModel @Inject constructor(
 
     private fun playAudio(offset: Int) {
         currentOffset = offset
-        mediaPlayer.seekTo(offset.toLong())
-        mediaPlayer.play()
+        mediaPlayer.seekTo(offset)
+        mediaPlayer.start()
         Handler(Looper.getMainLooper())
             .postDelayed(
                 {
