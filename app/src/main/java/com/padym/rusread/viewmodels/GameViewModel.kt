@@ -1,6 +1,5 @@
 package com.padym.rusread.viewmodels
 
-import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
@@ -10,11 +9,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.padym.rusread.R
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,9 +23,8 @@ const val SYLLABLE_LENGTH_MILLIS = 1200L
 class GameViewModel @Inject constructor(
     private val listDao: SyllableListDao,
     private val scoreDao: SyllableScoreDao,
-    @ApplicationContext private val context: Context
+    private val mediaPlayer: MediaPlayer,
 ) : ViewModel() {
-    private val mediaPlayer = MediaPlayer.create(context, R.raw.all_syllables)
 
     private var _syllables = mutableStateOf(emptySet<String>())
     val syllables: Set<String>
@@ -141,11 +137,6 @@ class GameViewModel @Inject constructor(
                 },
                 SYLLABLE_LENGTH_MILLIS
             )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        mediaPlayer.release()
     }
 }
 
