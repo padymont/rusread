@@ -1,23 +1,37 @@
 package com.padym.rusread.compose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.StartViewModel
 import com.padym.rusread.viewmodels.SyllablePreview
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
@@ -52,19 +66,45 @@ fun StartScreen2(
     startGameAction: () -> Unit,
 ) {
     Scaffold { paddingValues ->
-        Column(Modifier.padding(paddingValues)) {
-            SelectionActionRow(
-                isPreviousSelectionEnabled = isPreviousSelectionEnabled,
-                isNextSelectionEnabled = isNextSelectionEnabled,
-                previousSelectionAction = previousSelectionAction,
-                nextSelectionAction = nextSelectionAction,
-                createSelectionAction = createSelectionAction,
-                randomSelectionAction = randomSelectionAction
-            )
-            SelectedPreview(syllables)
-            Spacer(modifier = Modifier.weight(1f))
-            BottomEmojiRoundButton(text = "🚀", onButtonClick = startGameAction)
+        Box(
+            modifier = Modifier.padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            Column {
+                SelectionActionRow(
+                    isPreviousSelectionEnabled = isPreviousSelectionEnabled,
+                    isNextSelectionEnabled = isNextSelectionEnabled,
+                    previousSelectionAction = previousSelectionAction,
+                    nextSelectionAction = nextSelectionAction,
+                    createSelectionAction = createSelectionAction,
+                    randomSelectionAction = randomSelectionAction
+                )
+                SelectedPreview(syllables)
+                Spacer(modifier = Modifier.weight(1f))
+                BottomEmojiRoundButton(text = "🚀", onButtonClick = startGameAction)
+            }
+            FloatingBigEmoji()
         }
+    }
+}
+
+@Composable
+fun FloatingBigEmoji() {
+    var visible by remember { mutableStateOf(true) }
+    val animationSpec: FiniteAnimationSpec<Float>  = tween(durationMillis = 2000)
+
+    AnimatedVisibility(
+        visible = visible,
+        exit = fadeOut(animationSpec) + scaleOut(animationSpec),
+    ) {
+        Text(
+            text = "🏆",
+            fontSize = 160.sp,
+        )
+    }
+    LaunchedEffect(key1 = "FloatingBigEmoji") {
+        delay(1000)
+        visible = false
     }
 }
 
