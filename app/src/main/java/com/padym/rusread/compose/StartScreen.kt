@@ -25,22 +25,45 @@ fun StartScreen(navController: NavHostController) {
     val viewModel: StartViewModel = hiltViewModel()
     val currentGroup by viewModel.currentGroup.collectAsState()
 
+    StartScreen2(
+        isPreviousSelectionEnabled = currentGroup.isPreviousEnabled,
+        isNextSelectionEnabled = currentGroup.isNextEnabled,
+        previousSelectionAction = { viewModel.selectPreviousGroup() },
+        nextSelectionAction = { viewModel.selectNextGroup() },
+        createSelectionAction = { navController.navigate(Screen.AllSyllables.route) },
+        randomSelectionAction = { viewModel.generateGroup() },
+        syllables = currentGroup.syllables,
+        startGameAction = {
+            viewModel.fixCurrentGroup()
+            navController.navigate(Screen.Game.route)
+        }
+    )
+}
+
+@Composable
+fun StartScreen2(
+    isPreviousSelectionEnabled: Boolean,
+    isNextSelectionEnabled: Boolean,
+    previousSelectionAction: () -> Unit,
+    nextSelectionAction: () -> Unit,
+    createSelectionAction: () -> Unit,
+    randomSelectionAction: () -> Unit,
+    syllables: List<SyllablePreview>,
+    startGameAction: () -> Unit,
+) {
     Scaffold { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             SelectionActionRow(
-                isPreviousSelectionEnabled = currentGroup.isPreviousEnabled,
-                isNextSelectionEnabled = currentGroup.isNextEnabled,
-                previousSelectionAction = { viewModel.selectPreviousGroup() },
-                nextSelectionAction = { viewModel.selectNextGroup() },
-                createSelectionAction = { navController.navigate(Screen.AllSyllables.route) },
-                randomSelectionAction = { viewModel.generateGroup() }
+                isPreviousSelectionEnabled = isPreviousSelectionEnabled,
+                isNextSelectionEnabled = isNextSelectionEnabled,
+                previousSelectionAction = previousSelectionAction,
+                nextSelectionAction = nextSelectionAction,
+                createSelectionAction = createSelectionAction,
+                randomSelectionAction = randomSelectionAction
             )
-            SelectedPreview(currentGroup.syllables)
+            SelectedPreview(syllables)
             Spacer(modifier = Modifier.weight(1f))
-            BottomEmojiRoundButton(text = "🚀") {
-                viewModel.fixCurrentGroup()
-                navController.navigate(Screen.Game.route)
-            }
+            BottomEmojiRoundButton(text = "🚀", onButtonClick = startGameAction)
         }
     }
 }
@@ -90,13 +113,15 @@ fun StartScreenPreview() {
     }
 
     RusreadTheme {
-        Scaffold { paddingValues ->
-            Column(Modifier.padding(paddingValues)) {
-                SelectionActionRow(true, true, {}, {}, {}, {})
-                SelectedPreview(scoredSyllables)
-                Spacer(modifier = Modifier.weight(1f))
-                BottomEmojiRoundButton(text = "🚀", onButtonClick = {})
-            }
-        }
+        StartScreen2(
+            isPreviousSelectionEnabled = true,
+            isNextSelectionEnabled = true,
+            previousSelectionAction = {},
+            nextSelectionAction = {},
+            createSelectionAction = {},
+            randomSelectionAction = {},
+            syllables = scoredSyllables,
+            startGameAction = {}
+        )
     }
 }
