@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,7 +43,6 @@ import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.GameViewModel
-import com.padym.rusread.viewmodels.RIGHT_ANSWER_NUMBER
 import com.padym.rusread.viewmodels.Result
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
@@ -65,8 +63,7 @@ fun GameScreen(navController: NavHostController) {
         onSpokenSyllableClick = { viewModel.speakSyllable() },
         onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
         isGameOn = viewModel.isGameOn,
-        syllables = viewModel.syllables,
-        scores = viewModel.scores
+        syllables = viewModel.syllables
     )
 }
 
@@ -77,8 +74,7 @@ fun GameScreen2(
     onSpokenSyllableClick: () -> Unit,
     onSyllableClick: (String) -> Result,
     isGameOn: Boolean,
-    syllables: Set<String>,
-    scores: List<Pair<String, Int>>
+    syllables: Set<String>
 ) {
     Scaffold(
         topBar = { SimpleCloseTopAppBar(onCloseClick) },
@@ -98,15 +94,10 @@ fun GameScreen2(
                     EndGameEmoji()
                 }
             }
-            ScatteredSyllablesButtons(
-                isGameOn = isGameOn,
-                selectedSyllables = syllables,
-                scores = scores,
-            ) { syllable -> onSyllableClick(syllable) }
+            ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,20 +119,14 @@ fun SimpleCloseTopAppBar(onClose: () -> Unit = {}) {
 
 @Composable
 fun ScatteredSyllablesButtons(
-    isGameOn: Boolean,
     selectedSyllables: Set<String>,
-    scores: List<Pair<String, Int>>,
     onSyllableClick: (String) -> Result
 ) {
     Layout(
         modifier = Modifier.padding(8.dp),
         content = {
             selectedSyllables.forEach { syllable ->
-                InteractiveSyllableButton(
-                    isGameOn,
-                    syllable,
-                    scores.find { it.first == syllable }?.second ?: 0
-                ) { onSyllableClick(syllable) }
+                InteractiveSyllableButton(syllable) { onSyllableClick(syllable) }
             }
         }
     ) { measurables, constraints ->
@@ -168,12 +153,7 @@ fun ScatteredSyllablesButtons(
 }
 
 @Composable
-fun InteractiveSyllableButton(
-    isGameOn: Boolean,
-    syllable: String,
-    score: Int,
-    onClick: () -> Result
-) {
+fun InteractiveSyllableButton(syllable: String, onClick: () -> Result) {
     var showAnimation by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf(Result.WRONG) }
     val animatedY by animateFloatAsState(
@@ -197,20 +177,6 @@ fun InteractiveSyllableButton(
                 delay(1000)
                 showAnimation = false
             }
-        }
-        if (!isGameOn) {
-            LinearProgressIndicator(
-                progress = { score.toFloat() / RIGHT_ANSWER_NUMBER },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .width(64.dp)
-                    .height(4.dp),
-                color = AppColors.MetallicGold,
-                trackColor = AppColors.Almond,
-                strokeCap = StrokeCap.Butt,
-                gapSize = 0.dp,
-                drawStopIndicator = {}
-            )
         }
     }
 }
@@ -311,8 +277,7 @@ fun SyllableGameContentPreview() {
             onSpokenSyllableClick = { },
             onSyllableClick = { _ -> Result.entries.random() },
             isGameOn = true,
-            syllables = PreviewHelper.selectedSyllables,
-            scores = PreviewHelper.scores
+            syllables = PreviewHelper.selectedSyllables
         )
     }
 }
@@ -327,22 +292,11 @@ fun SyllableEndGamePreview() {
             onSpokenSyllableClick = { },
             onSyllableClick = { _ -> Result.entries.random() },
             isGameOn = false,
-            syllables = PreviewHelper.selectedSyllables,
-            scores = PreviewHelper.scores
+            syllables = PreviewHelper.selectedSyllables
         )
     }
 }
 
 object PreviewHelper {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
-    val scores = listOf(
-        "до" to 1,
-        "ме" to 2,
-        "мя" to 3,
-        "ко" to 4,
-        "ба" to 5,
-        "са" to 7,
-        "л" to 8,
-        "жу" to 10
-    )
 }

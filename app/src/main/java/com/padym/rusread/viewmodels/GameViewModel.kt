@@ -27,10 +27,6 @@ class GameViewModel @Inject constructor(
     val syllables: Set<String>
         get() = _syllables.value
 
-    private var _scores = mutableStateOf(emptyList<Pair<String, Int>>())
-    val scores: List<Pair<String, Int>>
-        get() = _scores.value
-
     private val spokenSyllable = mutableStateOf("")
     private val _correctAnswers = mutableIntStateOf(0)
 
@@ -48,8 +44,6 @@ class GameViewModel @Inject constructor(
     val isGameOn by derivedStateOf {
         correctAnswers < RIGHT_ANSWER_NUMBER
     }
-
-    private var currentOffset = 0
 
     init {
         viewModelScope.launch {
@@ -79,8 +73,6 @@ class GameViewModel @Inject constructor(
         }
         if (isGameOn) {
             setNextSpokenSyllable()
-        } else {
-            getScores(syllables)
         }
         return result
     }
@@ -97,10 +89,6 @@ class GameViewModel @Inject constructor(
 
     private fun lowerSyllableScore(syllable: String) = viewModelScope.launch {
         scoreDao.lowerScore(syllable)
-    }
-
-    private fun getScores(syllables: Set<String>) = viewModelScope.launch {
-        _scores.value = scoreDao.getScores(syllables)
     }
 
     private fun setNextSpokenSyllable() {
