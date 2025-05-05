@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +58,7 @@ fun GameScreen(navController: NavHostController) {
     }
     GameScreen2(
         onCloseClick = { navController.popBackStack() },
+        onFinishGame = { navController.popBackStack() },
         gameProgress = viewModel.gameProgress,
         onSpokenSyllableClick = { viewModel.speakSyllable() },
         onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
@@ -70,6 +70,7 @@ fun GameScreen(navController: NavHostController) {
 @Composable
 fun GameScreen2(
     onCloseClick: () -> Unit,
+    onFinishGame: () -> Unit,
     gameProgress: Float,
     onSpokenSyllableClick: () -> Unit,
     onSyllableClick: (String) -> Result,
@@ -91,7 +92,7 @@ fun GameScreen2(
                 if (isGameOn) {
                     EmojiRoundButton("🎧") { onSpokenSyllableClick() }
                 } else {
-                    EndGameEmoji()
+                    onFinishGame.invoke()
                 }
             }
             ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
@@ -228,16 +229,6 @@ fun ProgressBottomBar(progress: Float) {
     )
 }
 
-@Composable
-fun EndGameEmoji() {
-    Text(
-        text = "🏆",
-        fontSize = 160.sp,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
-}
-
 fun generateRandomPosition(
     existingButtons: List<Pair<Float, Float>>,
     screenWidth: Int,
@@ -273,25 +264,11 @@ fun SyllableGameContentPreview() {
     RusreadTheme {
         GameScreen2(
             onCloseClick = { },
+            onFinishGame = { },
             gameProgress = 0.7f,
             onSpokenSyllableClick = { },
             onSyllableClick = { _ -> Result.entries.random() },
             isGameOn = true,
-            syllables = PreviewHelper.selectedSyllables
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SyllableEndGamePreview() {
-    RusreadTheme {
-        GameScreen2(
-            onCloseClick = { },
-            gameProgress = 0.7f,
-            onSpokenSyllableClick = { },
-            onSyllableClick = { _ -> Result.entries.random() },
-            isGameOn = false,
             syllables = PreviewHelper.selectedSyllables
         )
     }
