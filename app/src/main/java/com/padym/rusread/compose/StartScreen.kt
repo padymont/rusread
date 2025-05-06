@@ -16,14 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.StartViewModel
 import com.padym.rusread.viewmodels.SyllablePreview
 import kotlin.random.Random
 
 @Composable
-fun StartScreen(navController: NavHostController) {
+fun StartScreen(
+    onCreateListNavigate: () -> Unit,
+    onGameStartNavigate: () -> Unit,
+) {
     val viewModel: StartViewModel = hiltViewModel()
     val currentGroup by viewModel.currentGroup.collectAsState()
 
@@ -32,12 +34,12 @@ fun StartScreen(navController: NavHostController) {
         isNextSelectionEnabled = currentGroup.isNextEnabled,
         previousSelectionAction = { viewModel.selectPreviousGroup() },
         nextSelectionAction = { viewModel.selectNextGroup() },
-        createSelectionAction = { navController.navigate(Screen.AllSyllables.route) },
+        createSelectionAction = onCreateListNavigate,
         randomSelectionAction = { viewModel.generateGroup() },
         syllables = currentGroup.syllables,
         startGameAction = {
             viewModel.fixCurrentGroup()
-            navController.navigate(Screen.Game.route)
+            onGameStartNavigate.invoke()
         }
     )
 }

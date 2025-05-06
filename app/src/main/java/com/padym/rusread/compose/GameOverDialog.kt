@@ -16,13 +16,13 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogWindowProvider
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 
 @Composable
-fun GameOverDialog(navController: NavHostController) {
-    GameOverDialog2(
-        onFinish = { navController.popBackStack() })
+fun GameOverDialog(
+    onCloseNavigate: () -> Unit,
+) {
+    GameOverDialog2(onFinish = onCloseNavigate)
 }
 
 @Composable
@@ -34,7 +34,7 @@ fun GameOverDialog2(onFinish: () -> Unit) {
 @Composable
 fun FloatingBigEmoji(onFinish: () -> Unit) {
     var visible by remember { mutableStateOf(true) }
-    val animationSpec: FiniteAnimationSpec<Float>  = tween(durationMillis = 4500)
+    val animationSpec: FiniteAnimationSpec<Float> = tween(durationMillis = 4500)
 
     AnimatedVisibility(
         visible = visible,

@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.AllSyllablesViewModel
@@ -24,18 +23,21 @@ import com.padym.rusread.viewmodels.SyllablePreview
 import kotlin.random.Random
 
 @Composable
-fun AllSyllablesScreen(navController: NavHostController) {
+fun AllSyllablesScreen(
+    onCloseNavigate: () -> Unit,
+    onSaveListNavigate: () -> Unit,
+) {
     val viewModel: AllSyllablesViewModel = hiltViewModel()
     val syllables by viewModel.syllablePreviewGroup.collectAsState()
     val isSavingEnabled by viewModel.isSavingEnabled.collectAsState()
 
     AllSyllablesScreenContent(
-        onCloseScreen = { navController.popBackStack() },
+        onCloseScreen = onCloseNavigate,
         syllables = syllables,
         isSavingEnabled = isSavingEnabled,
         onSaveList = {
             viewModel.saveSyllableList()
-            navController.popBackStack()
+            onSaveListNavigate.invoke()
         }
     )
 }

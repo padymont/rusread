@@ -38,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.GameViewModel
@@ -48,7 +47,10 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 @Composable
-fun GameScreen(navController: NavHostController) {
+fun GameScreen(
+    onCloseNavigate: () -> Unit,
+    onFinishGameNavigate: () -> Unit,
+) {
     val viewModel: GameViewModel = hiltViewModel()
 
     LaunchedEffect(key1 = viewModel.isAudioLoading) {
@@ -57,14 +59,8 @@ fun GameScreen(navController: NavHostController) {
         }
     }
     GameScreen2(
-        onCloseClick = { navController.popBackStack() },
-        onFinishGame = {
-            navController.navigate(Screen.GameOverDialog.route) {
-                popUpTo(Screen.Game.route) {
-                    inclusive = true
-                }
-            }
-        },
+        onCloseClick = onCloseNavigate,
+        onFinishGame = onFinishGameNavigate,
         gameProgress = viewModel.gameProgress,
         onSpokenSyllableClick = { viewModel.speakSyllable() },
         onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
