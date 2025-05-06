@@ -1,5 +1,6 @@
 package com.padym.rusread.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
@@ -20,15 +21,19 @@ import javax.inject.Inject
 const val MIN_SYLLABLES_COUNT = 3
 const val MAX_SYLLABLES_COUNT = 10
 const val PRELOAD_COUNT = 60
+const val CHOSEN_SYLLABLES_KEY = "chosenSyllables"
 
 @HiltViewModel
 class CreateViewModel @Inject constructor(
     private val listDao: SyllableListDao,
     scoreDao: SyllableScoreDao,
     private val mediaPlayer: SyllableMediaPlayer,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val chosenSyllables = MutableStateFlow(listOf<String>())
+    private val chosenSyllables = MutableStateFlow(
+        savedStateHandle[CHOSEN_SYLLABLES_KEY] ?: listOf<String>()
+    )
     private val isPreload = MutableStateFlow(true)
 
     val syllablePreviewGroup = combine(
@@ -70,6 +75,7 @@ class CreateViewModel @Inject constructor(
             mediaPlayer.speakSyllable(syllable)
             chosenSyllables.value += syllable
         }
+        savedStateHandle[CHOSEN_SYLLABLES_KEY] = chosenSyllables.value
     }
 
     fun saveSyllableList() {
