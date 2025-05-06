@@ -58,7 +58,7 @@ fun GameScreen(
             viewModel.speakSyllable()
         }
     }
-    GameScreen2(
+    GameLayout(
         onCloseClick = onCloseNavigate,
         onFinishGame = onFinishGameNavigate,
         gameProgress = viewModel.gameProgress,
@@ -70,7 +70,7 @@ fun GameScreen(
 }
 
 @Composable
-fun GameScreen2(
+fun GameLayout(
     onCloseClick: () -> Unit,
     onFinishGame: () -> Unit,
     gameProgress: Float,
@@ -262,20 +262,20 @@ fun overlaps(
 
 @Preview(showBackground = true)
 @Composable
-fun SyllableGameContentPreview() {
+fun GameLayoutPreview() {
     RusreadTheme {
-        GameScreen2(
+        GameLayout(
             onCloseClick = { },
             onFinishGame = { },
             gameProgress = 0.7f,
             onSpokenSyllableClick = { },
             onSyllableClick = { _ -> Result.entries.random() },
             isGameOn = true,
-            syllables = PreviewHelper.selectedSyllables
+            syllables = GamePreviewHelper.selectedSyllables
         )
     }
 }
 
-object PreviewHelper {
+private object GamePreviewHelper {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
 }

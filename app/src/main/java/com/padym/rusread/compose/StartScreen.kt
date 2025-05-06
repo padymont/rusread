@@ -29,7 +29,7 @@ fun StartScreen(
     val viewModel: StartViewModel = hiltViewModel()
     val currentGroup by viewModel.currentGroup.collectAsState()
 
-    StartScreen2(
+    StartLayout(
         isPreviousSelectionEnabled = currentGroup.isPreviousEnabled,
         isNextSelectionEnabled = currentGroup.isNextEnabled,
         previousSelectionAction = { viewModel.selectPreviousGroup() },
@@ -45,7 +45,7 @@ fun StartScreen(
 }
 
 @Composable
-fun StartScreen2(
+fun StartLayout(
     isPreviousSelectionEnabled: Boolean,
     isNextSelectionEnabled: Boolean,
     previousSelectionAction: () -> Unit,
@@ -115,22 +115,24 @@ fun SelectionActionRow(
 
 @Preview(showBackground = true)
 @Composable
-fun StartScreenPreview() {
-    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе")
-    val scoredSyllables = chosenSyllables.map {
-        SyllablePreview(it, Random.nextBoolean())
-    }
-
+fun StartLayoutPreview() {
     RusreadTheme {
-        StartScreen2(
+        StartLayout(
             isPreviousSelectionEnabled = true,
             isNextSelectionEnabled = true,
             previousSelectionAction = {},
             nextSelectionAction = {},
             createSelectionAction = {},
             randomSelectionAction = {},
-            syllables = scoredSyllables,
+            syllables = StartPreviewHelper.scoredSyllables,
             startGameAction = {}
         )
+    }
+}
+
+private object StartPreviewHelper {
+    val chosenSyllables = listOf("ба", "бо", "бу", "бя", "ша", "фу", "цу", "бы", "би", "бе")
+    val scoredSyllables = chosenSyllables.map {
+        SyllablePreview(it, Random.nextBoolean())
     }
 }

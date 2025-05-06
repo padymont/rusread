@@ -17,21 +17,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
-import com.padym.rusread.viewmodels.AllSyllablesViewModel
+import com.padym.rusread.viewmodels.CreateViewModel
 import com.padym.rusread.viewmodels.Syllable
 import com.padym.rusread.viewmodels.SyllablePreview
 import kotlin.random.Random
 
 @Composable
-fun AllSyllablesScreen(
+fun CreateScreen(
     onCloseNavigate: () -> Unit,
     onSaveListNavigate: () -> Unit,
 ) {
-    val viewModel: AllSyllablesViewModel = hiltViewModel()
+    val viewModel: CreateViewModel = hiltViewModel()
     val syllables by viewModel.syllablePreviewGroup.collectAsState()
     val isSavingEnabled by viewModel.isSavingEnabled.collectAsState()
 
-    AllSyllablesScreenContent(
+    CreateLayout(
         onCloseScreen = onCloseNavigate,
         syllables = syllables,
         isSavingEnabled = isSavingEnabled,
@@ -43,7 +43,7 @@ fun AllSyllablesScreen(
 }
 
 @Composable
-fun AllSyllablesScreenContent(
+fun CreateLayout(
     onCloseScreen: () -> Unit = {},
     syllables: List<SyllablePreview> = emptyList(),
     isSavingEnabled: Boolean = true,
@@ -82,7 +82,13 @@ fun AllSyllablesScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-fun AllSyllablesScreenPreview() {
+fun CreateLayoutPreview() {
+    RusreadTheme {
+        CreateLayout(syllables = CreatePreviewHelper.scoredSyllables)
+    }
+}
+
+private object CreatePreviewHelper {
     val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(30).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
@@ -97,8 +103,5 @@ fun AllSyllablesScreenPreview() {
             isEnabled = isEnabled,
             isStarred = Random.nextBoolean()
         )
-    }
-    RusreadTheme {
-        AllSyllablesScreenContent(syllables = scoredSyllables)
     }
 }

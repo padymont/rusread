@@ -41,13 +41,13 @@ fun RusreadAppNavHost(navController: NavHostController) {
                 })
         }
         composable(Screen.AllSyllables.route) {
-            AllSyllablesScreen(
+            CreateScreen(
                 onCloseNavigate = { navController.navigateUp() },
                 onSaveListNavigate = { navController.navigateUp() }
             )
         }
         dialog(Screen.GameOverDialog.route) {
-            GameOverDialog(
+            CongratulationsDialog(
                 onCloseNavigate = { navController.navigateUp() }
             )
         }

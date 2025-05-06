@@ -19,15 +19,15 @@ import androidx.compose.ui.window.DialogWindowProvider
 import kotlinx.coroutines.delay
 
 @Composable
-fun GameOverDialog(
+fun CongratulationsDialog(
     onCloseNavigate: () -> Unit,
 ) {
-    GameOverDialog2(onFinish = onCloseNavigate)
+    (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0f)
+    CongratulationsLayout(onFinish = onCloseNavigate)
 }
 
 @Composable
-fun GameOverDialog2(onFinish: () -> Unit) {
-    (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0f)
+fun CongratulationsLayout(onFinish: () -> Unit) {
     FloatingBigEmoji(onFinish)
 }
 
@@ -55,6 +55,6 @@ fun FloatingBigEmoji(onFinish: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun GameOverDialogPreview() {
-    GameOverDialog2(onFinish = {})
+fun CongratulationsLayoutPreview() {
+    CongratulationsLayout(onFinish = {})
 }

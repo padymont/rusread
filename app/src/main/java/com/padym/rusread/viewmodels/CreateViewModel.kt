@@ -22,7 +22,7 @@ const val MAX_SYLLABLES_COUNT = 10
 const val PRELOAD_COUNT = 60
 
 @HiltViewModel
-class AllSyllablesViewModel @Inject constructor(
+class CreateViewModel @Inject constructor(
     private val listDao: SyllableListDao,
     scoreDao: SyllableScoreDao,
     private val mediaPlayer: SyllableMediaPlayer,
