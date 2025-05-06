@@ -31,7 +31,7 @@ fun RusreadAppNavHost(navController: NavHostController) {
         }
         composable(Screen.Game.route) {
             GameScreen(
-                onCloseNavigate = { navController.popBackStack() },
+                onCloseNavigate = { navController.navigateUp() },
                 onFinishGameNavigate = {
                     navController.navigate(Screen.GameOverDialog.route) {
                         popUpTo(Screen.Game.route) {
@@ -42,13 +42,13 @@ fun RusreadAppNavHost(navController: NavHostController) {
         }
         composable(Screen.AllSyllables.route) {
             AllSyllablesScreen(
-                onCloseNavigate = { navController.popBackStack() },
-                onSaveListNavigate = { navController.popBackStack() }
+                onCloseNavigate = { navController.navigateUp() },
+                onSaveListNavigate = { navController.navigateUp() }
             )
         }
         dialog(Screen.GameOverDialog.route) {
             GameOverDialog(
-                onCloseNavigate = { navController.popBackStack() }
+                onCloseNavigate = { navController.navigateUp() }
             )
         }
     }
