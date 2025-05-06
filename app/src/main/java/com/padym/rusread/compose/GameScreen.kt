@@ -59,8 +59,11 @@ fun GameScreen(navController: NavHostController) {
     GameScreen2(
         onCloseClick = { navController.popBackStack() },
         onFinishGame = {
-            navController.popBackStack()
-            navController.navigate(Screen.GameOverDialog.route)
+            navController.navigate(Screen.GameOverDialog.route) {
+                popUpTo(Screen.Game.route) {
+                    inclusive = true
+                }
+            }
         },
         gameProgress = viewModel.gameProgress,
         onSpokenSyllableClick = { viewModel.speakSyllable() },
