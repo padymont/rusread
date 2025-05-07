@@ -1,17 +1,21 @@
 package com.padym.rusread.compose
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,19 +63,37 @@ fun GameScreen(
             viewModel.speakSyllable()
         }
     }
-    GameLayout(
-        onCloseClick = onCloseNavigate,
-        onFinishGame = onFinishGameNavigate,
-        gameProgress = viewModel.gameProgress,
-        onSpokenSyllableClick = { viewModel.speakSyllable() },
-        onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
-        isGameOn = viewModel.isGameOn,
-        syllables = viewModel.syllables
-    )
+
+    val configuration = LocalConfiguration.current
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_PORTRAIT -> {
+            GamePortraitLayout(
+                onCloseClick = onCloseNavigate,
+                onFinishGame = onFinishGameNavigate,
+                gameProgress = viewModel.gameProgress,
+                onSpokenSyllableClick = { viewModel.speakSyllable() },
+                onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
+                isGameOn = viewModel.isGameOn,
+                syllables = viewModel.syllables
+            )
+        }
+
+        else -> {
+            GameLandscapeLayout(
+                onCloseClick = onCloseNavigate,
+                onFinishGame = onFinishGameNavigate,
+                gameProgress = viewModel.gameProgress,
+                onSpokenSyllableClick = { viewModel.speakSyllable() },
+                onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
+                isGameOn = viewModel.isGameOn,
+                syllables = viewModel.syllables
+            )
+        }
+    }
 }
 
 @Composable
-fun GameLayout(
+fun GamePortraitLayout(
     onCloseClick: () -> Unit,
     onFinishGame: () -> Unit,
     gameProgress: Float,
@@ -87,17 +110,52 @@ fun GameLayout(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            Box(
-                modifier = Modifier.height(200.dp)
-            ) {
+        RootPortraitBox(paddingValues) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier.height(200.dp)
+                ) {
+                    if (isGameOn) {
+                        EmojiRoundButton("🎧") { onSpokenSyllableClick() }
+                    } else {
+                        onFinishGame.invoke()
+                    }
+                }
+                ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
+            }
+        }
+    }
+}
+
+@Composable
+fun GameLandscapeLayout(
+    onCloseClick: () -> Unit,
+    onFinishGame: () -> Unit,
+    gameProgress: Float,
+    onSpokenSyllableClick: () -> Unit,
+    onSyllableClick: (String) -> Result,
+    isGameOn: Boolean,
+    syllables: Set<String>
+) {
+    Scaffold(
+        topBar = { SimpleCloseTopAppBar(onCloseClick) },
+        bottomBar = {
+            Box(modifier = Modifier.height(12.dp)) {
+                if (isGameOn) ProgressBottomBar(gameProgress)
+            }
+        }
+    ) { paddingValues ->
+        RootLandscapeBox(paddingValues) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.width(24.dp))
                 if (isGameOn) {
                     EmojiRoundButton("🎧") { onSpokenSyllableClick() }
                 } else {
                     onFinishGame.invoke()
                 }
+                ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
+                Spacer(modifier = Modifier.width(24.dp))
             }
-            ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
         }
     }
 }
@@ -262,9 +320,9 @@ fun overlaps(
 
 @Preview(showBackground = true)
 @Composable
-fun GameLayoutPreview() {
+fun GamePortraitLayoutPreview() {
     RusreadTheme {
-        GameLayout(
+        GamePortraitLayout(
             onCloseClick = { },
             onFinishGame = { },
             gameProgress = 0.7f,
@@ -274,6 +332,37 @@ fun GameLayoutPreview() {
             syllables = GamePreviewHelper.selectedSyllables
         )
     }
+}
+
+@Preview(showBackground = true, device = "spec:parent=pixel_5,orientation=landscape")
+@Composable
+fun GameLandscapeLayoutPreview() {
+    RusreadTheme {
+        GameLandscapeLayout(
+            onCloseClick = { },
+            onFinishGame = { },
+            gameProgress = 0.7f,
+            onSpokenSyllableClick = { },
+            onSyllableClick = { _ -> Result.entries.random() },
+            isGameOn = true,
+            syllables = GamePreviewHelper.selectedSyllables
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
+)
+@Composable
+fun GamePortraitLayoutTabletPreview() {
+    GamePortraitLayoutPreview()
+}
+
+@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
+@Composable
+fun GameLandscapeLayoutTabletPreview() {
+    GameLandscapeLayoutPreview()
 }
 
 private object GamePreviewHelper {

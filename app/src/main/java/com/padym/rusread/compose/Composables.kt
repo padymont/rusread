@@ -3,15 +3,18 @@ package com.padym.rusread.compose
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,30 +40,68 @@ import com.padym.rusread.viewmodels.SyllablePreview
 import kotlin.random.Random
 
 @Composable
-fun EmojiRoundButton(
-    text: String = "", isEnabled: Boolean = true, paddingBottom: Int = 0, onButtonClick: () -> Unit
+fun RootPortraitBox(
+    paddingValues: PaddingValues,
+    content: @Composable (BoxScope.() -> Unit)
+) = RootBox(
+    maxWidth = 500.dp,
+    maxHeight = 900.dp,
+    paddingValues = paddingValues,
+    content = content
+)
+
+@Composable
+fun RootLandscapeBox(
+    paddingValues: PaddingValues,
+    content: @Composable (BoxScope.() -> Unit)
+) = RootBox(
+    maxWidth = 900.dp,
+    maxHeight = 500.dp,
+    paddingValues = paddingValues,
+    content = content
+)
+
+@Composable
+fun RootBox(
+    maxWidth: Dp,
+    maxHeight: Dp,
+    paddingValues: PaddingValues,
+    content: @Composable (BoxScope.() -> Unit)
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = paddingBottom.dp),
+            .padding(paddingValues)
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Button(
-            onClick = onButtonClick,
-            enabled = isEnabled,
+        Box(
             modifier = Modifier
-                .clip(CircleShape)
-                .size(160.dp)
-        ) {
-            Text(
-                text = text,
-                fontSize = 80.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
+                .widthIn(max = maxWidth)
+                .heightIn(max = maxHeight),
+            content = content
+        )
+    }
+}
+
+
+@Composable
+fun EmojiRoundButton(
+    text: String = "", isEnabled: Boolean = true, onButtonClick: () -> Unit
+) {
+    Button(
+        onClick = onButtonClick,
+        enabled = isEnabled,
+        modifier = Modifier
+            .clip(CircleShape)
+            .size(160.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 80.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
 
@@ -68,7 +109,7 @@ fun EmojiRoundButton(
 fun BottomEmojiRoundButton(
     text: String = "", isEnabled: Boolean = true, onButtonClick: () -> Unit = {}
 ) = EmojiRoundButton(
-    text = text, isEnabled = isEnabled, paddingBottom = 80, onButtonClick = onButtonClick
+    text = text, isEnabled = isEnabled, onButtonClick = onButtonClick
 )
 
 @Composable
@@ -90,21 +131,26 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SelectionSyllablesRow(
-    paddingBottom: Dp = 0.dp, content: @Composable() (RowScope.() -> Unit)
-) = FlowRow(
+fun SelectionSyllablesRow(syllables: List<SyllablePreview>) = FlowRow(
     modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 32.dp)
-        .heightIn(min = 268.dp)
-        .padding(bottom = paddingBottom),
+        .heightIn(min = 268.dp),
     horizontalArrangement = Arrangement.Center,
-    content = content
-)
+) {
+    syllables.forEach { SyllableFlowRowButton(it) }
+}
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SyllableSelection(syllables: List<SyllablePreview>) {
-    return syllables.forEach { SyllableFlowRowButton(it) }
+fun SelectionSyllablesColumn(syllables: List<SyllablePreview>) = FlowRow(
+    modifier = Modifier
+        .fillMaxHeight(),
+//        .widthIn(max = 480.dp),
+    horizontalArrangement = Arrangement.Center,
+    verticalArrangement = Arrangement.Center
+) {
+    syllables.forEach { SyllableFlowRowButton(it) }
 }
 
 @Composable
@@ -173,8 +219,6 @@ fun SelectionSyllablesRowPreview() {
         )
     }
     RusreadTheme {
-        SelectionSyllablesRow {
-            SyllableSelection(scoredSyllables)
-        }
+        SelectionSyllablesRow(scoredSyllables)
     }
 }

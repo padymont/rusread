@@ -1,9 +1,12 @@
 package com.padym.rusread.compose
 
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -11,7 +14,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,19 +36,35 @@ fun CreateScreen(
     val syllables by viewModel.syllablePreviewGroup.collectAsState()
     val isSavingEnabled by viewModel.isSavingEnabled.collectAsState()
 
-    CreateLayout(
-        onCloseScreen = onCloseNavigate,
-        syllables = syllables,
-        isSavingEnabled = isSavingEnabled,
-        onSaveList = {
-            viewModel.saveSyllableList()
-            onSaveListNavigate.invoke()
+    val configuration = LocalConfiguration.current
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_PORTRAIT -> {
+            CreatePortraitLayout(
+                onCloseScreen = onCloseNavigate,
+                syllables = syllables,
+                isSavingEnabled = isSavingEnabled,
+                onSaveList = {
+                    viewModel.saveSyllableList()
+                    onSaveListNavigate.invoke()
+                }
+            )
         }
-    )
+        else -> {
+            CreateLandscapeLayout(
+                onCloseScreen = onCloseNavigate,
+                syllables = syllables,
+                isSavingEnabled = isSavingEnabled,
+                onSaveList = {
+                    viewModel.saveSyllableList()
+                    onSaveListNavigate.invoke()
+                }
+            )
+        }
+    }
 }
 
 @Composable
-fun CreateLayout(
+fun CreatePortraitLayout(
     onCloseScreen: () -> Unit = {},
     syllables: List<SyllablePreview> = emptyList(),
     isSavingEnabled: Boolean = true,
@@ -58,7 +79,9 @@ fun CreateLayout(
             }
         },
         bottomBar = {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
                 Spacer(modifier = Modifier.height(16.dp))
                 val text = if (isSavingEnabled) "👍" else ""
@@ -67,14 +90,57 @@ fun CreateLayout(
             }
         }
     ) { paddingValues ->
-        val scrollState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .verticalScroll(scrollState)
-        ) {
-            SelectionSyllablesRow {
-                SyllableSelection(syllables)
+        RootPortraitBox(paddingValues) {
+            val scrollState = rememberScrollState()
+            Column(modifier = Modifier.verticalScroll(scrollState)) {
+                SelectionSyllablesRow(syllables)
+            }
+        }
+    }
+}
+
+@Composable
+fun CreateLandscapeLayout(
+    onCloseScreen: () -> Unit = {},
+    syllables: List<SyllablePreview> = emptyList(),
+    isSavingEnabled: Boolean = true,
+    onSaveList: () -> Unit = {},
+) {
+    Scaffold(
+        topBar = {
+            Column {
+                SimpleCloseTopAppBar { onCloseScreen() }
+                HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
+            }
+        },
+        bottomBar = {
+            HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
+        }
+    ) { paddingValues ->
+        RootLandscapeBox(paddingValues) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.width(24.dp))
+                Box(
+                    modifier = Modifier.weight(3f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val scrollState = rememberScrollState()
+                    Column(modifier = Modifier.verticalScroll(scrollState)) {
+                        SelectionSyllablesColumn(syllables)
+                        Spacer(modifier = Modifier.height(36.dp))
+                    }
+                }
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    val text = if (isSavingEnabled) "👍" else ""
+                    BottomEmojiRoundButton(
+                        text = text,
+                        isEnabled = isSavingEnabled
+                    ) { onSaveList() }
+                }
+                Spacer(modifier = Modifier.width(24.dp))
             }
         }
     }
@@ -82,10 +148,33 @@ fun CreateLayout(
 
 @Preview(showBackground = true)
 @Composable
-fun CreateLayoutPreview() {
+fun CreatePortraitLayoutPreview() {
     RusreadTheme {
-        CreateLayout(syllables = CreatePreviewHelper.scoredSyllables)
+        CreatePortraitLayout(syllables = CreatePreviewHelper.scoredSyllables)
     }
+}
+
+@Preview(showBackground = true, device = "spec:parent=pixel_5,orientation=landscape")
+@Composable
+fun CreateLandscapeLayoutPreview() {
+    RusreadTheme {
+        CreateLandscapeLayout(syllables = CreatePreviewHelper.scoredSyllables)
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
+)
+@Composable
+fun CreatePortraitLayoutTabletPreview() {
+    CreatePortraitLayoutPreview()
+}
+
+@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
+@Composable
+fun CreateLandscapeLayoutTabletPreview() {
+    CreateLandscapeLayoutPreview()
 }
 
 private object CreatePreviewHelper {
