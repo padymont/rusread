@@ -55,58 +55,48 @@ import kotlin.random.Random
 fun GameScreen(
     onCloseNavigate: () -> Unit,
     onFinishGameNavigate: () -> Unit,
+    viewModel: GameViewModel = hiltViewModel()
 ) {
-    val viewModel: GameViewModel = hiltViewModel()
-
     LaunchedEffect(key1 = viewModel.isAudioLoading) {
         if (!viewModel.isAudioLoading) {
             viewModel.speakSyllable()
         }
     }
 
+    val params = GameScreenParameters(
+        syllables = viewModel.syllables,
+        gameProgress = viewModel.gameProgress,
+        isGameOn = viewModel.isGameOn,
+        onAudio = { viewModel.speakSyllable() },
+        onSyllable = { syllable -> viewModel.processAnswer(syllable) },
+        onClose = onCloseNavigate,
+        onFinish = onFinishGameNavigate
+    )
+
     val configuration = LocalConfiguration.current
     when (configuration.orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> {
-            GamePortraitLayout(
-                onCloseClick = onCloseNavigate,
-                onFinishGame = onFinishGameNavigate,
-                gameProgress = viewModel.gameProgress,
-                onSpokenSyllableClick = { viewModel.speakSyllable() },
-                onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
-                isGameOn = viewModel.isGameOn,
-                syllables = viewModel.syllables
-            )
-        }
-
-        else -> {
-            GameLandscapeLayout(
-                onCloseClick = onCloseNavigate,
-                onFinishGame = onFinishGameNavigate,
-                gameProgress = viewModel.gameProgress,
-                onSpokenSyllableClick = { viewModel.speakSyllable() },
-                onSyllableClick = { syllable -> viewModel.processAnswer(syllable) },
-                isGameOn = viewModel.isGameOn,
-                syllables = viewModel.syllables
-            )
-        }
+        Configuration.ORIENTATION_PORTRAIT -> GamePortraitLayout(params)
+        else -> GameLandscapeLayout(params)
     }
 }
 
+data class GameScreenParameters(
+    val syllables: Set<String> = emptySet(),
+    val isGameOn: Boolean = true,
+    val gameProgress: Float = 0f,
+    val onAudio: () -> Unit = {},
+    val onSyllable: (String) -> Result = { _ -> Result.CORRECT },
+    val onClose: () -> Unit = {},
+    val onFinish: () -> Unit = {}
+)
+
 @Composable
-fun GamePortraitLayout(
-    onCloseClick: () -> Unit,
-    onFinishGame: () -> Unit,
-    gameProgress: Float,
-    onSpokenSyllableClick: () -> Unit,
-    onSyllableClick: (String) -> Result,
-    isGameOn: Boolean,
-    syllables: Set<String>
-) {
+fun GamePortraitLayout(params: GameScreenParameters) {
     Scaffold(
-        topBar = { SimpleCloseTopAppBar(onCloseClick) },
+        topBar = { SimpleCloseTopAppBar(params.onClose) },
         bottomBar = {
             Box(modifier = Modifier.height(12.dp)) {
-                if (isGameOn) ProgressBottomBar(gameProgress)
+                ProgressBottomBar(params.gameProgress)
             }
         }
     ) { paddingValues ->
@@ -115,45 +105,41 @@ fun GamePortraitLayout(
                 Box(
                     modifier = Modifier.height(200.dp)
                 ) {
-                    if (isGameOn) {
-                        EmojiRoundButton("🎧") { onSpokenSyllableClick() }
+                    if (params.isGameOn) {
+                        EmojiRoundButton("🎧") { params.onAudio() }
                     } else {
-                        onFinishGame.invoke()
+                        params.onFinish.invoke()
                     }
                 }
-                ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
+                ScatteredSyllablesButtons(params.syllables) { syllable ->
+                    params.onSyllable(syllable)
+                }
             }
         }
     }
 }
 
 @Composable
-fun GameLandscapeLayout(
-    onCloseClick: () -> Unit,
-    onFinishGame: () -> Unit,
-    gameProgress: Float,
-    onSpokenSyllableClick: () -> Unit,
-    onSyllableClick: (String) -> Result,
-    isGameOn: Boolean,
-    syllables: Set<String>
-) {
+fun GameLandscapeLayout(params: GameScreenParameters) {
     Scaffold(
-        topBar = { SimpleCloseTopAppBar(onCloseClick) },
+        topBar = { SimpleCloseTopAppBar(params.onClose) },
         bottomBar = {
             Box(modifier = Modifier.height(12.dp)) {
-                if (isGameOn) ProgressBottomBar(gameProgress)
+                ProgressBottomBar(params.gameProgress)
             }
         }
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Spacer(modifier = Modifier.width(24.dp))
-                if (isGameOn) {
-                    EmojiRoundButton("🎧") { onSpokenSyllableClick() }
+                if (params.isGameOn) {
+                    EmojiRoundButton("🎧") { params.onAudio() }
                 } else {
-                    onFinishGame.invoke()
+                    params.onFinish.invoke()
                 }
-                ScatteredSyllablesButtons(syllables) { syllable -> onSyllableClick(syllable) }
+                ScatteredSyllablesButtons(params.syllables) { syllable ->
+                    params.onSyllable(syllable)
+                }
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
@@ -322,15 +308,7 @@ fun overlaps(
 @Composable
 fun GamePortraitLayoutPreview() {
     RusreadTheme {
-        GamePortraitLayout(
-            onCloseClick = { },
-            onFinishGame = { },
-            gameProgress = 0.7f,
-            onSpokenSyllableClick = { },
-            onSyllableClick = { _ -> Result.entries.random() },
-            isGameOn = true,
-            syllables = GamePreviewHelper.selectedSyllables
-        )
+        GamePortraitLayout(GamePreviewHelper.params)
     }
 }
 
@@ -338,15 +316,7 @@ fun GamePortraitLayoutPreview() {
 @Composable
 fun GameLandscapeLayoutPreview() {
     RusreadTheme {
-        GameLandscapeLayout(
-            onCloseClick = { },
-            onFinishGame = { },
-            gameProgress = 0.7f,
-            onSpokenSyllableClick = { },
-            onSyllableClick = { _ -> Result.entries.random() },
-            isGameOn = true,
-            syllables = GamePreviewHelper.selectedSyllables
-        )
+        GameLandscapeLayout(GamePreviewHelper.params)
     }
 }
 
@@ -355,16 +325,17 @@ fun GameLandscapeLayoutPreview() {
     device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
 )
 @Composable
-fun GamePortraitLayoutTabletPreview() {
-    GamePortraitLayoutPreview()
-}
+fun GamePortraitLayoutTabletPreview() = GamePortraitLayoutPreview()
 
 @Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
 @Composable
-fun GameLandscapeLayoutTabletPreview() {
-    GameLandscapeLayoutPreview()
-}
+fun GameLandscapeLayoutTabletPreview() = GameLandscapeLayoutPreview()
 
 private object GamePreviewHelper {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
+    val params = GameScreenParameters(
+        gameProgress = 0.7f,
+        isGameOn = true,
+        syllables = selectedSyllables
+    )
 }

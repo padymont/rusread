@@ -19,17 +19,13 @@ import androidx.compose.ui.window.DialogWindowProvider
 import kotlinx.coroutines.delay
 
 @Composable
-fun CongratulationsDialog(
-    onCloseNavigate: () -> Unit,
-) {
+fun CongratulationsDialog(onFinishNavigate: () -> Unit) {
     (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0f)
-    CongratulationsLayout(onFinish = onCloseNavigate)
+    CongratulationsLayout(onFinish = onFinishNavigate)
 }
 
 @Composable
-fun CongratulationsLayout(onFinish: () -> Unit) {
-    FloatingBigEmoji(onFinish)
-}
+fun CongratulationsLayout(onFinish: () -> Unit) = FloatingBigEmoji(onFinish)
 
 @Composable
 fun FloatingBigEmoji(onFinish: () -> Unit) {
@@ -55,6 +51,4 @@ fun FloatingBigEmoji(onFinish: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun CongratulationsLayoutPreview() {
-    CongratulationsLayout(onFinish = {})
-}
+fun CongratulationsLayoutPreview() = CongratulationsLayout(onFinish = {})

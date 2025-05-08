@@ -1,9 +1,11 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,16 +13,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.StartViewModel
@@ -89,7 +100,7 @@ fun StartPortraitLayout(params: StartScreenParameters) {
                         .padding(start = 24.dp, end = 24.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    SelectionAction(params.actionParams)
+                    ActionButtons(params.actionParams)
                 }
                 SelectionSyllablesRow(params.syllables)
                 Spacer(modifier = Modifier.height(48.dp))
@@ -120,7 +131,7 @@ fun StartLandscapeLayout(params: StartScreenParameters) {
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        SelectionAction(params.actionParams)
+                        ActionButtons(params.actionParams)
                     }
                 }
                 Box(
@@ -142,11 +153,26 @@ fun StartLandscapeLayout(params: StartScreenParameters) {
 }
 
 @Composable
-fun SelectionAction(params: ActionParameters) = with(params) {
+fun ActionButtons(params: ActionParameters) = with(params) {
     EmojiIconButton(text = "👈", isVisible = isPreviousEnabled, onButtonClick = onPrevious)
     EmojiIconButton(text = "👉", isVisible = isNextEnabled, onButtonClick = onNext)
     EmojiIconButton(text = "🖍", onButtonClick = onCreate)
     EmojiIconButton(text = "🎲", onButtonClick = onRandom)
+}
+
+@Composable
+fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onButtonClick,
+        contentPadding = PaddingValues(0.dp),
+        border = BorderStroke(width = 0.dp, color = Color.Transparent),
+        modifier = Modifier
+            .clip(CircleShape)
+            .size(64.dp)
+            .alpha(if (isVisible) 1f else 0f)
+    ) {
+        Text(text = text, fontSize = 32.sp, textAlign = TextAlign.Center)
+    }
 }
 
 @Preview(showBackground = true)

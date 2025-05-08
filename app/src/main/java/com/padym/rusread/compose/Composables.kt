@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -111,23 +110,6 @@ fun BottomEmojiRoundButton(
 ) = EmojiRoundButton(
     text = text, isEnabled = isEnabled, onButtonClick = onButtonClick
 )
-
-@Composable
-fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onButtonClick,
-        contentPadding = PaddingValues(0.dp),
-        border = BorderStroke(width = 0.dp, color = Color.Transparent),
-        modifier = Modifier
-            .clip(CircleShape)
-            .size(64.dp)
-            .alpha(if (isVisible) 1f else 0f)
-    ) {
-        Text(
-            text = text, fontSize = 32.sp, textAlign = TextAlign.Center
-        )
-    }
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

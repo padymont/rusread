@@ -48,7 +48,7 @@ fun RusreadAppNavHost(navController: NavHostController) {
         }
         dialog(Screen.GameOverDialog.route) {
             CongratulationsDialog(
-                onCloseNavigate = { navController.navigateUp() }
+                onFinishNavigate = { navController.navigateUp() }
             )
         }
     }
