@@ -30,51 +30,41 @@ import kotlin.random.Random
 @Composable
 fun CreateScreen(
     onCloseNavigate: () -> Unit,
-    onSaveListNavigate: () -> Unit,
+    onSaveNavigate: () -> Unit,
+    viewModel: CreateViewModel = hiltViewModel()
 ) {
-    val viewModel: CreateViewModel = hiltViewModel()
     val syllables by viewModel.syllablePreviewGroup.collectAsState()
-    val isSavingEnabled by viewModel.isSavingEnabled.collectAsState()
+    val isSaveEnabled by viewModel.isSaveEnabled.collectAsState()
+    val params = CreateScreenParameters(
+        syllables = syllables,
+        isSaveEnabled = isSaveEnabled,
+        onClose = onCloseNavigate,
+        onSave = {
+            viewModel.saveSyllableList()
+            onSaveNavigate.invoke()
+        }
+    )
 
     val configuration = LocalConfiguration.current
     when (configuration.orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> {
-            CreatePortraitLayout(
-                onCloseScreen = onCloseNavigate,
-                syllables = syllables,
-                isSavingEnabled = isSavingEnabled,
-                onSaveList = {
-                    viewModel.saveSyllableList()
-                    onSaveListNavigate.invoke()
-                }
-            )
-        }
-        else -> {
-            CreateLandscapeLayout(
-                onCloseScreen = onCloseNavigate,
-                syllables = syllables,
-                isSavingEnabled = isSavingEnabled,
-                onSaveList = {
-                    viewModel.saveSyllableList()
-                    onSaveListNavigate.invoke()
-                }
-            )
-        }
+        Configuration.ORIENTATION_PORTRAIT -> CreatePortraitLayout(params)
+        else -> CreateLandscapeLayout(params)
     }
 }
 
-@Composable
-fun CreatePortraitLayout(
-    onCloseScreen: () -> Unit = {},
-    syllables: List<SyllablePreview> = emptyList(),
-    isSavingEnabled: Boolean = true,
-    onSaveList: () -> Unit = {},
-) {
+data class CreateScreenParameters(
+    val syllables: List<SyllablePreview> = emptyList(),
+    val isSaveEnabled: Boolean = false,
+    val onClose: () -> Unit = {},
+    val onSave: () -> Unit = {},
+)
 
+@Composable
+fun CreatePortraitLayout(params: CreateScreenParameters) {
     Scaffold(
         topBar = {
             Column {
-                SimpleCloseTopAppBar { onCloseScreen() }
+                SimpleCloseTopAppBar { params.onClose() }
                 HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
             }
         },
@@ -84,8 +74,11 @@ fun CreatePortraitLayout(
             ) {
                 HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
                 Spacer(modifier = Modifier.height(16.dp))
-                val text = if (isSavingEnabled) "👍" else ""
-                BottomEmojiRoundButton(text = text, isEnabled = isSavingEnabled) { onSaveList() }
+                val text = if (params.isSaveEnabled) "👍" else ""
+                BottomEmojiRoundButton(
+                    text = text,
+                    isEnabled = params.isSaveEnabled
+                ) { params.onSave() }
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -93,29 +86,22 @@ fun CreatePortraitLayout(
         RootPortraitBox(paddingValues) {
             val scrollState = rememberScrollState()
             Column(modifier = Modifier.verticalScroll(scrollState)) {
-                SelectionSyllablesRow(syllables)
+                SelectionSyllablesRow(params.syllables)
             }
         }
     }
 }
 
 @Composable
-fun CreateLandscapeLayout(
-    onCloseScreen: () -> Unit = {},
-    syllables: List<SyllablePreview> = emptyList(),
-    isSavingEnabled: Boolean = true,
-    onSaveList: () -> Unit = {},
-) {
+fun CreateLandscapeLayout(params: CreateScreenParameters) {
     Scaffold(
         topBar = {
             Column {
-                SimpleCloseTopAppBar { onCloseScreen() }
+                SimpleCloseTopAppBar { params.onClose() }
                 HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
             }
         },
-        bottomBar = {
-            HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
-        }
+        bottomBar = { HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand) }
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -126,7 +112,7 @@ fun CreateLandscapeLayout(
                 ) {
                     val scrollState = rememberScrollState()
                     Column(modifier = Modifier.verticalScroll(scrollState)) {
-                        SelectionSyllablesColumn(syllables)
+                        SelectionSyllablesColumn(params.syllables)
                         Spacer(modifier = Modifier.height(36.dp))
                     }
                 }
@@ -134,11 +120,11 @@ fun CreateLandscapeLayout(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    val text = if (isSavingEnabled) "👍" else ""
+                    val text = if (params.isSaveEnabled) "👍" else ""
                     BottomEmojiRoundButton(
                         text = text,
-                        isEnabled = isSavingEnabled
-                    ) { onSaveList() }
+                        isEnabled = params.isSaveEnabled
+                    ) { params.onSave() }
                 }
                 Spacer(modifier = Modifier.width(24.dp))
             }
@@ -150,7 +136,7 @@ fun CreateLandscapeLayout(
 @Composable
 fun CreatePortraitLayoutPreview() {
     RusreadTheme {
-        CreatePortraitLayout(syllables = CreatePreviewHelper.scoredSyllables)
+        CreatePortraitLayout(params = CreatePreviewHelper.params)
     }
 }
 
@@ -158,7 +144,7 @@ fun CreatePortraitLayoutPreview() {
 @Composable
 fun CreateLandscapeLayoutPreview() {
     RusreadTheme {
-        CreateLandscapeLayout(syllables = CreatePreviewHelper.scoredSyllables)
+        CreateLandscapeLayout(params = CreatePreviewHelper.params)
     }
 }
 
@@ -181,11 +167,7 @@ private object CreatePreviewHelper {
     val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(30).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
-        val isEnabled = if (isSelected) {
-            true
-        } else {
-            Random.nextBoolean()
-        }
+        val isEnabled = if (isSelected) true else Random.nextBoolean()
         SyllablePreview(
             text = it,
             isSelected = isSelected,
@@ -193,4 +175,5 @@ private object CreatePreviewHelper {
             isStarred = Random.nextBoolean()
         )
     }
+    val params = CreateScreenParameters(syllables = scoredSyllables)
 }

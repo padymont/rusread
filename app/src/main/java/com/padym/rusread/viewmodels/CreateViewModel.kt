@@ -57,7 +57,7 @@ class CreateViewModel @Inject constructor(
             }
     }.stateIn(initialValue = emptyList())
 
-    val isSavingEnabled = chosenSyllables.map {
+    val isSaveEnabled = chosenSyllables.map {
         it.size >= MIN_SYLLABLES_COUNT
     }.stateIn(initialValue = false)
 
