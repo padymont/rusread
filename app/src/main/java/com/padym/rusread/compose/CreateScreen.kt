@@ -153,15 +153,11 @@ fun CreateLandscapeLayoutPreview() {
     device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
 )
 @Composable
-fun CreatePortraitLayoutTabletPreview() {
-    CreatePortraitLayoutPreview()
-}
+fun CreatePortraitLayoutTabletPreview() = CreatePortraitLayoutPreview()
 
 @Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
 @Composable
-fun CreateLandscapeLayoutTabletPreview() {
-    CreateLandscapeLayoutPreview()
-}
+fun CreateLandscapeLayoutTabletPreview() = CreateLandscapeLayoutPreview()
 
 private object CreatePreviewHelper {
     val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(30).sorted()
