@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 
 @Composable
@@ -33,7 +32,7 @@ fun RusreadAppNavHost(navController: NavHostController) {
             GameScreen(
                 onCloseNavigate = { navController.navigateUp() },
                 onFinishGameNavigate = {
-                    navController.navigate(Screen.GameOverDialog.route) {
+                    navController.navigate(Screen.CongratulationsScreen.route) {
                         popUpTo(Screen.Game.route) {
                             inclusive = true
                         }
@@ -46,8 +45,8 @@ fun RusreadAppNavHost(navController: NavHostController) {
                 onSaveNavigate = { navController.navigateUp() }
             )
         }
-        dialog(Screen.GameOverDialog.route) {
-            CongratulationsDialog(
+        composable(Screen.CongratulationsScreen.route) {
+            CongratulationsScreen(
                 onFinishNavigate = { navController.navigateUp() }
             )
         }

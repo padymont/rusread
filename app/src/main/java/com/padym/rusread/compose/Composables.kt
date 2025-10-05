@@ -16,11 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,6 +88,23 @@ fun RootBox(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleCloseTopAppBar(onClose: () -> Unit = {}) {
+    TopAppBar(
+        title = { Text("") },
+        modifier = Modifier.padding(8.dp),
+        actions = {
+            IconButton(onClick = onClose) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close",
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        },
+    )
+}
 
 @Composable
 fun EmojiRoundButton(
