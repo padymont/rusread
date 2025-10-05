@@ -1,6 +1,10 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,14 +15,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
@@ -36,6 +46,7 @@ fun CreateScreen(
     val syllables by viewModel.syllablePreviewGroup.collectAsState()
     val isSaveEnabled by viewModel.isSaveEnabled.collectAsState()
     val params = CreateScreenParameters(
+        isPreviewOn = viewModel.isPreviewOn,
         syllables = syllables,
         isSaveEnabled = isSaveEnabled,
         onClose = onCloseNavigate,
@@ -53,6 +64,7 @@ fun CreateScreen(
 }
 
 data class CreateScreenParameters(
+    val isPreviewOn: Boolean = true,
     val syllables: List<SyllablePreview> = emptyList(),
     val isSaveEnabled: Boolean = false,
     val onClose: () -> Unit = {},
@@ -84,9 +96,13 @@ fun CreatePortraitLayout(params: CreateScreenParameters) {
         }
     ) { paddingValues ->
         RootPortraitBox(paddingValues) {
-            val scrollState = rememberScrollState()
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
-                SelectionSyllablesRow(params.syllables)
+            if (params.isPreviewOn) {
+                PreviewEmoji()
+            } else {
+                val scrollState = rememberScrollState()
+                Column(modifier = Modifier.verticalScroll(scrollState)) {
+                    SelectionSyllablesRow(params.syllables)
+                }
             }
         }
     }
@@ -110,10 +126,14 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
                     modifier = Modifier.weight(3f),
                     contentAlignment = Alignment.Center
                 ) {
-                    val scrollState = rememberScrollState()
-                    Column(modifier = Modifier.verticalScroll(scrollState)) {
-                        SelectionSyllablesColumn(params.syllables)
-                        Spacer(modifier = Modifier.height(36.dp))
+                    if (params.isPreviewOn) {
+                        PreviewEmoji()
+                    } else {
+                        val scrollState = rememberScrollState()
+                        Column(modifier = Modifier.verticalScroll(scrollState)) {
+                            SelectionSyllablesColumn(params.syllables)
+                            Spacer(modifier = Modifier.height(36.dp))
+                        }
                     }
                 }
                 Box(
@@ -130,6 +150,30 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
             }
         }
     }
+}
+
+@Composable
+fun PreviewEmoji() {
+    val scale = remember { Animatable(1f) }
+    LaunchedEffect(key1 = Unit) {
+        scale.animateTo(
+            targetValue = 1.1f,
+            animationSpec = InfiniteRepeatableSpec(
+                animation = tween(durationMillis = 300),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+    }
+
+    Text(
+        modifier = Modifier.graphicsLayer {
+            scaleX = scale.value
+            scaleY = scale.value
+        },
+        text = "⏱️",
+        fontSize = 80.sp,
+        textAlign = TextAlign.Center,
+    )
 }
 
 @Preview(showBackground = true)
@@ -171,5 +215,9 @@ private object CreatePreviewHelper {
             isStarred = Random.nextBoolean()
         )
     }
-    val params = CreateScreenParameters(syllables = scoredSyllables)
+    val params = CreateScreenParameters(
+        isPreviewOn = true,
+//        isPreviewOn = false,
+        syllables = scoredSyllables
+    )
 }

@@ -1,5 +1,6 @@
 package com.padym.rusread.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +21,6 @@ import javax.inject.Inject
 
 const val MIN_SYLLABLES_COUNT = 3
 const val MAX_SYLLABLES_COUNT = 10
-const val PRELOAD_COUNT = 60
 const val CHOSEN_SYLLABLES_KEY = "chosenSyllables"
 
 @HiltViewModel
@@ -34,17 +34,19 @@ class CreateViewModel @Inject constructor(
     private val chosenSyllables = MutableStateFlow(
         savedStateHandle[CHOSEN_SYLLABLES_KEY] ?: listOf<String>()
     )
-    private val isPreload = MutableStateFlow(true)
+
+    private val _isPreviewOn = mutableStateOf(true)
+    val isPreviewOn: Boolean
+        get() = _isPreviewOn.value
+
 
     val syllablePreviewGroup = combine(
-        isPreload,
         chosenSyllables,
         scoreDao.getHighScoreSyllables()
-    ) { isPreload, chosenSyllables, highScoreList ->
+    ) { chosenSyllables, highScoreList ->
         Syllable.getAll()
             .filter { it.millisOffset != Int.MAX_VALUE }
             .sortedBy { it.key }
-            .take(if (isPreload) PRELOAD_COUNT else Int.MAX_VALUE)
             .map { it.key }
             .map { syllable ->
                 SyllablePreview(
@@ -63,8 +65,8 @@ class CreateViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            delay(500)
-            isPreload.value = false
+            delay(1200)
+            _isPreviewOn.value = false
         }
     }
 
