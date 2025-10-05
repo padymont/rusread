@@ -56,14 +56,19 @@ fun GameScreen(
         }
     }
 
+    if (!viewModel.isGameOn) {
+        LaunchedEffect(Unit) {
+            delay(200)
+            onFinishGameNavigate()
+        }
+    }
+
     val params = GameScreenParameters(
         syllables = viewModel.syllables,
         gameProgress = viewModel.gameProgress,
-        isGameOn = viewModel.isGameOn,
-        onAudio = { viewModel.speakSyllable() },
+        onAudio = { if (viewModel.isGameOn) viewModel.speakSyllable() },
         onSyllable = { syllable -> viewModel.processAnswer(syllable) },
-        onClose = onCloseNavigate,
-        onFinish = onFinishGameNavigate
+        onClose = onCloseNavigate
     )
 
     val configuration = LocalConfiguration.current
@@ -75,12 +80,10 @@ fun GameScreen(
 
 data class GameScreenParameters(
     val syllables: Set<String> = emptySet(),
-    val isGameOn: Boolean = true,
     val gameProgress: Float = 0f,
     val onAudio: () -> Unit = {},
     val onSyllable: (String) -> Result = { _ -> Result.CORRECT },
-    val onClose: () -> Unit = {},
-    val onFinish: () -> Unit = {}
+    val onClose: () -> Unit = {}
 )
 
 @Composable
@@ -98,11 +101,7 @@ fun GamePortraitLayout(params: GameScreenParameters) {
                 Box(
                     modifier = Modifier.height(200.dp)
                 ) {
-                    if (params.isGameOn) {
-                        EmojiRoundButton("🎧") { params.onAudio() }
-                    } else {
-                        params.onFinish.invoke()
-                    }
+                    EmojiRoundButton("🎧") { params.onAudio() }
                 }
                 ScatteredSyllablesButtons(params.syllables) { syllable ->
                     params.onSyllable(syllable)
@@ -125,11 +124,7 @@ fun GameLandscapeLayout(params: GameScreenParameters) {
         RootLandscapeBox(paddingValues) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Spacer(modifier = Modifier.width(24.dp))
-                if (params.isGameOn) {
-                    EmojiRoundButton("🎧") { params.onAudio() }
-                } else {
-                    params.onFinish.invoke()
-                }
+                EmojiRoundButton("🎧") { params.onAudio() }
                 ScatteredSyllablesButtons(params.syllables) { syllable ->
                     params.onSyllable(syllable)
                 }
@@ -310,7 +305,6 @@ private object GamePreviewHelper {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
     val params = GameScreenParameters(
         gameProgress = 0.7f,
-        isGameOn = true,
         syllables = selectedSyllables
     )
 }
