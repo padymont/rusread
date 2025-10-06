@@ -1,10 +1,6 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.InfiniteRepeatableSpec
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,17 +11,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -153,28 +144,12 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
 }
 
 @Composable
-fun AnimatedPreviewEmoji() {
-    val scale = remember { Animatable(1f) }
-    LaunchedEffect(key1 = Unit) {
-        scale.animateTo(
-            targetValue = 1.1f,
-            animationSpec = InfiniteRepeatableSpec(
-                animation = tween(durationMillis = 300),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-    }
-
-    Text(
-        modifier = Modifier.graphicsLayer {
-            scaleX = scale.value
-            scaleY = scale.value
-        },
-        text = "⏱️",
-        fontSize = 80.sp,
-        textAlign = TextAlign.Center,
-    )
-}
+fun AnimatedPreviewEmoji() = AnimatedEmoji(
+    emoji = "⏱️",
+    fontSize = 80.sp,
+    durationMillis = 0,
+    onFinish = {}
+)
 
 @Preview(showBackground = true)
 @Composable

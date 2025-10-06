@@ -1,26 +1,16 @@
 package com.padym.rusread.compose
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.InfiniteRepeatableSpec
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.padym.rusread.ui.theme.RusreadTheme
-import kotlinx.coroutines.delay
 
 @Composable
 fun CongratulationsScreen(onFinishNavigate: () -> Unit) {
@@ -45,32 +35,12 @@ fun CongratulationsLayout(onFinish: () -> Unit) {
 }
 
 @Composable
-fun AnimatedWinEmoji(onFinish: () -> Unit) {
-    val scale = remember { Animatable(1f) }
-    LaunchedEffect(key1 = Unit) {
-        scale.animateTo(
-            targetValue = 1.1f,
-            animationSpec = InfiniteRepeatableSpec(
-                animation = tween(durationMillis = 300),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-    }
-    LaunchedEffect(key1 = Unit) {
-        delay(1500)
-        onFinish.invoke()
-    }
-
-    Text(
-        modifier = Modifier.graphicsLayer {
-            scaleX = scale.value
-            scaleY = scale.value
-        },
-        text = "🏆",
-        fontSize = 160.sp,
-        textAlign = TextAlign.Center,
-    )
-}
+fun AnimatedWinEmoji(onFinish: () -> Unit) = AnimatedEmoji(
+    emoji = "🏆",
+    fontSize = 160.sp,
+    durationMillis = 1500,
+    onFinish = onFinish
+)
 
 @Preview(showBackground = true)
 @Composable

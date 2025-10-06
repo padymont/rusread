@@ -1,5 +1,9 @@
 package com.padym.rusread.compose
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,20 +32,25 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.Syllable
 import com.padym.rusread.viewmodels.SyllablePreview
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 @Composable
@@ -202,6 +211,39 @@ fun FlowRowButtonText(
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp,
         color = textColor,
+    )
+}
+
+@Composable
+fun AnimatedEmoji(
+    emoji: String,
+    fontSize: TextUnit,
+    durationMillis: Long,
+    onFinish: () -> Unit
+) {
+    val scale = remember { Animatable(1f) }
+    LaunchedEffect(key1 = Unit) {
+        scale.animateTo(
+            targetValue = 1.1f,
+            animationSpec = InfiniteRepeatableSpec(
+                animation = tween(durationMillis = 300),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+    }
+    LaunchedEffect(key1 = Unit) {
+        delay(timeMillis = durationMillis)
+        onFinish.invoke()
+    }
+
+    Text(
+        modifier = Modifier.graphicsLayer {
+            scaleX = scale.value
+            scaleY = scale.value
+        },
+        text = emoji,
+        fontSize = fontSize,
+        textAlign = TextAlign.Center,
     )
 }
 
