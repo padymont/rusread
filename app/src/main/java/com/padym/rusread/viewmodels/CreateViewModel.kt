@@ -9,7 +9,6 @@ import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -63,13 +62,6 @@ class CreateViewModel @Inject constructor(
         it.size >= MIN_SYLLABLES_COUNT
     }.stateIn(initialValue = false)
 
-    init {
-        viewModelScope.launch {
-            delay(1200)
-            _isPreviewOn.value = false
-        }
-    }
-
     private fun processSyllable(syllable: String) {
         if (syllable in chosenSyllables.value) {
             chosenSyllables.value -= syllable
@@ -80,6 +72,9 @@ class CreateViewModel @Inject constructor(
         savedStateHandle[CHOSEN_SYLLABLES_KEY] = chosenSyllables.value
     }
 
+    fun finishPreview() {
+        _isPreviewOn.value = false
+    }
     fun saveSyllableList() {
         viewModelScope.launch {
             listDao.save(SyllableList(list = chosenSyllables.value.toSet()))

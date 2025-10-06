@@ -38,6 +38,7 @@ fun CreateScreen(
     val isSaveEnabled by viewModel.isSaveEnabled.collectAsState()
     val params = CreateScreenParameters(
         isPreviewOn = viewModel.isPreviewOn,
+        onFinishPreview = { viewModel.finishPreview() },
         syllables = syllables,
         isSaveEnabled = isSaveEnabled,
         onClose = onCloseNavigate,
@@ -56,6 +57,7 @@ fun CreateScreen(
 
 data class CreateScreenParameters(
     val isPreviewOn: Boolean = true,
+    val onFinishPreview: () -> Unit = {},
     val syllables: List<SyllablePreview> = emptyList(),
     val isSaveEnabled: Boolean = false,
     val onClose: () -> Unit = {},
@@ -88,7 +90,7 @@ fun CreatePortraitLayout(params: CreateScreenParameters) {
     ) { paddingValues ->
         RootPortraitBox(paddingValues) {
             if (params.isPreviewOn) {
-                AnimatedPreviewEmoji()
+                AnimatedPreviewEmoji(onFinish = params.onFinishPreview)
             } else {
                 val scrollState = rememberScrollState()
                 Column(modifier = Modifier.verticalScroll(scrollState)) {
@@ -118,7 +120,7 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
                     contentAlignment = Alignment.Center
                 ) {
                     if (params.isPreviewOn) {
-                        AnimatedPreviewEmoji()
+                        AnimatedPreviewEmoji(onFinish = params.onFinishPreview)
                     } else {
                         val scrollState = rememberScrollState()
                         Column(modifier = Modifier.verticalScroll(scrollState)) {
@@ -144,11 +146,11 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
 }
 
 @Composable
-fun AnimatedPreviewEmoji() = AnimatedEmoji(
+fun AnimatedPreviewEmoji(onFinish: () -> Unit) = AnimatedEmoji(
     emoji = "⏱️",
     fontSize = 80.sp,
-    durationMillis = 0,
-    onFinish = {}
+    durationMillis = 1500,
+    onFinish = onFinish
 )
 
 @Preview(showBackground = true)
