@@ -97,7 +97,7 @@ fun CreatePortraitLayout(params: CreateScreenParameters) {
     ) { paddingValues ->
         RootPortraitBox(paddingValues) {
             if (params.isPreviewOn) {
-                PreviewEmoji()
+                AnimatedPreviewEmoji()
             } else {
                 val scrollState = rememberScrollState()
                 Column(modifier = Modifier.verticalScroll(scrollState)) {
@@ -127,7 +127,7 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
                     contentAlignment = Alignment.Center
                 ) {
                     if (params.isPreviewOn) {
-                        PreviewEmoji()
+                        AnimatedPreviewEmoji()
                     } else {
                         val scrollState = rememberScrollState()
                         Column(modifier = Modifier.verticalScroll(scrollState)) {
@@ -153,7 +153,7 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
 }
 
 @Composable
-fun PreviewEmoji() {
+fun AnimatedPreviewEmoji() {
     val scale = remember { Animatable(1f) }
     LaunchedEffect(key1 = Unit) {
         scale.animateTo(
@@ -216,8 +216,8 @@ private object CreatePreviewHelper {
         )
     }
     val params = CreateScreenParameters(
-        isPreviewOn = true,
-//        isPreviewOn = false,
+//        isPreviewOn = true,
+        isPreviewOn = false,
         syllables = scoredSyllables
     )
 }
