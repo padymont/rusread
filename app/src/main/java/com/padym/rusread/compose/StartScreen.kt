@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.StartViewModel
 import com.padym.rusread.viewmodels.SyllablePreview
