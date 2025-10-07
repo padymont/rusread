@@ -7,5 +7,4 @@ import androidx.room.PrimaryKey
 data class SyllableScore(
     @PrimaryKey val syllable: String,
     val score: Int = 0
-) {
-}
+)

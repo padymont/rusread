@@ -12,10 +12,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,7 +34,11 @@ fun SettingsScreen(
     onCloseNavigate: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    val currentStarScore by viewModel.currentStarScore.collectAsState()
+
     val params = SettingsScreenParameters(
+        currentStarScore = currentStarScore,
+        onStarScoreChange = { newScore -> viewModel.setStarScore(newScore) },
         onClose = onCloseNavigate
     )
 
@@ -48,6 +50,8 @@ fun SettingsScreen(
 }
 
 data class SettingsScreenParameters(
+    val currentStarScore: Int = 0,
+    val onStarScoreChange: (Int) -> Unit = {},
     val onClose: () -> Unit = {}
 )
 
@@ -66,11 +70,9 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
             ) {
                 val startValue = 5
                 val steps = 15
-//                var sliderPosition by remember { mutableFloatStateOf(startValue.toFloat()) }
-                var sliderPosition by remember { mutableFloatStateOf(10f) }
-
+                val currentValue = params.currentStarScore
                 Text(
-                    text = stringResource(R.string.right_answers_as_done, sliderPosition.toInt()),
+                    text = stringResource(R.string.right_answers_as_done, currentValue),
                     textAlign = TextAlign.Center,
                     fontSize = 24.sp,
                     lineHeight = 32.sp,
@@ -79,8 +81,8 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Slider(
                     modifier = Modifier.padding(horizontal = 24.dp),
-                    value = sliderPosition,
-                    onValueChange = { newValue -> sliderPosition = newValue },
+                    value = currentValue.toFloat(),
+                    onValueChange = { newValue -> params.onStarScoreChange(newValue.toInt()) },
                     valueRange = startValue.toFloat()..(startValue + steps).toFloat(),
                     steps = steps - 1,
                     colors = SliderDefaults.colors(
