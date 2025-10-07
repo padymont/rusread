@@ -39,6 +39,7 @@ fun SettingsScreen(
     val params = SettingsScreenParameters(
         currentStarScore = currentStarScore,
         onStarScoreChange = { newScore -> viewModel.setStarScore(newScore) },
+        onClearProgress = { viewModel.clearProgress() },
         onClose = onCloseNavigate
     )
 
@@ -52,6 +53,7 @@ fun SettingsScreen(
 data class SettingsScreenParameters(
     val currentStarScore: Int = 0,
     val onStarScoreChange: (Int) -> Unit = {},
+    val onClearProgress: () -> Unit = {},
     val onClose: () -> Unit = {}
 )
 
@@ -104,7 +106,7 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
                 Spacer(modifier = Modifier.height(24.dp))
                 EmojiRoundButton(
                     text = "🧹",
-                    onButtonClick = {}
+                    onButtonClick = params.onClearProgress
                 )
             }
         }

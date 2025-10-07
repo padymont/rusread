@@ -23,6 +23,10 @@ class SettingsViewModel @Inject constructor(
         starScoreDao.setNewScore(newScore)
     }
 
+    fun clearProgress() = viewModelScope.launch {
+        scoreDao.clearAllEntries()
+    }
+
     private fun <T> Flow<T>.stateIn(initialValue: T) = stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

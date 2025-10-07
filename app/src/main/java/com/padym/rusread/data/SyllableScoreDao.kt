@@ -27,6 +27,9 @@ interface SyllableScoreDao {
     @Query("SELECT * FROM syllable_score_table WHERE syllable IN (:syllables)")
     suspend fun getEntriesScores(syllables: Set<String>): List<SyllableScore>
 
+    @Query("DELETE FROM syllable_score_table")
+    suspend fun clearAllEntries()
+
     suspend fun save(syllable: String) = insert(SyllableScore(syllable))
 
     suspend fun update(syllable: String, score: Int) {
