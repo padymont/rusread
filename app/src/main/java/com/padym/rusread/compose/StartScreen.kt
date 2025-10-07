@@ -42,6 +42,7 @@ import kotlin.random.Random
 fun StartScreen(
     onCreateListNavigate: () -> Unit,
     onGameStartNavigate: () -> Unit,
+    onSettingsNavigate: () -> Unit,
     viewModel: StartViewModel = hiltViewModel()
 ) {
     val currentGroup by viewModel.currentGroup.collectAsState()
@@ -56,6 +57,7 @@ fun StartScreen(
     val params = StartScreenParameters(
         syllables = currentGroup.syllables,
         actionParams = actionParams,
+        onSettings = onSettingsNavigate,
         onGame = {
             viewModel.fixCurrentGroup()
             onGameStartNavigate.invoke()
@@ -72,6 +74,7 @@ fun StartScreen(
 data class StartScreenParameters(
     val syllables: List<SyllablePreview> = emptyList(),
     val actionParams: ActionParameters = ActionParameters(),
+    val onSettings: () -> Unit = {},
     val onGame: () -> Unit = {},
 )
 
@@ -81,7 +84,7 @@ data class ActionParameters(
     val onPrevious: () -> Unit = {},
     val onNext: () -> Unit = {},
     val onRandom: () -> Unit = {},
-    val onCreate: () -> Unit = {},
+    val onCreate: () -> Unit = {}
 )
 
 @Composable
@@ -89,23 +92,35 @@ fun StartPortraitLayout(params: StartScreenParameters) {
     Scaffold { paddingValues ->
         RootPortraitBox(paddingValues) {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 24.dp, end = 24.dp),
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Spacer(modifier = Modifier.height(80.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 24.dp, end = 24.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    ActionButtons(params.actionParams)
+                    Spacer(modifier = Modifier.height(48.dp))
+                    SettingsButton(onClick = params.onSettings)
                 }
-                SelectionSyllablesRow(params.syllables)
-                Spacer(modifier = Modifier.height(48.dp))
-                BottomEmojiRoundButton(text = "🚀", onButtonClick = params.onGame)
-                Spacer(modifier = Modifier.height(80.dp))
+                Column(
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                )  {
+                    Spacer(modifier = Modifier.height(80.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        ActionButtons(params = params.actionParams)
+                    }
+                    SelectionSyllablesRow(params.syllables)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    BottomEmojiRoundButton(text = "🚀", onButtonClick = params.onGame)
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
             }
         }
     }
@@ -117,7 +132,7 @@ fun StartLandscapeLayout(params: StartScreenParameters) {
         RootLandscapeBox(paddingValues) {
             Row(
                 modifier = Modifier
-                    .padding(vertical = 48.dp)
+                    .padding(vertical = 12.dp)
                     .fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -131,7 +146,8 @@ fun StartLandscapeLayout(params: StartScreenParameters) {
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        ActionButtons(params.actionParams)
+                        SettingsButton(onClick = params.onSettings)
+                        ActionButtons(params = params.actionParams)
                     }
                 }
                 Box(
@@ -151,6 +167,9 @@ fun StartLandscapeLayout(params: StartScreenParameters) {
         }
     }
 }
+
+@Composable
+fun SettingsButton(onClick: () -> Unit) = EmojiIconButton(text = "⚙️", onButtonClick = onClick)
 
 @Composable
 fun ActionButtons(params: ActionParameters) = with(params) {

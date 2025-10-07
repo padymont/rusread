@@ -148,7 +148,7 @@ fun BottomEmojiRoundButton(
 fun SelectionSyllablesRow(syllables: List<SyllablePreview>) = FlowRow(
     modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 32.dp)
+        .padding(horizontal = 8.dp)
         .heightIn(min = 268.dp),
     horizontalArrangement = Arrangement.Center,
 ) {

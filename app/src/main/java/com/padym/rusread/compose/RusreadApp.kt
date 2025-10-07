@@ -21,11 +21,14 @@ fun RusreadAppNavHost(navController: NavHostController) {
         composable(Screen.Start.route) {
             StartScreen(
                 onCreateListNavigate = {
-                    navController.navigate(Screen.AllSyllables.route)
+                    navController.navigate(Screen.Create.route)
                 },
                 onGameStartNavigate = {
                     navController.navigate(Screen.Game.route)
                 },
+                onSettingsNavigate = {
+                    navController.navigate(Screen.Settings.route)
+                }
             )
         }
         composable(Screen.Game.route) {
@@ -39,7 +42,7 @@ fun RusreadAppNavHost(navController: NavHostController) {
                     }
                 })
         }
-        composable(Screen.AllSyllables.route) {
+        composable(Screen.Create.route) {
             CreateScreen(
                 onCloseNavigate = { navController.navigateUp() },
                 onSaveNavigate = { navController.navigateUp() }
@@ -48,6 +51,11 @@ fun RusreadAppNavHost(navController: NavHostController) {
         composable(Screen.CongratulationsScreen.route) {
             CongratulationsScreen(
                 onFinishNavigate = { navController.navigateUp() }
+            )
+        }
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onCloseNavigate = { navController.navigateUp() }
             )
         }
     }
