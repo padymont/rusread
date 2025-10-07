@@ -1,11 +1,33 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.padym.rusread.R
+import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.SettingsViewModel
 
@@ -35,6 +57,54 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
         topBar = { SimpleCloseTopAppBar(params.onClose) }
     ) { paddingValues ->
         RootPortraitBox(paddingValues) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 24.dp, end = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val startValue = 5
+                val steps = 15
+//                var sliderPosition by remember { mutableFloatStateOf(startValue.toFloat()) }
+                var sliderPosition by remember { mutableFloatStateOf(10f) }
+
+                Text(
+                    text = stringResource(R.string.right_answers_as_done, sliderPosition.toInt()),
+                    textAlign = TextAlign.Center,
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Slider(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    value = sliderPosition,
+                    onValueChange = { newValue -> sliderPosition = newValue },
+                    valueRange = startValue.toFloat()..(startValue + steps).toFloat(),
+                    steps = steps - 1,
+                    colors = SliderDefaults.colors(
+                        thumbColor = AppColors.IndianRed,
+                        activeTrackColor = AppColors.IndianRed,
+                        inactiveTrackColor = AppColors.Linen,
+                        activeTickColor = AppColors.Linen,
+                        inactiveTickColor = AppColors.IndianRed,
+                    )
+                )
+                Spacer(modifier = Modifier.height(80.dp))
+                Text(
+                    text = stringResource(R.string.delete_progress),
+                    textAlign = TextAlign.Center,
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                EmojiRoundButton(
+                    text = "🧹",
+                    onButtonClick = {}
+                )
+            }
         }
     }
 }
