@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.data.StarScoreDao
-import com.padym.rusread.data.SyllableScoreDao
+import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val starScoreDao: StarScoreDao,
-    private val scoreDao: SyllableScoreDao
+    private val syllableRepository: SyllableRepository,
 ) : ViewModel() {
 
     val currentStarScore = starScoreDao.getCurrentScore().stateIn(initialValue = 0)
@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun clearProgress() = viewModelScope.launch {
-        scoreDao.clearAllEntries()
+        syllableRepository.clearAllEntries()
     }
 
     fun showTooltip() {

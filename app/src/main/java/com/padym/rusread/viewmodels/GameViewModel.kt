@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.SyllableListDao
-import com.padym.rusread.data.SyllableScoreDao
+import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,7 +19,7 @@ const val PROGRESS_OFFSET = 0.3f
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val listDao: SyllableListDao,
-    private val scoreDao: SyllableScoreDao,
+    private val syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class GameViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _syllables.value = listDao.getLatestEntry().list
-            syllables.forEach { scoreDao.save(it) }
+            syllables.forEach { syllableRepository.save(it) }
             if (spokenSyllable.value.isEmpty()) {
                 spokenSyllable.value = syllables.random()
             }
@@ -84,11 +84,11 @@ class GameViewModel @Inject constructor(
     }
 
     private fun increaseSyllableScore(syllable: String) = viewModelScope.launch {
-        scoreDao.increaseScore(syllable)
+        syllableRepository.increaseScore(syllable)
     }
 
     private fun lowerSyllableScore(syllable: String) = viewModelScope.launch {
-        scoreDao.lowerScore(syllable)
+        syllableRepository.lowerScore(syllable)
     }
 
     private fun setNextSpokenSyllable() {

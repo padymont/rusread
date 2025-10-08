@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
-import com.padym.rusread.data.SyllableScoreDao
+import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,7 +20,7 @@ const val MIN_INDEX_VALUE = 0
 @HiltViewModel
 class StartViewModel @Inject constructor(
     private val listDao: SyllableListDao,
-    scoreDao: SyllableScoreDao,
+    syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
 
@@ -40,7 +40,7 @@ class StartViewModel @Inject constructor(
         }.map { list ->
             maxIndexValue = list.lastIndex
             list.sortedByDescending { it.modifiedAt }
-        }.combine(scoreDao.getHighScoreSyllables()) { groups, scores ->
+        }.combine(syllableRepository.getHighScoreSyllables()) { groups, scores ->
             groups.mapIndexed { index, group ->
                 PreviewGroup(
                     id = group.id,

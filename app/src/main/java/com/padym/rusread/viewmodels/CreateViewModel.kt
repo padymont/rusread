@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.SyllableList
 import com.padym.rusread.data.SyllableListDao
-import com.padym.rusread.data.SyllableScoreDao
+import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +25,7 @@ const val CHOSEN_SYLLABLES_KEY = "chosenSyllables"
 @HiltViewModel
 class CreateViewModel @Inject constructor(
     private val listDao: SyllableListDao,
-    scoreDao: SyllableScoreDao,
+    syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -41,7 +41,7 @@ class CreateViewModel @Inject constructor(
 
     val syllablePreviewGroup = combine(
         chosenSyllables,
-        scoreDao.getHighScoreSyllables()
+        syllableRepository.getHighScoreSyllables()
     ) { chosenSyllables, highScoreList ->
         Syllable.getAll()
             .filter { it.millisOffset != Int.MAX_VALUE }
