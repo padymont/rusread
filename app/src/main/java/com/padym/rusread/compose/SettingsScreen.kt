@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +37,8 @@ import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.SettingsViewModel
 import kotlinx.coroutines.delay
+
+const val TOOLTIP_BOTTOM_OFFSET = 48
 
 @Composable
 fun SettingsScreen(
@@ -151,27 +154,45 @@ fun Tooltip(onDismissRequest: () -> Unit) {
         onDismissRequest()
     }
 
+    val density = LocalDensity.current
     Popup(
         alignment = Alignment.BottomCenter,
-        offset = IntOffset(0, -200),
+        offset = with(density) { IntOffset(0, -TOOLTIP_BOTTOM_OFFSET.dp.roundToPx()) },
         onDismissRequest = onDismissRequest
     ) {
-        Box(
-            modifier = Modifier
-                .shadow(4.dp, RoundedCornerShape(8.dp))
-                .background(
-                    color = AppColors.Almond,
-                    shape = RoundedCornerShape(8.dp)
-                )
-        ) {
-            Text(
-                text = stringResource(R.string.tooltip_done),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                fontSize = 24.sp,
-                lineHeight = 32.sp,
-                fontWeight = FontWeight.Bold
+        TooltipContent()
+    }
+}
+
+@Composable
+fun TooltipContent() {
+    Box(
+        modifier = Modifier
+            .shadow(4.dp, RoundedCornerShape(8.dp))
+            .background(
+                color = AppColors.Almond,
+                shape = RoundedCornerShape(8.dp)
             )
-        }
+    ) {
+        Text(
+            text = stringResource(R.string.tooltip_done),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+            fontSize = 24.sp,
+            lineHeight = 32.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun PreviewTooltip() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = TOOLTIP_BOTTOM_OFFSET.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        TooltipContent()
     }
 }
 
@@ -180,6 +201,7 @@ fun Tooltip(onDismissRequest: () -> Unit) {
 fun SettingsPortraitLayoutPreview() {
     RusreadTheme {
         SettingsPortraitLayout(SettingsPreviewHelper.params)
+        PreviewTooltip()
     }
 }
 
@@ -188,6 +210,7 @@ fun SettingsPortraitLayoutPreview() {
 fun SettingsLandscapeLayoutPreview() {
     RusreadTheme {
         SettingsLandscapeLayout(SettingsPreviewHelper.params)
+        PreviewTooltip()
     }
 }
 
@@ -205,7 +228,7 @@ fun SettingsLandscapeLayoutTabletPreview() = SettingsLandscapeLayoutPreview()
 private object SettingsPreviewHelper {
     val params = SettingsScreenParameters(
         currentStarScore = 10,
-        isTooltipOn = true,
+        isTooltipOn = false,
         onClose = {}
     )
 }
