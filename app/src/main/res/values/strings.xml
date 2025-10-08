@@ -2,4 +2,5 @@
     <string name="app_name">Rusread</string>
     <string name="delete_progress">Стереть звёздочки:</string>
     <string name="right_answers_as_done">Пометить звездочкой \n%1$d правильных ответов</string>
+    <string name="tooltip_done">Сделано</string>
 </resources>

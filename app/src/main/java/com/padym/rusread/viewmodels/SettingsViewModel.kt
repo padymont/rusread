@@ -1,5 +1,6 @@
 package com.padym.rusread.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.data.StarScoreDao
@@ -19,12 +20,24 @@ class SettingsViewModel @Inject constructor(
 
     val currentStarScore = starScoreDao.getCurrentScore().stateIn(initialValue = 0)
 
+    private var _isTooltipOn = mutableStateOf(false)
+    val isTooltipOn: Boolean
+        get() = _isTooltipOn.value
+
     fun setStarScore(newScore: Int) = viewModelScope.launch {
         starScoreDao.setNewScore(newScore)
     }
 
     fun clearProgress() = viewModelScope.launch {
         scoreDao.clearAllEntries()
+    }
+
+    fun showTooltip() {
+        _isTooltipOn.value = true
+    }
+
+    fun hideTooltip() {
+        _isTooltipOn.value = false
     }
 
     private fun <T> Flow<T>.stateIn(initialValue: T) = stateIn(

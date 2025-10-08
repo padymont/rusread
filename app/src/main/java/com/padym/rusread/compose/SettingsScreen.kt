@@ -1,33 +1,41 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.padym.rusread.R
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.SettingsViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsScreen(
@@ -38,8 +46,16 @@ fun SettingsScreen(
 
     val params = SettingsScreenParameters(
         currentStarScore = currentStarScore,
-        onStarScoreChange = { newScore -> viewModel.setStarScore(newScore) },
-        onClearProgress = { viewModel.clearProgress() },
+        isTooltipOn = viewModel.isTooltipOn,
+        onStarScoreChange = { newScore ->
+            viewModel.setStarScore(newScore)
+            viewModel.showTooltip()
+        },
+        onClearProgress = {
+            viewModel.clearProgress()
+            viewModel.showTooltip()
+        },
+        onTooltipDismiss = { viewModel.hideTooltip() },
         onClose = onCloseNavigate
     )
 
@@ -52,8 +68,10 @@ fun SettingsScreen(
 
 data class SettingsScreenParameters(
     val currentStarScore: Int = 0,
+    val isTooltipOn: Boolean = false,
     val onStarScoreChange: (Int) -> Unit = {},
     val onClearProgress: () -> Unit = {},
+    val onTooltipDismiss: () -> Unit = {},
     val onClose: () -> Unit = {}
 )
 
@@ -108,6 +126,9 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
                     text = "🧹",
                     onButtonClick = params.onClearProgress
                 )
+                if (params.isTooltipOn) {
+                    Tooltip(onDismissRequest = params.onTooltipDismiss)
+                }
             }
         }
     }
@@ -119,6 +140,37 @@ fun SettingsLandscapeLayout(params: SettingsScreenParameters) {
         topBar = { SimpleCloseTopAppBar(params.onClose) },
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
+        }
+    }
+}
+
+@Composable
+fun Tooltip(onDismissRequest: () -> Unit) {
+    LaunchedEffect(Unit) {
+        delay(1500L)
+        onDismissRequest()
+    }
+
+    Popup(
+        alignment = Alignment.BottomCenter,
+        offset = IntOffset(0, -200),
+        onDismissRequest = onDismissRequest
+    ) {
+        Box(
+            modifier = Modifier
+                .shadow(4.dp, RoundedCornerShape(8.dp))
+                .background(
+                    color = AppColors.Almond,
+                    shape = RoundedCornerShape(8.dp)
+                )
+        ) {
+            Text(
+                text = stringResource(R.string.tooltip_done),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                fontSize = 24.sp,
+                lineHeight = 32.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -152,6 +204,8 @@ fun SettingsLandscapeLayoutTabletPreview() = SettingsLandscapeLayoutPreview()
 
 private object SettingsPreviewHelper {
     val params = SettingsScreenParameters(
+        currentStarScore = 10,
+        isTooltipOn = true,
         onClose = {}
     )
 }
