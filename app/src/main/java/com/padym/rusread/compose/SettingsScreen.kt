@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -91,46 +93,12 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                val startValue = 5
-                val steps = 15
-                val currentValue = params.currentStarScore
-                Text(
-                    text = stringResource(R.string.right_answers_as_done, currentValue),
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    lineHeight = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Slider(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    value = currentValue.toFloat(),
-                    onValueChange = { newValue -> params.onStarScoreChange(newValue.toInt()) },
-                    valueRange = startValue.toFloat()..(startValue + steps).toFloat(),
-                    steps = steps - 1,
-                    colors = SliderDefaults.colors(
-                        thumbColor = AppColors.IndianRed,
-                        activeTrackColor = AppColors.IndianRed,
-                        inactiveTrackColor = AppColors.Linen,
-                        activeTickColor = AppColors.Linen,
-                        inactiveTickColor = AppColors.IndianRed,
-                    )
+                StarScore(
+                    currentScore = params.currentStarScore,
+                    onScoreChange = params.onStarScoreChange
                 )
                 Spacer(modifier = Modifier.height(80.dp))
-                Text(
-                    text = stringResource(R.string.delete_progress),
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    lineHeight = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                EmojiRoundIconButton(
-                    text = "💣",
-                    size = 100.dp,
-                    fontSize = 60.sp,
-                    onButtonClick = params.onClearProgress,
-                )
+                DeleteProgress(onClick = params.onClearProgress)
                 if (params.isTooltipOn) {
                     Tooltip(onDismissRequest = params.onTooltipDismiss)
                 }
@@ -145,8 +113,78 @@ fun SettingsLandscapeLayout(params: SettingsScreenParameters) {
         topBar = { SimpleCloseTopAppBar(params.onClose) },
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
+            Row(
+                modifier = Modifier.fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(0.5f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    StarScore(
+                        currentScore = params.currentStarScore,
+                        onScoreChange = params.onStarScoreChange
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(0.5f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    DeleteProgress(onClick = params.onClearProgress)
+                }
+            }
+            if (params.isTooltipOn) {
+                Tooltip(onDismissRequest = params.onTooltipDismiss)
+            }
         }
     }
+}
+
+@Composable
+fun StarScore(currentScore: Int, onScoreChange: (Int) -> Unit) {
+    val startValue = 5
+    val steps = 15
+    val currentValue = currentScore
+    Text(
+        text = stringResource(R.string.right_answers_as_done, currentValue),
+        textAlign = TextAlign.Center,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Spacer(modifier = Modifier.height(24.dp))
+    Slider(
+        modifier = Modifier.padding(horizontal = 24.dp),
+        value = currentValue.toFloat(),
+        onValueChange = { newValue -> onScoreChange(newValue.toInt()) },
+        valueRange = startValue.toFloat()..(startValue + steps).toFloat(),
+        steps = steps - 1,
+        colors = SliderDefaults.colors(
+            thumbColor = AppColors.IndianRed,
+            activeTrackColor = AppColors.IndianRed,
+            inactiveTrackColor = AppColors.Linen,
+            activeTickColor = AppColors.Linen,
+            inactiveTickColor = AppColors.IndianRed,
+        )
+    )
+}
+
+@Composable
+fun DeleteProgress(onClick: () -> Unit) {
+    Text(
+        text = stringResource(R.string.delete_progress),
+        textAlign = TextAlign.Center,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    EmojiRoundIconButton(
+        text = "💣",
+        size = 100.dp,
+        fontSize = 60.sp,
+        onButtonClick = onClick,
+    )
 }
 
 @Composable
