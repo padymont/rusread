@@ -124,10 +124,12 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
                     lineHeight = 32.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(24.dp))
-                EmojiRoundButton(
-                    text = "🧹",
-                    onButtonClick = params.onClearProgress
+                Spacer(modifier = Modifier.height(8.dp))
+                EmojiRoundIconButton(
+                    text = "💣",
+                    size = 100.dp,
+                    fontSize = 60.sp,
+                    onButtonClick = params.onClearProgress,
                 )
                 if (params.isTooltipOn) {
                     Tooltip(onDismissRequest = params.onTooltipDismiss)

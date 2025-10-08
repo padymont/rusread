@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -245,6 +246,31 @@ fun AnimatedEmoji(
         fontSize = fontSize,
         textAlign = TextAlign.Center,
     )
+}
+
+@Composable
+fun EmojiRoundIconButton(
+    text: String,
+    isVisible: Boolean = true,
+    size: Dp,
+    fontSize: TextUnit,
+    onButtonClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onButtonClick,
+        contentPadding = PaddingValues(0.dp),
+        border = BorderStroke(width = 0.dp, color = Color.Transparent),
+        modifier = Modifier
+            .clip(CircleShape)
+            .size(size)
+            .alpha(if (isVisible) 1f else 0f)
+    ) {
+        Text(
+            text = text,
+            fontSize = fontSize,
+            textAlign = TextAlign.Center
+        )
+    }
 }
 
 @Preview(showBackground = true)
