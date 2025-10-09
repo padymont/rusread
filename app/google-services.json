@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "352757457493",
+    "project_id": "be-app-b2c65",
+    "storage_bucket": "be-app-b2c65.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352757457493:android:8b943eb5319240ce1eeadc",
+        "android_client_info": {
+          "package_name": "com.padym.rusread"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDL8dq9g7fz9T6KqUkyjUrlBZcDf3vYAX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
