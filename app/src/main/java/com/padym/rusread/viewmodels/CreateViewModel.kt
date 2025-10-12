@@ -44,7 +44,7 @@ class CreateViewModel @Inject constructor(
         syllableRepository.getHighScoreSyllables()
     ) { chosenSyllables, highScoreList ->
         Syllable.getAll()
-            .filter { it.millisOffset != Int.MAX_VALUE }
+            .filter { it.resId != 0 }
             .sortedBy { it.key }
             .map { it.key }
             .map { syllable ->

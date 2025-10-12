@@ -1,9 +1,10 @@
 package com.padym.rusread.viewmodels
+import com.padym.rusread.R
 
 data class Syllable(
     val key: String,
-    val millisOffset: Int = Int.MAX_VALUE,
-    val occurrenceCount: Int = 0
+    val resId: Int = 0,
+    val millisOffset: Int = Int.MAX_VALUE
 ) {
     companion object {
 
@@ -25,6 +26,11 @@ data class Syllable(
         fun findOffset(syllable: String): Int {
             return getAll().find { it.key == syllable }?.millisOffset ?: 0
         }
+
+        fun findResourceId(syllable: String): Int {
+            return getAll().find { it.key == syllable }?.resId ?: 0
+        }
+
 
         fun getFirstTimeGroup() = setOf("ма", "мо", "му", "па", "по", "пу")
 
@@ -76,7 +82,7 @@ data class Syllable(
         )
 
         fun getAll(): List<Syllable> = listOf(
-            Syllable("а", millisOffset = 0),
+            Syllable("а", resId = R.raw.a01_1_a),
             Syllable("е", millisOffset = 1000),
             Syllable("ё", millisOffset = 2000),
             Syllable("и", millisOffset = 3000),
@@ -86,30 +92,30 @@ data class Syllable(
             Syllable("э", millisOffset = 8200),
             Syllable("ю", millisOffset = 9200),
             Syllable("я", millisOffset = 10500),
-            Syllable("б", millisOffset = 11500),
-            Syllable("бь", millisOffset = 12500),
-            Syllable("ба", millisOffset = 13200),
-            Syllable("бе", millisOffset = 14200),
-            Syllable("бё", millisOffset = 15500),
-            Syllable("би", millisOffset = 16600),
-            Syllable("бо", millisOffset = 17700),
-            Syllable("бу", millisOffset = 19000),
-            Syllable("бы", millisOffset = 19800),
-            Syllable("бэ", millisOffset = 20700),
-            Syllable("бю", millisOffset = 21600),
-            Syllable("бя", millisOffset = 22500),
-            Syllable("в", millisOffset = 24200),
-            Syllable("вь", millisOffset = 25500),
-            Syllable("ва", millisOffset = 26500),
-            Syllable("ве", millisOffset = 27700),
-            Syllable("вё", millisOffset = 29500),
-            Syllable("ви", millisOffset = 31000),
-            Syllable("во", millisOffset = 32700),
-            Syllable("ву", millisOffset = 34700),
-            Syllable("вы", millisOffset = 35700),
-            Syllable("вэ", millisOffset = 37000),
-            Syllable("вю", millisOffset = 38500),
-            Syllable("вя", millisOffset = 40000),
+            Syllable("б", resId = R.raw.a02_1_b),
+            Syllable("бь", resId = R.raw.a02_9_b_soft),
+            Syllable("ба", resId = R.raw.a02_2_ba),
+            Syllable("бе", resId = R.raw.a02_3_be),
+            Syllable("бё", resId = R.raw.a02_4_bjo),
+            Syllable("би", resId = R.raw.a02_5_bi),
+            Syllable("бо", resId = R.raw.a02_6_bo),
+            Syllable("бу", resId = R.raw.a02_7_bu),
+            Syllable("бы", resId = R.raw.a02_8_by),
+            Syllable("бэ", resId = R.raw.a02_10_bee),
+            Syllable("бю", resId = R.raw.a02_11_bju),
+            Syllable("бя", resId = R.raw.a02_12_bja),
+            Syllable("в", resId = R.raw.a03_1_v),
+            Syllable("вь", resId = R.raw.a03_9_v_soft),
+            Syllable("ва", resId = R.raw.a03_2_va),
+            Syllable("ве", resId = R.raw.a03_3_ve),
+            Syllable("вё", resId = R.raw.a03_4_vjo),
+            Syllable("ви", resId = R.raw.a03_5_vi),
+            Syllable("во", resId = R.raw.a03_6_vo),
+            Syllable("ву", resId = R.raw.a03_7_vu),
+            Syllable("вы", resId = R.raw.a03_8_vy),
+            Syllable("вэ", resId = R.raw.a03_10_vee),
+            Syllable("вю", resId = R.raw.a03_11_vju),
+            Syllable("вя", resId = R.raw.a03_12_vja),
             Syllable("г", millisOffset = 40800),
             Syllable("гь", millisOffset = 41800),
             Syllable("га", millisOffset = 42800),
