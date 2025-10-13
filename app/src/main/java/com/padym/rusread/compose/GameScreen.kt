@@ -50,7 +50,7 @@ import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-private const val MAX_PLACEMENT_ATTEMPTS = 500
+private const val MAX_PLACEMENT_ATTEMPTS = 1000
 
 @Composable
 fun GameScreen(
