@@ -236,7 +236,7 @@ private fun PreviewTooltip() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT)
 @Composable
 fun SettingsPortraitLayoutPreview() {
     RusreadTheme {
@@ -245,7 +245,11 @@ fun SettingsPortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = "spec:parent=pixel_5,orientation=landscape")
+@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Composable
+fun SettingsPortraitLayoutSmallPreview() = SettingsPortraitLayoutPreview()
+
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
 @Composable
 fun SettingsLandscapeLayoutPreview() {
     RusreadTheme {
@@ -254,14 +258,15 @@ fun SettingsLandscapeLayoutPreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
-)
+@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Composable
+fun SettingsLandscapeLayoutSmallPreview() = SettingsLandscapeLayoutPreview()
+
+@Preview(showBackground = true, device = TABLET_PORTRAIT)
 @Composable
 fun SettingsPortraitLayoutTabletPreview() = SettingsPortraitLayoutPreview()
 
-@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
+@Preview(showBackground = true, device = TABLET_LANDSCAPE)
 @Composable
 fun SettingsLandscapeLayoutTabletPreview() = SettingsLandscapeLayoutPreview()
 

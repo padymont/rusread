@@ -274,7 +274,7 @@ fun overlaps(
     return distance < size
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT)
 @Composable
 fun GamePortraitLayoutPreview() {
     RusreadTheme {
@@ -282,7 +282,11 @@ fun GamePortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = "spec:parent=pixel_5,orientation=landscape")
+//@Preview(showBackground = true, device = SMALL_PORTRAIT)
+//@Composable
+//fun GamePortraitLayoutSmallPreview() = GamePortraitLayoutPreview()
+
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
 @Composable
 fun GameLandscapeLayoutPreview() {
     RusreadTheme {
@@ -290,14 +294,15 @@ fun GameLandscapeLayoutPreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
-)
+//@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+//@Composable
+//fun GameLandscapeLayoutSmallPreview() = GameLandscapeLayoutPreview()
+
+@Preview(showBackground = true, device = TABLET_PORTRAIT)
 @Composable
 fun GamePortraitLayoutTabletPreview() = GamePortraitLayoutPreview()
 
-@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
+@Preview(showBackground = true, device = TABLET_LANDSCAPE)
 @Composable
 fun GameLandscapeLayoutTabletPreview() = GameLandscapeLayoutPreview()
 

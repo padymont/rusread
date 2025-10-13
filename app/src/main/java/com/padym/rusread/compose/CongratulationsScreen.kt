@@ -42,7 +42,7 @@ fun AnimatedWinEmoji(onFinish: () -> Unit) = AnimatedEmoji(
     onFinish = onFinish
 )
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT)
 @Composable
 fun CongratulationsPortraitLayoutPreview() {
     RusreadTheme {
@@ -50,7 +50,11 @@ fun CongratulationsPortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = "spec:parent=pixel_5,orientation=landscape")
+@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Composable
+fun CongratulationsLayoutSmallPreview() = CongratulationsPortraitLayoutPreview()
+
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
 @Composable
 fun CongratulationsLandscapeLayoutPreview() {
     RusreadTheme {
@@ -58,13 +62,14 @@ fun CongratulationsLandscapeLayoutPreview() {
     }
 }
 
-@Preview(
-    showBackground = true,
-    device = "spec:width=1280dp,height=800dp,dpi=240,orientation=portrait"
-)
+@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Composable
+fun CongratulationsLandscapeLayoutSmallPreview() = CongratulationsLandscapeLayoutPreview()
+
+@Preview(showBackground = true, device = TABLET_PORTRAIT)
 @Composable
 fun CongratulationsLayoutTabletPreview() = CongratulationsPortraitLayoutPreview()
 
-@Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,dpi=240")
+@Preview(showBackground = true, device = TABLET_LANDSCAPE)
 @Composable
 fun CongratulationsLandscapeLayoutTabletPreview() = CongratulationsLandscapeLayoutPreview()

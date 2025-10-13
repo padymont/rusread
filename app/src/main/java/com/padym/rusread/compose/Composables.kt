@@ -54,6 +54,18 @@ import com.padym.rusread.viewmodels.SyllablePreview
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
+const val SMALL_PHONE = "spec:parent=small_phone"
+const val SMALL_PORTRAIT = "$SMALL_PHONE,orientation=portrait"
+const val SMALL_LANDSCAPE = "$SMALL_PHONE,orientation=landscape"
+
+const val NORMAL_PHONE = "spec:parent=pixel_7"
+const val NORMAL_PORTRAIT = "$NORMAL_PHONE,orientation=portrait"
+const val NORMAL_LANDSCAPE = "$NORMAL_PHONE,orientation=landscape"
+
+const val TABLET = "spec:parent=medium_tablet"
+const val TABLET_PORTRAIT = "$TABLET,orientation=portrait"
+const val TABLET_LANDSCAPE = "$TABLET,orientation=landscape"
+
 @Composable
 fun RootPortraitBox(
     paddingValues: PaddingValues,
