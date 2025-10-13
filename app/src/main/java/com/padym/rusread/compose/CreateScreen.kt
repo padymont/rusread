@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -80,11 +81,7 @@ fun CreatePortraitLayout(params: CreateScreenParameters) {
             ) {
                 HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
                 Spacer(modifier = Modifier.height(16.dp))
-                val text = if (params.isSaveEnabled) "👍" else ""
-                BottomEmojiRoundButton(
-                    text = text,
-                    isEnabled = params.isSaveEnabled
-                ) { params.onSave() }
+                ConfirmButton(isEnabled = params.isSaveEnabled) { params.onSave() }
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -138,15 +135,25 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
-                    val text = if (params.isSaveEnabled) "👍" else ""
-                    BottomEmojiRoundButton(
-                        text = text,
-                        isEnabled = params.isSaveEnabled
-                    ) { params.onSave() }
+                    ConfirmButton(isEnabled = params.isSaveEnabled) { params.onSave() }
                 }
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
+    }
+}
+
+@Composable
+fun ConfirmButton(isEnabled: Boolean, onClick: () -> Unit) {
+    if (isEnabled) {
+        EmojiRoundIconButton(
+            text = "👍",
+            size = 100.dp,
+            fontSize = 60.sp,
+            onButtonClick = onClick,
+        )
+    } else {
+        Box(modifier = Modifier.size(100.dp))
     }
 }
 
@@ -191,7 +198,7 @@ fun CreatePortraitLayoutTabletPreview() = CreatePortraitLayoutPreview()
 fun CreateLandscapeLayoutTabletPreview() = CreateLandscapeLayoutPreview()
 
 private object CreatePreviewHelper {
-    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(30).sorted()
+    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(50).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
         val isEnabled = if (isSelected) true else Random.nextBoolean()
@@ -205,6 +212,8 @@ private object CreatePreviewHelper {
     val params = CreateScreenParameters(
 //        isPreviewOn = true,
         isPreviewOn = false,
+        isSaveEnabled = true,
+//        isSaveEnabled = false,
         syllables = scoredSyllables
     )
 }
