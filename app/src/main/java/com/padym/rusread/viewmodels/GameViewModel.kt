@@ -27,6 +27,10 @@ class GameViewModel @Inject constructor(
     val syllables: Set<String>
         get() = _syllables.value
 
+    private var _isNotEnoughSpaceError = mutableStateOf(false)
+    val isNotEnoughSpaceError: Boolean
+        get() = _isNotEnoughSpaceError.value
+
     private val spokenSyllable = mutableStateOf("")
     private val _correctAnswers = mutableIntStateOf(0)
 
@@ -99,6 +103,10 @@ class GameViewModel @Inject constructor(
 
     fun speakSyllable() {
         mediaPlayer.speakSyllable(spokenSyllable.value)
+    }
+
+    fun processNotEnoughSpace() {
+        _isNotEnoughSpaceError.value = true
     }
 }
 

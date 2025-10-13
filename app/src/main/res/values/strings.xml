@@ -3,4 +3,5 @@
     <string name="delete_progress">Стереть звёздочки:</string>
     <string name="right_answers_as_done">Пометить звездочкой \n%1$d правильных ответов</string>
     <string name="tooltip_done">Сделано</string>
+    <string name="not_enough_space_error">На экране не хватает места\nУменьшите количество слогов</string>
 </resources>

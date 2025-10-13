@@ -34,10 +34,14 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.padym.rusread.R
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
 import com.padym.rusread.viewmodels.GameViewModel
@@ -46,7 +50,7 @@ import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-private const val MAX_PLACEMENT_ATTEMPTS = 100
+private const val MAX_PLACEMENT_ATTEMPTS = 500
 
 @Composable
 fun GameScreen(
@@ -69,6 +73,8 @@ fun GameScreen(
 
     val params = GameScreenParameters(
         syllables = viewModel.syllables,
+        onNotEnoughSpace = { viewModel.processNotEnoughSpace() },
+        isNotEnoughSpaceError = viewModel.isNotEnoughSpaceError,
         gameProgress = viewModel.gameProgress,
         onAudio = { if (viewModel.isGameOn) viewModel.speakSyllable() },
         onSyllable = { syllable -> viewModel.processAnswer(syllable) },
@@ -84,6 +90,8 @@ fun GameScreen(
 
 data class GameScreenParameters(
     val syllables: Set<String> = emptySet(),
+    val onNotEnoughSpace: () -> Unit = {},
+    val isNotEnoughSpaceError: Boolean = false,
     val gameProgress: Float = 0f,
     val onAudio: () -> Unit = {},
     val onSyllable: (String) -> Result = { _ -> Result.CORRECT },
@@ -101,14 +109,20 @@ fun GamePortraitLayout(params: GameScreenParameters) {
         }
     ) { paddingValues ->
         RootPortraitBox(paddingValues) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    modifier = Modifier.height(200.dp)
-                ) {
-                    EmojiRoundButton("🎧") { params.onAudio() }
-                }
-                ScatteredSyllablesButtons(params.syllables) { syllable ->
-                    params.onSyllable(syllable)
+            if (params.isNotEnoughSpaceError) {
+                NotEnoughSpaceError()
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(
+                        modifier = Modifier.height(200.dp)
+                    ) {
+                        EmojiRoundButton("🎧") { params.onAudio() }
+                    }
+                    ScatteredSyllablesButtons(
+                        selectedSyllables = params.syllables,
+                        onNotEnoughSpace = params.onNotEnoughSpace,
+                        onSyllableClick = { syllable -> params.onSyllable(syllable) }
+                    )
                 }
             }
         }
@@ -126,21 +140,40 @@ fun GameLandscapeLayout(params: GameScreenParameters) {
         }
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Spacer(modifier = Modifier.width(24.dp))
-                EmojiRoundButton("🎧") { params.onAudio() }
-                ScatteredSyllablesButtons(params.syllables) { syllable ->
-                    params.onSyllable(syllable)
+            if (params.isNotEnoughSpaceError) {
+                NotEnoughSpaceError()
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Spacer(modifier = Modifier.width(24.dp))
+                    EmojiRoundButton("🎧") { params.onAudio() }
+                    ScatteredSyllablesButtons(
+                        selectedSyllables = params.syllables,
+                        onNotEnoughSpace = params.onNotEnoughSpace,
+                        onSyllableClick = { syllable -> params.onSyllable(syllable) }
+                    )
+                    Spacer(modifier = Modifier.width(24.dp))
                 }
-                Spacer(modifier = Modifier.width(24.dp))
             }
         }
     }
 }
 
 @Composable
+fun NotEnoughSpaceError() {
+    Text(
+        modifier = Modifier.padding(horizontal = 24.dp),
+        text = stringResource(R.string.not_enough_space_error),
+        textAlign = TextAlign.Center,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
 fun ScatteredSyllablesButtons(
     selectedSyllables: Set<String>,
+    onNotEnoughSpace: () -> Unit,
     onSyllableClick: (String) -> Result
 ) {
     Layout(
@@ -162,7 +195,10 @@ fun ScatteredSyllablesButtons(
                 placeable.width,
                 placeable.height
             )
-            if (coordinates !== null) {
+            if (coordinates == null) {
+                onNotEnoughSpace.invoke()
+                return@forEach
+            } else {
                 successfulPlaceable.add(placeable)
                 buttonList.add(coordinates)
             }
@@ -330,6 +366,8 @@ fun GameLandscapeLayoutTabletPreview() = GameLandscapeLayoutPreview()
 private object GamePreviewHelper {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
     val params = GameScreenParameters(
+        isNotEnoughSpaceError = true,
+//        isNotEnoughSpaceError = false,
         gameProgress = 0.7f,
         syllables = selectedSyllables
     )
