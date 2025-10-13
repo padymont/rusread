@@ -1,6 +1,7 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,8 @@ import com.padym.rusread.viewmodels.Result
 import kotlinx.coroutines.delay
 import kotlin.math.sqrt
 import kotlin.random.Random
+
+private const val MAX_PLACEMENT_ATTEMPTS = 100
 
 @Composable
 fun GameScreen(
@@ -148,6 +152,7 @@ fun ScatteredSyllablesButtons(
         }
     ) { measurables, constraints ->
         val placeables = measurables.map { it.measure(constraints) }
+        val successfulPlaceable = mutableListOf<Placeable>()
         val buttonList = mutableListOf<Pair<Float, Float>>()
         placeables.forEach { placeable ->
             val coordinates = generateRandomPosition(
@@ -157,11 +162,14 @@ fun ScatteredSyllablesButtons(
                 placeable.width,
                 placeable.height
             )
-            buttonList.add(coordinates)
+            if (coordinates !== null) {
+                successfulPlaceable.add(placeable)
+                buttonList.add(coordinates)
+            }
         }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
-            placeables.forEachIndexed { index, placeable ->
+            successfulPlaceable.forEachIndexed { index, placeable ->
                 val (buttonX, buttonY) = buttonList[index]
                 placeable.placeRelative(buttonX.toInt(), buttonY.toInt())
             }
@@ -251,15 +259,28 @@ fun generateRandomPosition(
     screenHeight: Int,
     buttonWidth: Int,
     buttonHeight: Int
-): Pair<Float, Float> {
+): Pair<Float, Float>? {
     var x: Float
     var y: Float
+    var attempts = 0
+
     do {
+        attempts++
+        if (attempts > MAX_PLACEMENT_ATTEMPTS) {
+            Log.w(
+                "Placement",
+                "Could not find a spot after $MAX_PLACEMENT_ATTEMPTS attempts. Skipping syllable."
+            )
+            return null
+        }
+
         x = Random.nextInt(screenWidth - buttonWidth).toFloat()
         y = Random.nextInt(screenHeight - buttonHeight).toFloat()
     } while (existingButtons.any { (buttonX, buttonY) ->
             overlaps(x, y, buttonX, buttonY, buttonWidth)
         })
+
+    Log.d("Placement", "Found a spot after $attempts attempts.")
     return Pair(x, y)
 }
 
@@ -282,9 +303,9 @@ fun GamePortraitLayoutPreview() {
     }
 }
 
-//@Preview(showBackground = true, device = SMALL_PORTRAIT)
-//@Composable
-//fun GamePortraitLayoutSmallPreview() = GamePortraitLayoutPreview()
+@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Composable
+fun GamePortraitLayoutSmallPreview() = GamePortraitLayoutPreview()
 
 @Preview(showBackground = true, device = NORMAL_LANDSCAPE)
 @Composable
@@ -294,9 +315,9 @@ fun GameLandscapeLayoutPreview() {
     }
 }
 
-//@Preview(showBackground = true, device = SMALL_LANDSCAPE)
-//@Composable
-//fun GameLandscapeLayoutSmallPreview() = GameLandscapeLayoutPreview()
+@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Composable
+fun GameLandscapeLayoutSmallPreview() = GameLandscapeLayoutPreview()
 
 @Preview(showBackground = true, device = TABLET_PORTRAIT)
 @Composable
