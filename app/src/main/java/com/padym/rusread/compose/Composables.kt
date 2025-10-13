@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -162,8 +161,9 @@ fun SelectionSyllablesRow(syllables: List<SyllablePreview>) = FlowRow(
     modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 8.dp)
-        .heightIn(min = 268.dp),
+        .heightIn(min = 216.dp),
     horizontalArrangement = Arrangement.Center,
+    verticalArrangement = Arrangement.Top
 ) {
     syllables.forEach { SyllableFlowRowButton(it) }
 }
@@ -171,9 +171,6 @@ fun SelectionSyllablesRow(syllables: List<SyllablePreview>) = FlowRow(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SelectionSyllablesColumn(syllables: List<SyllablePreview>) = FlowRow(
-    modifier = Modifier
-        .fillMaxHeight(),
-//        .widthIn(max = 480.dp),
     horizontalArrangement = Arrangement.Center,
     verticalArrangement = Arrangement.Center
 ) {
