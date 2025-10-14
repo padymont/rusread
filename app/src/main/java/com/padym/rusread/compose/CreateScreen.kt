@@ -72,14 +72,14 @@ fun CreatePortraitLayout(params: CreateScreenParameters) {
         topBar = {
             Column {
                 SimpleCloseTopAppBar { params.onClose() }
-                HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
+                ThinHorizontalDivider()
             }
         },
         bottomBar = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
+                ThinHorizontalDivider()
                 Spacer(modifier = Modifier.height(16.dp))
                 ConfirmButton(isEnabled = params.isSaveEnabled) { params.onSave() }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -109,10 +109,10 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
         topBar = {
             Column {
                 SimpleCloseTopAppBar { params.onClose() }
-                HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
+                ThinHorizontalDivider()
             }
         },
-        bottomBar = { HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand) }
+        bottomBar = { ThinHorizontalDivider() }
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -142,6 +142,9 @@ fun CreateLandscapeLayout(params: CreateScreenParameters) {
         }
     }
 }
+
+@Composable
+fun ThinHorizontalDivider() = HorizontalDivider(thickness = 2.dp, color = AppColors.SoftSand)
 
 @Composable
 fun ConfirmButton(isEnabled: Boolean, onClick: () -> Unit) {
