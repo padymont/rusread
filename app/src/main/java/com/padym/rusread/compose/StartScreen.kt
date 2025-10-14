@@ -182,7 +182,7 @@ fun EmojiIconButton(text: String, isVisible: Boolean = true, onButtonClick: () -
     )
 }
 
-@Preview(showBackground = true, device = NORMAL_PORTRAIT)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT, showSystemUi = true)
 @Composable
 fun StartPortraitLayoutPreview() {
     RusreadTheme {
@@ -190,11 +190,11 @@ fun StartPortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Preview(showBackground = true, device = SMALL_PORTRAIT, showSystemUi = true)
 @Composable
 fun StartPortraitLayoutSmallPreview() = StartPortraitLayoutPreview()
 
-@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun StartLandscapeLayoutPreview() {
     RusreadTheme {
@@ -202,15 +202,15 @@ fun StartLandscapeLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Preview(showBackground = true, device = SMALL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun StartLandscapeLayoutPreviewSmallPreview() = StartLandscapeLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_PORTRAIT)
+@Preview(showBackground = true, device = TABLET_PORTRAIT, showSystemUi = true)
 @Composable
 fun StartPortraitLayoutTabletPreview() = StartPortraitLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_LANDSCAPE)
+@Preview(showBackground = true, device = TABLET_LANDSCAPE, showSystemUi = true)
 @Composable
 fun StartLandscapeLayoutPreviewTabletPreview() = StartLandscapeLayoutPreview()
 

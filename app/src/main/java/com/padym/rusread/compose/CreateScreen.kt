@@ -165,7 +165,7 @@ fun AnimatedPreviewEmoji(onFinish: () -> Unit) = AnimatedEmoji(
     onFinish = onFinish
 )
 
-@Preview(showBackground = true, device = NORMAL_PORTRAIT)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT, showSystemUi = true)
 @Composable
 fun CreatePortraitLayoutPreview() {
     RusreadTheme {
@@ -173,11 +173,11 @@ fun CreatePortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Preview(showBackground = true, device = SMALL_PORTRAIT, showSystemUi = true)
 @Composable
 fun CreatePortraitLayoutSmallPreview() = CreatePortraitLayoutPreview()
 
-@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun CreateLandscapeLayoutPreview() {
     RusreadTheme {
@@ -185,15 +185,15 @@ fun CreateLandscapeLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Preview(showBackground = true, device = SMALL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun CreateLandscapeLayoutSmallPreview() = CreateLandscapeLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_PORTRAIT)
+@Preview(showBackground = true, device = TABLET_PORTRAIT, showSystemUi = true)
 @Composable
 fun CreatePortraitLayoutTabletPreview() = CreatePortraitLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_LANDSCAPE)
+@Preview(showBackground = true, device = TABLET_LANDSCAPE, showSystemUi = true)
 @Composable
 fun CreateLandscapeLayoutTabletPreview() = CreateLandscapeLayoutPreview()
 

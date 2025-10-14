@@ -236,7 +236,7 @@ private fun PreviewTooltip() {
     }
 }
 
-@Preview(showBackground = true, device = NORMAL_PORTRAIT)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT, showSystemUi = true)
 @Composable
 fun SettingsPortraitLayoutPreview() {
     RusreadTheme {
@@ -245,11 +245,11 @@ fun SettingsPortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Preview(showBackground = true, device = SMALL_PORTRAIT, showSystemUi = true)
 @Composable
 fun SettingsPortraitLayoutSmallPreview() = SettingsPortraitLayoutPreview()
 
-@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun SettingsLandscapeLayoutPreview() {
     RusreadTheme {
@@ -258,15 +258,15 @@ fun SettingsLandscapeLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Preview(showBackground = true, device = SMALL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun SettingsLandscapeLayoutSmallPreview() = SettingsLandscapeLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_PORTRAIT)
+@Preview(showBackground = true, device = TABLET_PORTRAIT, showSystemUi = true)
 @Composable
 fun SettingsPortraitLayoutTabletPreview() = SettingsPortraitLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_LANDSCAPE)
+@Preview(showBackground = true, device = TABLET_LANDSCAPE, showSystemUi = true)
 @Composable
 fun SettingsLandscapeLayoutTabletPreview() = SettingsLandscapeLayoutPreview()
 

@@ -331,7 +331,7 @@ fun overlaps(
     return distance < size
 }
 
-@Preview(showBackground = true, device = NORMAL_PORTRAIT)
+@Preview(showBackground = true, device = NORMAL_PORTRAIT, showSystemUi = true)
 @Composable
 fun GamePortraitLayoutPreview() {
     RusreadTheme {
@@ -339,11 +339,11 @@ fun GamePortraitLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_PORTRAIT)
+@Preview(showBackground = true, device = SMALL_PORTRAIT, showSystemUi = true)
 @Composable
 fun GamePortraitLayoutSmallPreview() = GamePortraitLayoutPreview()
 
-@Preview(showBackground = true, device = NORMAL_LANDSCAPE)
+@Preview(showBackground = true, device = NORMAL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun GameLandscapeLayoutPreview() {
     RusreadTheme {
@@ -351,23 +351,23 @@ fun GameLandscapeLayoutPreview() {
     }
 }
 
-@Preview(showBackground = true, device = SMALL_LANDSCAPE)
+@Preview(showBackground = true, device = SMALL_LANDSCAPE, showSystemUi = true)
 @Composable
 fun GameLandscapeLayoutSmallPreview() = GameLandscapeLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_PORTRAIT)
+@Preview(showBackground = true, device = TABLET_PORTRAIT, showSystemUi = true)
 @Composable
 fun GamePortraitLayoutTabletPreview() = GamePortraitLayoutPreview()
 
-@Preview(showBackground = true, device = TABLET_LANDSCAPE)
+@Preview(showBackground = true, device = TABLET_LANDSCAPE, showSystemUi = true)
 @Composable
 fun GameLandscapeLayoutTabletPreview() = GameLandscapeLayoutPreview()
 
 private object GamePreviewHelper {
     val selectedSyllables = setOf("до", "ме", "мя", "ко", "ба", "са", "л", "жу")
     val params = GameScreenParameters(
-        isNotEnoughSpaceError = true,
-//        isNotEnoughSpaceError = false,
+//        isNotEnoughSpaceError = true,
+        isNotEnoughSpaceError = false,
         gameProgress = 0.7f,
         syllables = selectedSyllables
     )

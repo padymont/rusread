@@ -10,15 +10,6 @@ private val LightColorScheme = lightColorScheme(
     surface = AppColors.Linen,
     onBackground = AppColors.Charcoal,
     onSurface = AppColors.Charcoal,
-
-    /* Other default colors to override
-    surface = Color(0xFFFFFBFE),
-    secondary = AppColors.PurpleGrey40,
-    tertiary = AppColors.Pink40,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    */
 )
 
 @Composable
