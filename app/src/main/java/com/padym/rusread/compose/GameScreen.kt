@@ -1,6 +1,7 @@
 package com.padym.rusread.compose
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -302,6 +303,10 @@ fun generateRandomPosition(
     do {
         attempts++
         if (attempts > MAX_PLACEMENT_ATTEMPTS) {
+            Log.d(
+                "GameScreen.generateRandomPosition()",
+                "Could not find a spot after $MAX_PLACEMENT_ATTEMPTS attempts. Skipping syllable."
+            )
             return null
         }
 
@@ -311,6 +316,7 @@ fun generateRandomPosition(
             overlaps(x, y, buttonX, buttonY, buttonWidth)
         })
 
+    Log.d("GameScreen.generateRandomPosition()", "Found a spot after $attempts attempts.")
     return Pair(x, y)
 }
 
