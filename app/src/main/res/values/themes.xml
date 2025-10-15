@@ -3,5 +3,7 @@
     <style name="Theme.Rusread" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@color/linen</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">@color/linen</item>
     </style>
 </resources>
