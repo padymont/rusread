@@ -4,4 +4,5 @@
     <string name="right_answers_as_done">Пометить звездочкой \n%1$d правильных ответов</string>
     <string name="tooltip_done">Сделано</string>
     <string name="not_enough_space_error">На экране не хватает места\n\nПопробуйте еще раз \nили уменьшите количество слогов</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
 </resources>

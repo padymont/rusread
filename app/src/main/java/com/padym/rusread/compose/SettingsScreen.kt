@@ -2,6 +2,7 @@ package com.padym.rusread.compose
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -83,7 +87,8 @@ data class SettingsScreenParameters(
 @Composable
 fun SettingsPortraitLayout(params: SettingsScreenParameters) {
     Scaffold(
-        topBar = { SimpleCloseTopAppBar(params.onClose) }
+        topBar = { SimpleCloseTopAppBar(params.onClose) },
+        bottomBar = { BottomBar() }
     ) { paddingValues ->
         RootPortraitBox(paddingValues) {
             Column(
@@ -111,6 +116,7 @@ fun SettingsPortraitLayout(params: SettingsScreenParameters) {
 fun SettingsLandscapeLayout(params: SettingsScreenParameters) {
     Scaffold(
         topBar = { SimpleCloseTopAppBar(params.onClose) },
+        bottomBar = { BottomBar() }
     ) { paddingValues ->
         RootLandscapeBox(paddingValues) {
             Row(
@@ -137,6 +143,19 @@ fun SettingsLandscapeLayout(params: SettingsScreenParameters) {
                 Tooltip(onDismissRequest = params.onTooltipDismiss)
             }
         }
+    }
+}
+
+@Composable
+fun BottomBar() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        PrivacyPolicyLink()
     }
 }
 
@@ -222,6 +241,20 @@ fun TooltipContent() {
             fontWeight = FontWeight.Bold
         )
     }
+}
+
+@Composable
+fun PrivacyPolicyLink() {
+    val uriHandler = LocalUriHandler.current
+    val privacyPolicyUrl = "https://padym.com/be-app-privacy-policy.html"
+
+    Text(
+        text = stringResource(R.string.privacy_policy),
+        textDecoration = TextDecoration.Underline,
+        modifier = Modifier.clickable {
+            uriHandler.openUri(privacyPolicyUrl)
+        }
+    )
 }
 
 @Composable
