@@ -23,10 +23,6 @@ data class Syllable(
             listOf("е", "ё", "и", "ю", "я")
         )
 
-        fun findOffset(syllable: String): Int {
-            return getAll().find { it.key == syllable }?.millisOffset ?: 0
-        }
-
         fun findResourceId(syllable: String): Int {
             return getAll().find { it.key == syllable }?.resId ?: 0
         }
