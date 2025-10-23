@@ -54,6 +54,9 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
         }
+        debug {
+            manifestPlaceholders["firebase_analytics_collection_deactivated"] = "false"
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
