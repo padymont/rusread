@@ -1,5 +1,6 @@
 package com.padym.rusread.compose
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
@@ -36,7 +37,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -182,6 +182,7 @@ fun NotEnoughSpaceError() {
     )
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun ScatteredSyllablesButtons(
     selectedSyllables: Set<String>,
@@ -189,7 +190,14 @@ fun ScatteredSyllablesButtons(
     onSyllableClick: (String) -> Result
 ) {
     val context = LocalContext.current
-    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
+    val params = AnalyticsParams(
+        screenWidth = screenWidth,
+        screenHeight = screenHeight,
+        syllablesCount = selectedSyllables.size
+    )
 
     Layout(
         modifier = Modifier.padding(8.dp),
@@ -202,14 +210,6 @@ fun ScatteredSyllablesButtons(
         val placeables = measurables.map { it.measure(constraints) }
         val successfulPlaceable = mutableListOf<Placeable>()
         val buttonList = mutableListOf<Pair<Float, Float>>()
-
-        val screenWidth = with(density) { constraints.maxWidth.toDp() }
-        val screenHeight = with(density) { constraints.maxHeight.toDp() }
-        val params = AnalyticsParams(
-            screenWidth = screenWidth,
-            screenHeight = screenHeight,
-            syllablesCount = selectedSyllables.size
-        )
 
         var isFailed = false
         placeables.forEachIndexed { index, placeable ->
@@ -245,13 +245,7 @@ fun ScatteredSyllablesButtons(
 }
 
 private fun sendAnalyticsEvent(context: Context, result: AnalyticsResult, params: AnalyticsParams) {
-    Log.d("GameScreen.sendAnalyticsEvent()", "sendAnalyticsEvent() invoked. $result")
-    Log.d(
-        "GameScreen.sendAnalyticsEvent()",
-        "${params.screenWidth.value.toLong()} ${params.screenHeight.value.toLong()} ${params.syllablesCount.toLong()}"
-    )
     val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-
     val eventName = when (result) {
         AnalyticsResult.SUCCESS -> EVENT_SYLLABLE_PLACEMENT_SUCCESS
         AnalyticsResult.FAIL -> EVENT_SYLLABLE_PLACEMENT_FAILED
