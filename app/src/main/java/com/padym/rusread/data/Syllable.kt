@@ -4,75 +4,7 @@ import com.padym.rusread.R
 
 object Syllable {
 
-    val firstTimeGroup = setOf("ма", "мо", "му", "па", "по", "пу")
-
-    private val consonantGroups = listOf(
-        listOf("б", "в", "г", "д", "з"),
-        listOf("к", "л", "м", "н"),
-        listOf("п", "р", "с", "т"),
-        listOf("л", "м", "н", "р"),
-        listOf("б", "п"),
-        listOf("в", "ф"),
-        listOf("г", "к"),
-        listOf("д", "т"),
-    )
-    private val vowelGroups = listOf(
-        listOf("а", "о", "у", "ы", "э"),
-        listOf("е", "ё", "и", "ю", "я")
-    )
-
-    private val hissConsonantGroups = listOf(
-        listOf(
-            "жа", "жо", "жу", "хэ",
-            "ха", "хо", "ху", "хы", "хэ",
-            "ца", "цо", "цу", "цы", "цэ",
-            "ча", "чо", "чу",
-            "ша", "шо", "шу",
-            "ща", "що", "щу"
-        ),
-        listOf(
-            "же", "жё", "жи",
-            "хе", "хё", "хи", "хю", "хя",
-            "це", "ци",
-            "че", "чё", "чи",
-            "ше", "шё", "ши",
-            "ще", "щё", "щи",
-        )
-    )
-
-    private val softSignGroups = listOf(
-        listOf("б", "в", "г", "д", "бь", "вь", "гь", "дь"),
-        listOf("к", "л", "м", "н", "кь", "ль", "мь", "нь"),
-        listOf("п", "р", "с", "т", "пь", "рь", "сь", "ть"),
-        listOf("з", "зь", "ж", "жь", "ч", "чь", "ш", "шь", "щ", "щь"),
-    )
-
-    fun getPreselectedGroups() = buildNormalGroups() +
-            singleLetterGroups +
-            hissConsonantGroups +
-            softSignGroups
-
-    private fun buildNormalGroups(): List<List<String>> {
-        return vowelGroups.flatMap { vowels ->
-            consonantGroups.map { consonants ->
-                consonants.flatMap { consonant ->
-                    vowels.map { vowel -> consonant + vowel }
-                }
-            }
-        }
-    }
-
-    private val singleLetterGroups = listOf(
-        listOf("а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я"),
-        listOf("б", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н"),
-        listOf("п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ")
-    )
-
-    fun findResourceId(syllable: String): Int {
-        return getAllSyllablesMap()[syllable] ?: 0
-    }
-
-    fun getAllSyllablesMap(): Map<String, Int> = mapOf(
+    val allSyllablesMap = mapOf(
         "а" to R.raw.a01_1_a,
         "е" to R.raw.a11_1_e,
         "ё" to R.raw.a06_1_jo,
@@ -327,4 +259,68 @@ object Syllable {
         "ь" to R.raw.a30_1_soft,
         "ъ" to R.raw.a28_1_hard
     )
+
+    val firstTimeGroup = setOf("ма", "мо", "му", "па", "по", "пу")
+
+    private val consonantGroups = listOf(
+        listOf("б", "в", "г", "д", "з"),
+        listOf("к", "л", "м", "н"),
+        listOf("п", "р", "с", "т"),
+        listOf("л", "м", "н", "р"),
+        listOf("б", "п"),
+        listOf("в", "ф"),
+        listOf("г", "к"),
+        listOf("д", "т"),
+    )
+    private val vowelGroups = listOf(
+        listOf("а", "о", "у", "ы", "э"),
+        listOf("е", "ё", "и", "ю", "я")
+    )
+
+    private val singleLetterGroups = listOf(
+        listOf("а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я"),
+        listOf("б", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н"),
+        listOf("п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ")
+    )
+
+    private val hissConsonantGroups = listOf(
+        listOf(
+            "жа", "жо", "жу", "хэ",
+            "ха", "хо", "ху", "хы", "хэ",
+            "ца", "цо", "цу", "цы", "цэ",
+            "ча", "чо", "чу",
+            "ша", "шо", "шу",
+            "ща", "що", "щу"
+        ),
+        listOf(
+            "же", "жё", "жи",
+            "хе", "хё", "хи", "хю", "хя",
+            "це", "ци",
+            "че", "чё", "чи",
+            "ше", "шё", "ши",
+            "ще", "щё", "щи",
+        )
+    )
+
+    private val softSignGroups = listOf(
+        listOf("б", "в", "г", "д", "бь", "вь", "гь", "дь"),
+        listOf("к", "л", "м", "н", "кь", "ль", "мь", "нь"),
+        listOf("п", "р", "с", "т", "пь", "рь", "сь", "ть"),
+        listOf("з", "зь", "ж", "жь", "ч", "чь", "ш", "шь", "щ", "щь"),
+    )
+
+    fun getPreselectedGroups() = buildNormalGroups() +
+            singleLetterGroups +
+            hissConsonantGroups +
+            softSignGroups
+
+    private fun buildNormalGroups(): List<List<String>> {
+        return vowelGroups.flatMap { vowels ->
+            consonantGroups.map { consonants ->
+                consonants.flatMap { consonant ->
+                    vowels.map { vowel -> consonant + vowel }
+                }
+            }
+        }
+    }
 }

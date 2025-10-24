@@ -10,7 +10,7 @@ class SyllableMediaPlayer(private val context: Context) {
 
     fun speakSyllable(text: String) {
         releasePlayer()
-        val resourceId = Syllable.findResourceId(text)
+        val resourceId = Syllable.allSyllablesMap[text] ?: 0
 
         if (resourceId != 0) {
             playAudio(resourceId)
