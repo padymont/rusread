@@ -2,7 +2,7 @@ package com.padym.rusread
 
 import android.content.Context
 import android.media.MediaPlayer
-import com.padym.rusread.viewmodels.Syllable
+import com.padym.rusread.data.Syllable
 
 class SyllableMediaPlayer(private val context: Context) {
 
