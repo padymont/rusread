@@ -85,6 +85,6 @@ class StartViewModel @Inject constructor(
     }
 
     private fun getRandomGroup(): Set<String> {
-        return Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
+        return _root_ide_package_.com.padym.rusread.data.Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
     }
 }

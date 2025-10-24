@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.padym.rusread.data.Syllable
 import com.padym.rusread.ui.theme.AppColors
 import com.padym.rusread.ui.theme.RusreadTheme
-import com.padym.rusread.viewmodels.Syllable
 import com.padym.rusread.viewmodels.SyllablePreview
 import kotlin.random.Random
 
