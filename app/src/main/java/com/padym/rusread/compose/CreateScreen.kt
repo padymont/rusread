@@ -231,7 +231,7 @@ fun CreatePortraitLayoutTabletPreview() = CreatePortraitLayoutPreview()
 fun CreateLandscapeLayoutTabletPreview() = CreateLandscapeLayoutPreview()
 
 private object CreatePreviewHelper {
-    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(50).sorted()
+    val chosenSyllables = Syllable.getPreselectedGroups().flatten().shuffled().take(50).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
         val isEnabled = if (isSelected) true else Random.nextBoolean()

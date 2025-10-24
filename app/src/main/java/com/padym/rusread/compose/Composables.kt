@@ -244,7 +244,7 @@ fun EmojiRoundIconButton(
 @Preview(showBackground = true)
 @Composable
 fun SelectionSyllablesRowPreview() {
-    val chosenSyllables = Syllable.getAll().map { it.key }.shuffled().take(34).sorted()
+    val chosenSyllables = Syllable.getPreselectedGroups().flatten().shuffled().take(34).sorted()
     val scoredSyllables = chosenSyllables.map {
         val isSelected = Random.nextBoolean()
         val isEnabled = if (isSelected) {

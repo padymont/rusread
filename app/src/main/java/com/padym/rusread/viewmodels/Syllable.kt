@@ -1,10 +1,10 @@
 package com.padym.rusread.viewmodels
+
 import com.padym.rusread.R
 
 data class Syllable(
     val key: String,
-    val resId: Int = 0,
-    val millisOffset: Int = Int.MAX_VALUE
+    val resId: Int = 0
 ) {
     companion object {
 
@@ -22,10 +22,6 @@ data class Syllable(
             listOf("а", "о", "у", "ы", "э"),
             listOf("е", "ё", "и", "ю", "я")
         )
-
-        fun findOffset(syllable: String): Int {
-            return getAll().find { it.key == syllable }?.millisOffset ?: 0
-        }
 
         fun findResourceId(syllable: String): Int {
             return getAll().find { it.key == syllable }?.resId ?: 0
