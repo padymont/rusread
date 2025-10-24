@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val INITIAL_STAR_SCORE = 10
 private const val STAR_SCORE_PREFS = "star_score_prefs"
 private const val STAR_SCORE_KEY = "star_score_key"
 

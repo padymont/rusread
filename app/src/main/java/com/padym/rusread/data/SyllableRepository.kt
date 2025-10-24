@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-const val INITIAL_STAR_SCORE = 10
-
 @Singleton
 class SyllableRepository @Inject constructor(
     private val syllableGroupDao: SyllableGroupDao,
