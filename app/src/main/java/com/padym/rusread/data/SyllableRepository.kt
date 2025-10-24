@@ -1,7 +1,6 @@
 package com.padym.rusread.data
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -23,15 +22,18 @@ class SyllableRepository @Inject constructor(
         return Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun getHighScoreSyllables(): Flow<List<String>> {
-        return starScoreDao.getCurrentScore()
-            .flatMapLatest { highScore ->
-                syllableScoreDao.getHighScoreEntries(highScore)
-            }.map { list ->
-                list.map { it.syllable }
-            }
+    fun getCurrentScore() = starScoreDao.getScore().map { starScore ->
+        starScore?.score ?: INITIAL_STAR_SCORE
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getHighScoreSyllables() = getCurrentScore()
+        .flatMapLatest { highScore -> syllableScoreDao.getHighScoreEntries(highScore) }
+        .map { list ->
+            list.map { it.syllable }
+        }
+
+    suspend fun setNewScore(newScore: Int) = starScoreDao.setScore(StarScore(score = newScore))
 
     suspend fun save(syllable: String) = syllableScoreDao.insert(SyllableScore(syllable))
 
