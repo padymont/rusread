@@ -39,7 +39,7 @@ class CreateViewModel @Inject constructor(
 
     val syllablePreviewGroup = combine(
         chosenSyllables,
-        syllableRepository.getHighScoreSyllables()
+        syllableRepository.getStarScoreSyllables()
     ) { chosenSyllables, highScoreList ->
         syllableRepository.getAllValidSyllables()
             .sorted()

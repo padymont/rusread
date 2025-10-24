@@ -26,7 +26,7 @@ class StartViewModel @Inject constructor(
     private val currentIndex = MutableStateFlow(0)
     private var maxIndexValue = MIN_INDEX_VALUE
 
-    val currentGroup = syllableRepository.getSyllableGroups()
+    val currentGroup = syllableRepository.getSavedSyllableGroups()
         .map {
             currentIndex.value = MIN_INDEX_VALUE
             it.ifEmpty {
@@ -39,7 +39,7 @@ class StartViewModel @Inject constructor(
         }.map { list ->
             maxIndexValue = list.lastIndex
             list.sortedByDescending { it.modifiedAt }
-        }.combine(syllableRepository.getHighScoreSyllables()) { groups, scores ->
+        }.combine(syllableRepository.getStarScoreSyllables()) { groups, scores ->
             groups.mapIndexed { index, group ->
                 PreviewGroup(
                     id = group.id,
@@ -76,7 +76,7 @@ class StartViewModel @Inject constructor(
 
     fun fixCurrentGroup() {
         viewModelScope.launch {
-            syllableRepository.updateSyllableGroup(currentGroup.value.id)
+            syllableRepository.updateSavedSyllableGroup(currentGroup.value.id)
         }
     }
 

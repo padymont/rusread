@@ -23,46 +23,48 @@ class SyllableRepository @Inject constructor(
         return Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
     }
 
-    fun getSyllableGroups() = syllableGroupDao.getEntries()
+    fun getSavedSyllableGroups() = syllableGroupDao.getEntries()
 
-    suspend fun getLatestSyllableGroup() = syllableGroupDao.getLatestEntry()
+    suspend fun getLatestSavedSyllableGroup() = syllableGroupDao.getLatestEntry()
 
     suspend fun saveSyllableGroup(group: SyllableGroup) = syllableGroupDao.save(group)
 
-    suspend fun updateSyllableGroup(entityId: Int) {
+    suspend fun updateSavedSyllableGroup(entityId: Int) {
         syllableGroupDao.updateModifiedAt(entityId, System.currentTimeMillis())
     }
 
-    fun getCurrentScore() = starScoreDao.getScore().map { starScore ->
+    fun getCurrentStarScore() = starScoreDao.getScore().map { starScore ->
         starScore?.score ?: INITIAL_STAR_SCORE
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getHighScoreSyllables() = getCurrentScore()
+    fun getStarScoreSyllables() = getCurrentStarScore()
         .flatMapLatest { highScore -> syllableScoreDao.getHighScoreEntries(highScore) }
         .map { list ->
             list.map { it.syllable }
         }
 
-    suspend fun setNewScore(newScore: Int) = starScoreDao.setScore(StarScore(score = newScore))
+    suspend fun setNewStarScore(newScore: Int) = starScoreDao.setScore(StarScore(score = newScore))
 
-    suspend fun save(syllable: String) = syllableScoreDao.insert(SyllableScore(syllable))
+    suspend fun saveSyllableScore(syllable: String) {
+        syllableScoreDao.insert(SyllableScore(syllable))
+    }
 
-    suspend fun update(syllable: String, score: Int) {
+    suspend fun updateSyllableScore(syllable: String, score: Int) {
         syllableScoreDao.updateScore(syllable, score)
     }
 
-    suspend fun lowerScore(syllable: String) {
+    suspend fun lowerSyllableScore(syllable: String) {
         val entry = syllableScoreDao.getEntry(syllable)
         if (entry.score > 0) {
-            update(entry.syllable, entry.score - 1)
+            updateSyllableScore(entry.syllable, entry.score - 1)
         }
     }
 
-    suspend fun increaseScore(syllable: String) {
+    suspend fun increaseSyllableScore(syllable: String) {
         val entry = syllableScoreDao.getEntry(syllable)
-        update(entry.syllable, entry.score + 1)
+        updateSyllableScore(entry.syllable, entry.score + 1)
     }
 
-    suspend fun clearAllEntries() = syllableScoreDao.clearAllEntries()
+    suspend fun clearAllSyllablesScores() = syllableScoreDao.clearAllEntries()
 }

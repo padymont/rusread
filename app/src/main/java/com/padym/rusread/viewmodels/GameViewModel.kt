@@ -49,8 +49,8 @@ class GameViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _syllables.value = syllableRepository.getLatestSyllableGroup().list
-            syllables.forEach { syllableRepository.save(it) }
+            _syllables.value = syllableRepository.getLatestSavedSyllableGroup().list
+            syllables.forEach { syllableRepository.saveSyllableScore(it) }
             if (spokenSyllable.value.isEmpty()) {
                 spokenSyllable.value = syllables.random()
             }
@@ -86,11 +86,11 @@ class GameViewModel @Inject constructor(
     }
 
     private fun increaseSyllableScore(syllable: String) = viewModelScope.launch {
-        syllableRepository.increaseScore(syllable)
+        syllableRepository.increaseSyllableScore(syllable)
     }
 
     private fun lowerSyllableScore(syllable: String) = viewModelScope.launch {
-        syllableRepository.lowerScore(syllable)
+        syllableRepository.lowerSyllableScore(syllable)
     }
 
     private fun setNextSpokenSyllable() {

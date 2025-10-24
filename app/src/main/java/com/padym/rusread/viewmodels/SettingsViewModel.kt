@@ -16,18 +16,18 @@ class SettingsViewModel @Inject constructor(
     private val syllableRepository: SyllableRepository,
 ) : ViewModel() {
 
-    val currentStarScore = syllableRepository.getCurrentScore().stateIn(initialValue = 0)
+    val currentStarScore = syllableRepository.getCurrentStarScore().stateIn(initialValue = 0)
 
     private var _isTooltipOn = mutableStateOf(false)
     val isTooltipOn: Boolean
         get() = _isTooltipOn.value
 
     fun setStarScore(newScore: Int) = viewModelScope.launch {
-        syllableRepository.setNewScore(newScore)
+        syllableRepository.setNewStarScore(newScore)
     }
 
     fun clearProgress() = viewModelScope.launch {
-        syllableRepository.clearAllEntries()
+        syllableRepository.clearAllSyllablesScores()
     }
 
     fun showTooltip() {
