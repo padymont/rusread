@@ -2,6 +2,8 @@ package com.padym.rusread.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.padym.rusread.data.AppDatabase
@@ -15,6 +17,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Provider
 import javax.inject.Singleton
 
 
@@ -24,12 +30,22 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+        syllableDaoProvider: Provider<SyllableDao>
+    ): AppDatabase {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
             "my_database"
-        ).build()
+        ).addCallback(object : RoomDatabase.Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+                CoroutineScope(Dispatchers.IO).launch {
+                    prePopulateSyllables(context, syllableDaoProvider.get())
+                }
+            }
+        }).build()
     }
 
     @Provides
@@ -52,8 +68,7 @@ object DatabaseModule {
         return appDatabase.starScoreDao()
     }
 
-    private suspend fun prePopulateSyllables(context: Context, syllableDao: SyllableDao) {
-
+    internal suspend fun prePopulateSyllables(context: Context, syllableDao: SyllableDao) {
         if (syllableDao.getCount() > 0) return
 
         data class SyllableDto(val key: String, val resId: String)

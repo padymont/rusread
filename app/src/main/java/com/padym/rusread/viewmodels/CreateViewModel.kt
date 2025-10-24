@@ -37,8 +37,7 @@ class CreateViewModel @Inject constructor(
     private val _isPreviewOn = mutableStateOf(true)
     val isPreviewOn: Boolean
         get() = _isPreviewOn.value
-
-
+    
     val syllablePreviewGroup = combine(
         syllableRepository.getAllSyllables(),
         chosenSyllables,
