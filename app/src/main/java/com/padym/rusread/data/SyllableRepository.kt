@@ -9,7 +9,6 @@ import javax.inject.Singleton
 
 @Singleton
 class SyllableRepository @Inject constructor(
-    private val syllableDao: SyllableDao,
     private val syllableScoreDao: SyllableScoreDao,
     private val starScoreDao: StarScoreDao
 ) {
@@ -49,12 +48,4 @@ class SyllableRepository @Inject constructor(
     }
 
     suspend fun clearAllEntries() = syllableScoreDao.clearAllEntries()
-
-    fun getAllSyllables(): Flow<List<Syllable>> {
-        return syllableDao.getAll()
-    }
-
-    suspend fun getSyllable(key: String): Syllable? {
-        return syllableDao.getSyllable(key)
-    }
 }

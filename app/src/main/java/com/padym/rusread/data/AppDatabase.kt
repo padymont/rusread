@@ -5,14 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Syllable::class, SyllableList::class, SyllableScore::class, StarScore::class],
+    entities = [SyllableList::class, SyllableScore::class, StarScore::class],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(StringSetConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-
-    abstract fun syllableDao(): SyllableDao
 
     abstract fun syllableListDao(): SyllableListDao
 
