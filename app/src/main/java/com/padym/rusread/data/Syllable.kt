@@ -1,4 +1,4 @@
-package com.padym.rusread.viewmodels
+package com.padym.rusread.data
 
 import com.padym.rusread.R
 
