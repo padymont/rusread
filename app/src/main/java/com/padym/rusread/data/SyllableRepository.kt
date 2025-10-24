@@ -25,6 +25,8 @@ class SyllableRepository @Inject constructor(
 
     fun getSyllableGroups() = syllableGroupDao.getEntries()
 
+    suspend fun getLatestSyllableGroup() = syllableGroupDao.getLatestEntry()
+
     suspend fun saveSyllableGroup(group: SyllableGroup) = syllableGroupDao.save(group)
 
     suspend fun updateSyllableGroup(entityId: Int) {
