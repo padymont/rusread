@@ -4,6 +4,8 @@ import com.padym.rusread.R
 
 object Syllable {
 
+    val firstTimeGroup = setOf("ма", "мо", "му", "па", "по", "пу")
+
     private val consonantGroups = listOf(
         listOf("б", "в", "г", "д", "з"),
         listOf("к", "л", "м", "н"),
@@ -19,30 +21,7 @@ object Syllable {
         listOf("е", "ё", "и", "ю", "я")
     )
 
-    fun getPreselectedGroups() = buildNormalGroups() +
-            getSingleLetterGroups() +
-            getHissConsonantGroups() +
-            getSoftSignGroups()
-
-    private fun buildNormalGroups(): List<List<String>> {
-        return vowelGroups.flatMap { vowels ->
-            consonantGroups.map { consonants ->
-                consonants.flatMap { consonant ->
-                    vowels.map { vowel -> consonant + vowel }
-                }
-            }
-        }
-    }
-
-    fun getFirstTimeGroup() = setOf("ма", "мо", "му", "па", "по", "пу")
-
-    private fun getSingleLetterGroups() = listOf(
-        listOf("а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я"),
-        listOf("б", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н"),
-        listOf("п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ")
-    )
-
-    private fun getHissConsonantGroups() = listOf(
+    private val hissConsonantGroups = listOf(
         listOf(
             "жа", "жо", "жу", "хэ",
             "ха", "хо", "ху", "хы", "хэ",
@@ -61,11 +40,32 @@ object Syllable {
         )
     )
 
-    private fun getSoftSignGroups() = listOf(
+    private val softSignGroups = listOf(
         listOf("б", "в", "г", "д", "бь", "вь", "гь", "дь"),
         listOf("к", "л", "м", "н", "кь", "ль", "мь", "нь"),
         listOf("п", "р", "с", "т", "пь", "рь", "сь", "ть"),
         listOf("з", "зь", "ж", "жь", "ч", "чь", "ш", "шь", "щ", "щь"),
+    )
+
+    fun getPreselectedGroups() = buildNormalGroups() +
+            singleLetterGroups +
+            hissConsonantGroups +
+            softSignGroups
+
+    private fun buildNormalGroups(): List<List<String>> {
+        return vowelGroups.flatMap { vowels ->
+            consonantGroups.map { consonants ->
+                consonants.flatMap { consonant ->
+                    vowels.map { vowel -> consonant + vowel }
+                }
+            }
+        }
+    }
+
+    private val singleLetterGroups = listOf(
+        listOf("а", "е", "ё", "и", "о", "у", "ы", "э", "ю", "я"),
+        listOf("б", "в", "г", "д", "ж", "з", "й", "к", "л", "м", "н"),
+        listOf("п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ")
     )
 
     fun findResourceId(syllable: String): Int {

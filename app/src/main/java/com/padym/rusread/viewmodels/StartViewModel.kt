@@ -32,7 +32,7 @@ class StartViewModel @Inject constructor(
         .map {
             currentIndex.value = MIN_INDEX_VALUE
             it.ifEmpty {
-                SyllableList(list = Syllable.getFirstTimeGroup())
+                SyllableList(list = Syllable.firstTimeGroup)
                     .run {
                         listDao.save(this)
                         listOf(this)
