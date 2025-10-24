@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
 import com.padym.rusread.data.Syllable
-import com.padym.rusread.data.SyllableList
-import com.padym.rusread.data.SyllableListDao
+import com.padym.rusread.data.SyllableGroup
 import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +19,6 @@ const val MIN_INDEX_VALUE = 0
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    private val listDao: SyllableListDao,
     private val syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
@@ -28,13 +26,13 @@ class StartViewModel @Inject constructor(
     private val currentIndex = MutableStateFlow(0)
     private var maxIndexValue = MIN_INDEX_VALUE
 
-    val currentGroup = listDao.getEntries()
+    val currentGroup = syllableRepository.getSyllableGroups()
         .map {
             currentIndex.value = MIN_INDEX_VALUE
             it.ifEmpty {
-                SyllableList(list = Syllable.firstTimeGroup)
+                SyllableGroup(list = Syllable.firstTimeGroup)
                     .run {
-                        listDao.save(this)
+                        syllableRepository.saveSyllableGroup(this)
                         listOf(this)
                     }
             }
@@ -78,11 +76,11 @@ class StartViewModel @Inject constructor(
 
     fun fixCurrentGroup() {
         viewModelScope.launch {
-            listDao.update(currentGroup.value.id)
+            syllableRepository.updateSyllableGroup(currentGroup.value.id)
         }
     }
 
     private fun setNewGroup(group: Set<String>) = viewModelScope.launch {
-        listDao.save(SyllableList(list = group))
+        syllableRepository.saveSyllableGroup(SyllableGroup(list = group))
     }
 }

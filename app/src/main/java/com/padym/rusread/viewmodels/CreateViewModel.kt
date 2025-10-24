@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
-import com.padym.rusread.data.SyllableList
-import com.padym.rusread.data.SyllableListDao
+import com.padym.rusread.data.SyllableGroup
+import com.padym.rusread.data.SyllableGroupDao
 import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ const val CHOSEN_SYLLABLES_KEY = "chosenSyllables"
 
 @HiltViewModel
 class CreateViewModel @Inject constructor(
-    private val listDao: SyllableListDao,
+    private val listDao: SyllableGroupDao,
     syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
     private val savedStateHandle: SavedStateHandle
@@ -75,7 +75,7 @@ class CreateViewModel @Inject constructor(
     }
     fun saveSyllableList() {
         viewModelScope.launch {
-            listDao.save(SyllableList(list = chosenSyllables.value.toSet()))
+            listDao.save(SyllableGroup(list = chosenSyllables.value.toSet()))
         }
     }
 

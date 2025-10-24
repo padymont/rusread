@@ -8,6 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SyllableRepository @Inject constructor(
+    private val syllableGroupDao: SyllableGroupDao,
     private val syllableScoreDao: SyllableScoreDao,
     private val starScoreDao: StarScoreDao
 ) {
@@ -20,6 +21,14 @@ class SyllableRepository @Inject constructor(
 
     fun getRandomSyllableGroup(): Set<String> {
         return Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
+    }
+
+    fun getSyllableGroups() = syllableGroupDao.getEntries()
+
+    suspend fun saveSyllableGroup(group: SyllableGroup) = syllableGroupDao.save(group)
+
+    suspend fun updateSyllableGroup(entityId: Int) {
+        syllableGroupDao.updateModifiedAt(entityId, System.currentTimeMillis())
     }
 
     fun getCurrentScore() = starScoreDao.getScore().map { starScore ->
@@ -51,12 +60,6 @@ class SyllableRepository @Inject constructor(
     suspend fun increaseScore(syllable: String) {
         val entry = syllableScoreDao.getEntry(syllable)
         update(entry.syllable, entry.score + 1)
-    }
-
-    suspend fun getScores(syllables: Set<String>): List<Pair<String, Int>> {
-        return syllableScoreDao.getEntriesScores(syllables).map {
-            Pair(it.syllable, it.score)
-        }
     }
 
     suspend fun clearAllEntries() = syllableScoreDao.clearAllEntries()

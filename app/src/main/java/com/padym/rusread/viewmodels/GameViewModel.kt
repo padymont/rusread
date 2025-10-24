@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.padym.rusread.SyllableMediaPlayer
-import com.padym.rusread.data.SyllableListDao
+import com.padym.rusread.data.SyllableGroupDao
 import com.padym.rusread.data.SyllableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ const val PROGRESS_OFFSET = 0.3f
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val listDao: SyllableListDao,
+    private val listDao: SyllableGroupDao,
     private val syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
