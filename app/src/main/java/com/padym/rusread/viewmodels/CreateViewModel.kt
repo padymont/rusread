@@ -40,20 +40,21 @@ class CreateViewModel @Inject constructor(
 
 
     val syllablePreviewGroup = combine(
+        syllableRepository.getAllSyllables(),
         chosenSyllables,
         syllableRepository.getHighScoreSyllables()
-    ) { chosenSyllables, highScoreList ->
-        Syllable.getAll()
-            .filter { it.resId != 0 }
+    ) { allSyllables, chosenSyllables, highScoreList ->
+        allSyllables
+            .filter { it.resId.isNotBlank() }
             .sortedBy { it.key }
-            .map { it.key }
             .map { syllable ->
+                val syllableKey = syllable.key
                 SyllablePreview(
-                    text = syllable,
-                    isSelected = syllable in chosenSyllables,
+                    text = syllableKey,
+                    isSelected = syllableKey in chosenSyllables,
                     isEnabled = chosenSyllables.size < MAX_SYLLABLES_COUNT,
-                    isStarred = syllable in highScoreList,
-                    onClick = { processSyllable(syllable) }
+                    isStarred = syllableKey in highScoreList,
+                    onClick = { processSyllable(syllableKey) }
                 )
             }
     }.stateIn(initialValue = emptyList())
