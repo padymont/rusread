@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [SyllableGroup::class, SyllableScore::class, StarScore::class],
+    entities = [SyllableGroup::class, SyllableScore::class],
     version = 1,
     exportSchema = false
 )
@@ -15,6 +15,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun syllableGroupDao(): SyllableGroupDao
 
     abstract fun syllableScoreDao(): SyllableScoreDao
-
-    abstract fun starScoreDao(): StarScoreDao
 }

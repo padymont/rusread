@@ -3,7 +3,6 @@ package com.padym.rusread.di
 import android.content.Context
 import androidx.room.Room
 import com.padym.rusread.data.AppDatabase
-import com.padym.rusread.data.StarScoreDao
 import com.padym.rusread.data.SyllableGroupDao
 import com.padym.rusread.data.SyllableScoreDao
 import dagger.Module
@@ -36,10 +35,5 @@ object DatabaseModule {
     @Provides
     fun provideSyllableScoreDao(appDatabase: AppDatabase): SyllableScoreDao {
         return appDatabase.syllableScoreDao()
-    }
-
-    @Provides
-    fun provideStarScoreDao(appDatabase: AppDatabase): StarScoreDao {
-        return appDatabase.starScoreDao()
     }
 }

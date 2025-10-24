@@ -6,11 +6,13 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+const val INITIAL_STAR_SCORE = 10
+
 @Singleton
 class SyllableRepository @Inject constructor(
     private val syllableGroupDao: SyllableGroupDao,
     private val syllableScoreDao: SyllableScoreDao,
-    private val starScoreDao: StarScoreDao
+    private val starScoreStorage: StarScoreStorage
 ) {
 
     fun getAllValidSyllables() = Syllable.allSyllablesMap
@@ -33,9 +35,7 @@ class SyllableRepository @Inject constructor(
         syllableGroupDao.updateModifiedAt(entityId, System.currentTimeMillis())
     }
 
-    fun getCurrentStarScore() = starScoreDao.getScore().map { starScore ->
-        starScore?.score ?: INITIAL_STAR_SCORE
-    }
+    fun getCurrentStarScore() = starScoreStorage.getScore()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getStarScoreSyllables() = getCurrentStarScore()
@@ -44,7 +44,7 @@ class SyllableRepository @Inject constructor(
             list.map { it.syllable }
         }
 
-    suspend fun setNewStarScore(newScore: Int) = starScoreDao.setScore(StarScore(score = newScore))
+    fun setNewStarScore(newScore: Int) = starScoreStorage.setScore(newScore)
 
     suspend fun saveSyllableScore(syllable: String) {
         syllableScoreDao.insert(SyllableScore(syllable))
