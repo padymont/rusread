@@ -37,23 +37,23 @@ class CreateViewModel @Inject constructor(
     private val _isPreviewOn = mutableStateOf(true)
     val isPreviewOn: Boolean
         get() = _isPreviewOn.value
-    
+
+
     val syllablePreviewGroup = combine(
-        syllableRepository.getAllSyllables(),
         chosenSyllables,
         syllableRepository.getHighScoreSyllables()
-    ) { allSyllables, chosenSyllables, highScoreList ->
-        allSyllables
-            .filter { it.resId.isNotBlank() }
-            .sortedBy { it.key }
+    ) { chosenSyllables, highScoreList ->
+        Syllable.getAllSyllablesMap()
+            .filter { it.value != 0 }
+            .keys
+            .sorted()
             .map { syllable ->
-                val syllableKey = syllable.key
                 SyllablePreview(
-                    text = syllableKey,
-                    isSelected = syllableKey in chosenSyllables,
+                    text = syllable,
+                    isSelected = syllable in chosenSyllables,
                     isEnabled = chosenSyllables.size < MAX_SYLLABLES_COUNT,
-                    isStarred = syllableKey in highScoreList,
-                    onClick = { processSyllable(syllableKey) }
+                    isStarred = syllable in highScoreList,
+                    onClick = { processSyllable(syllable) }
                 )
             }
     }.stateIn(initialValue = emptyList())
