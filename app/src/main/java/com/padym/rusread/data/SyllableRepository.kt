@@ -13,6 +13,16 @@ class SyllableRepository @Inject constructor(
     private val starScoreDao: StarScoreDao
 ) {
 
+    fun getAllValidSyllables() = Syllable.allSyllablesMap
+        .filter { it.value != 0 }
+        .keys
+
+    fun getSyllableResourceId(syllable: String) = Syllable.allSyllablesMap[syllable] ?: 0
+
+    fun getRandomSyllableGroup(): Set<String> {
+        return Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getHighScoreSyllables(): Flow<List<String>> {
         return starScoreDao.getCurrentScore()

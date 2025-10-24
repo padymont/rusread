@@ -21,7 +21,7 @@ const val MIN_INDEX_VALUE = 0
 @HiltViewModel
 class StartViewModel @Inject constructor(
     private val listDao: SyllableListDao,
-    syllableRepository: SyllableRepository,
+    private val syllableRepository: SyllableRepository,
     private val mediaPlayer: SyllableMediaPlayer,
 ) : ViewModel() {
 
@@ -64,7 +64,9 @@ class StartViewModel @Inject constructor(
             initialValue = PreviewGroup()
         )
 
-    fun generateGroup() = setNewGroup(getRandomGroup())
+    fun generateGroup() = setNewGroup(
+        syllableRepository.getRandomSyllableGroup()
+    )
 
     fun selectPreviousGroup() {
         currentIndex.value = (currentIndex.value + 1).coerceAtMost(maxIndexValue)
@@ -82,9 +84,5 @@ class StartViewModel @Inject constructor(
 
     private fun setNewGroup(group: Set<String>) = viewModelScope.launch {
         listDao.save(SyllableList(list = group))
-    }
-
-    private fun getRandomGroup(): Set<String> {
-        return _root_ide_package_.com.padym.rusread.data.Syllable.getPreselectedGroups().random().shuffled().take(10).toSet()
     }
 }
